@@ -14,6 +14,7 @@ class CourierStates(StatesGroup):
 	available_order_info = State()
 	delivered_orders = State()
 
+
 @courier.decorators.picked_language
 async def menu_msg_handler(message: types.Message, state:FSMContext, language= 'eng'):
 	await state.reset_data()

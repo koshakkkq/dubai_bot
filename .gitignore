@@ -2,4 +2,7 @@ config.json
 __pycache__/
 .idea/
 venv/
+env/
+.env
 log.txt
+*.log
