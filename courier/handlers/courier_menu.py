@@ -3,11 +3,10 @@ import asyncio
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.storage import FSMContext
 from aiogram import types, Dispatcher
-from language_selection import get_current_language
 
 import courier.keyboards
 import courier.messages
-import courier.decorators
+import decorators
 class CourierStates(StatesGroup):
 	in_menu = State()
 	available_orders = State()
@@ -15,7 +14,7 @@ class CourierStates(StatesGroup):
 	delivered_orders = State()
 
 
-@courier.decorators.picked_language
+@decorators.picked_language
 async def menu_msg_handler(message: types.Message, state:FSMContext, language= 'eng'):
 	await state.reset_data()
 	await state.set_state(CourierStates.in_menu.state)
@@ -28,7 +27,7 @@ async def menu_msg_handler(message: types.Message, state:FSMContext, language= '
 	await message.answer(text=msg, reply_markup=keyboard)
 
 
-@courier.decorators.picked_language
+@decorators.picked_language
 async def menu_callback(callback: types.CallbackQuery, state: FSMContext, language= 'eng'):
 	await state.reset_data()
 	await state.set_state(CourierStates.in_menu.state)
@@ -39,10 +38,9 @@ async def menu_callback(callback: types.CallbackQuery, state: FSMContext, langua
 	await callback.message.edit_text(text=msg, reply_markup=keyboard)
 	await callback.answer()
 
-@courier.decorators.picked_language
+@decorators.picked_language
 async def available_orders_callback(callback: types.CallbackQuery, state: FSMContext, language= 'eng'):
 	await state.set_state(CourierStates.available_orders.state)
-	language = await get_current_language(callback.message.from_user.id)
 
 	msg = '*....*'
 
@@ -51,7 +49,7 @@ async def available_orders_callback(callback: types.CallbackQuery, state: FSMCon
 	await callback.message.edit_text(text=msg, reply_markup=keyboard)
 	await callback.answer()
 
-@courier.decorators.picked_language
+@decorators.picked_language
 async def available_order_info_callback(callback: types.CallbackQuery, state: FSMContext, language= 'eng'):
 	await state.set_state(CourierStates.available_order_info.state)
 
@@ -69,7 +67,7 @@ async def available_order_info_callback(callback: types.CallbackQuery, state: FS
 	await callback.message.edit_text(text=msg, reply_markup=keyboard)
 	await callback.answer()
 
-@courier.decorators.picked_language
+@decorators.picked_language
 async def pick_available_order(callback: types.CallbackQuery, state: FSMContext, language= 'eng'):
 
 	data = await state.get_data()
@@ -83,7 +81,7 @@ async def pick_available_order(callback: types.CallbackQuery, state: FSMContext,
 	await asyncio.sleep(3)
 	await menu_msg_handler(callback.message, state)
 
-@courier.decorators.picked_language
+@decorators.picked_language
 async def delivered_orders_list(callback: types.CallbackQuery, state: FSMContext, language='eng'):
 
 	await state.set_state(CourierStates.delivered_orders.state)
