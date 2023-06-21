@@ -18,20 +18,21 @@ async def menu_msg_handler(message: types.Message, state: FSMContext, language='
     await state.reset_data()
     await state.set_state(ShopMenuStates.in_menu.state)
 
-    msg = shop.messages.messages[language]['menu']
+    msg = shop.messages.messages[language]['shop_menu']
 
-    keyboard = shop.keyboards.keyboards[language]['menu']
+    keyboard = shop.keyboards.keyboards[language]['shop_menu']
 
     await message.answer(text=msg, reply_markup=keyboard)
 
 
+@decorators.picked_language
 async def shop_menu_callback(callback: types.CallbackQuery, state: FSMContext, language='eng'):
     await state.reset_data()
     await state.set_state(ShopMenuStates.in_menu.state)
 
-    msg = shop.messages.messages[language]['menu']
+    msg = shop.messages.messages[language]['shop_menu']
 
-    keyboard = shop.keyboards.keyboards[language]['menu']
+    keyboard = shop.keyboards.keyboards[language]['shop_menu']
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard)
 def register_handlers(dp: Dispatcher):
