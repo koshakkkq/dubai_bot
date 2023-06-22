@@ -1,5 +1,5 @@
 eng_messages = {
-	'menu': 'Welcome to the courier menu.',
+	'courier_menu': 'Welcome to the courier menu.',
 	'delivered_orders': 'Your delivered orders:'
 }
 

@@ -1,1 +1,1 @@
-from .courier_menu import register_handlers, menu_msg_handler
+from .courier_menu import menu_msg_handler

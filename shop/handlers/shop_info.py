@@ -2,6 +2,8 @@
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.storage import FSMContext
 from aiogram import types, Dispatcher
+from aiogram.dispatcher import filters
+from loader import dp
 from .shop_menu import ShopMenuStates, shop_menu_callback
 
 import decorators
@@ -17,6 +19,10 @@ class ShopInfoStates(StatesGroup):
 	models = State()
 
 
+@dp.callback_query_handler(
+	filters.Text(equals="shop_info"),
+	state="*",
+)
 
 @decorators.picked_language
 async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, language='eng'):
@@ -30,6 +36,10 @@ async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, l
 	await callback.message.edit_text(text=msg, reply_markup=keyboard)
 	await callback.answer()
 
+@dp.callback_query_handler(
+	filters.Text(equals="shop_get_brands"),
+	state="*",
+)
 @decorators.picked_language
 async def get_brands_callback(callback: types.CallbackQuery, state: FSMContext, language='eng'):
 	await state.update_data(brands_page = 1)
@@ -65,12 +75,19 @@ async def show_all_brands_callback(
 	await callback.message.edit_text(text=message, reply_markup=keyboard)
 	await callback.answer()
 
+
+@dp.callback_query_handler(
+	filters.Text(startswith="pick_brand_"),
+	state="*",
+)
 @decorators.picked_language
 async def pick_brand(callback:types.CallbackQuery, state: FSMContext, language='eng'):
 	brand_id = callback.data.split('_')[-1]
 	await state.update_data(brand_id=brand_id)
 	await state.update_data(model_page = 1)
 	await show_models(callback=callback, state=state, language=language,page=1)#тоже самое что и get_brands_callback
+
+
 @decorators.picked_language
 async def show_models(callback:types.CallbackQuery, state:FSMContext, language='eng', page = 1):
 	await state.set_state(ShopInfoStates.models.state)
@@ -90,40 +107,3 @@ async def show_models(callback:types.CallbackQuery, state:FSMContext, language='
 
 	await callback.message.edit_text(text=message, reply_markup=keyboard)
 	await callback.answer()
-
-def register_handlers(dp: Dispatcher):
-	dp.register_callback_query_handler(
-		shop_info_callback,
-		state=ShopMenuStates.in_menu,
-		text='delivered_orders',
-	)
-
-	dp.register_callback_query_handler(
-		shop_menu_callback,
-		state = ShopInfoStates.info,
-		text='back',
-	)
-
-	dp.register_callback_query_handler(
-		get_brands_callback,
-		state=ShopInfoStates.info,
-		text='get_brands',
-	)
-
-	dp.register_callback_query_handler(
-		shop_info_callback,
-		state=ShopInfoStates.brands,
-		text='back',
-	)
-
-	dp.register_callback_query_handler(
-		pick_brand,
-		state=ShopInfoStates.brands,
-		text_startswith = 'pick_brand_',
-	)
-
-	dp.register_callback_query_handler(
-		show_all_brands_callback,
-		state=ShopInfoStates.models,
-		text='back',
-	)
