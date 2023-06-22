@@ -2,6 +2,7 @@ import logging
 from aiogram import executor
 from loader import dp, bot
 from register_handlers import register_handlers
+from shop import handlers
 import asyncio
 from user import handlers, filters
 

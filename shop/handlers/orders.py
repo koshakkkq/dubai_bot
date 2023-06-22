@@ -1,6 +1,8 @@
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.storage import FSMContext
 from aiogram import types, Dispatcher
+from aiogram.dispatcher import filters
+from loader import dp
 from .shop_menu import ShopMenuStates, shop_menu_callback
 
 
@@ -14,6 +16,11 @@ class AvailableOrdersStates(StatesGroup):
     order_info = State()
     order_price = State()
     finish = State()
+
+@dp.callback_query_handler(
+    filters.Text(equals="shop_customer_requests"),
+    state="*",
+)
 @decorators.picked_language
 async def show_available_orders(callback: types.CallbackQuery, state: FSMContext, language='eng'):
     await state.set_state(AvailableOrdersStates.orders.state)
@@ -33,7 +40,12 @@ async def show_available_orders(callback: types.CallbackQuery, state: FSMContext
 
     await callback.answer()
 
+@dp.callback_query_handler(
+    filters.Text(startswith="shop_get_available_order_"),
+    state="*",
+)
 @decorators.picked_language
+
 async def get_available_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng'):
 
     await state.set_state(AvailableOrdersStates.order_info.state)
@@ -47,18 +59,27 @@ async def get_available_order_info(callback: types.CallbackQuery, state: FSMCont
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard)
 
-
+@dp.callback_query_handler(
+    filters.Text(equals="shop_accept_order"),
+    state="*",
+)
 @decorators.picked_language
 async def get_order_price(callback: types.CallbackQuery, state: FSMContext, language='eng'):
+    data = await state.get_data()
+    order_id = data['order_id']
+
 
     await state.set_state(AvailableOrdersStates.order_price.state)
 
     msg = shop.messages.messages[language]['shop_order_price']
 
-    keyboard = shop.keyboards.keyboards[language]['back']
+    keyboard = shop.keyboards.orders.get_shop_accept_order_keyboard(order_id=order_id, language=language)
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard)
 
+@dp.message_handler(
+    state=AvailableOrdersStates.order_price,
+)
 @decorators.picked_language
 async def set_order_price(message: types.Message, state:FSMContext, language='eng'):
 
@@ -69,59 +90,3 @@ async def set_order_price(message: types.Message, state:FSMContext, language='en
     keyboard = shop.keyboards.keyboards[language]['shop_available_order_finish']
 
     await message.answer(text=msg, reply_markup=keyboard)
-
-
-def register_handlers(dp: Dispatcher):
-    dp.register_callback_query_handler(
-        show_available_orders,
-        state=ShopMenuStates.in_menu,
-        text='customer_requests',
-    )
-
-    dp.register_callback_query_handler(
-        shop_menu_callback,
-        state=AvailableOrdersStates.orders,
-        text='back',
-    )
-
-    dp.register_callback_query_handler(
-        get_available_order_info,
-        state=AvailableOrdersStates.orders,
-        text_startswith='get_order_',
-    )
-
-    dp.register_callback_query_handler(
-        get_order_price,
-        state=AvailableOrdersStates.order_info,
-        text='accept_order',
-    )
-
-
-    dp.register_callback_query_handler(
-        show_available_orders,
-        state=AvailableOrdersStates.order_info,
-        text='decline_order',
-    )
-
-    dp.register_callback_query_handler(
-        get_available_order_info,
-        state=AvailableOrdersStates.order_price.state,
-        text='back',
-    )
-
-    dp.register_message_handler(
-        set_order_price,
-        state=AvailableOrdersStates.order_price
-    )
-
-    dp.register_callback_query_handler(
-        shop_menu_callback,
-        state=AvailableOrdersStates.finish,
-        text='menu',
-    )
-
-    dp.register_callback_query_handler(
-        show_available_orders,
-        state=AvailableOrdersStates.finish,
-        text='customer_requests',
-    )

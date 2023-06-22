@@ -14,7 +14,7 @@ async def get_brands_keyboard(user_id: int, current_language: str, page = 1):
 	for i in all_brands:
 		brands_buttons.append([InlineKeyboardButton(text=i, callback_data=f'pick_brand_{i}')])
 
-	brands_buttons.append([buttons[current_language]['back']])
+	brands_buttons.append([buttons[current_language]['shop_info']])
 
 	return InlineKeyboardMarkup(inline_keyboard=brands_buttons)
 
@@ -49,6 +49,6 @@ async def get_models_keyboard(user_id, brand_id, current_language: str, page = 1
 	models_buttons.append([buttons[current_language]['pick_all_models']])
 	models_buttons.append([buttons[current_language]['pick_page_models']])
 
-	models_buttons.append([buttons[current_language]['back']])
+	models_buttons.append([buttons[current_language]['shop_get_brands']])
 
 	return InlineKeyboardMarkup(inline_keyboard=models_buttons)

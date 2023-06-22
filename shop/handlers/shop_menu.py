@@ -3,11 +3,13 @@ import asyncio
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.storage import FSMContext
 from aiogram import types, Dispatcher
+from aiogram.dispatcher import filters
+from loader import dp
+
 
 import decorators
 import shop.messages
 import shop.keyboards
-
 
 class ShopMenuStates(StatesGroup):
     in_menu = State()
@@ -25,6 +27,11 @@ async def menu_msg_handler(message: types.Message, state: FSMContext, language='
     await message.answer(text=msg, reply_markup=keyboard)
 
 
+
+@dp.callback_query_handler(
+    filters.Text(equals="shop_menu"),
+    state="*",
+)
 @decorators.picked_language
 async def shop_menu_callback(callback: types.CallbackQuery, state: FSMContext, language='eng'):
     await state.reset_data()
@@ -35,5 +42,3 @@ async def shop_menu_callback(callback: types.CallbackQuery, state: FSMContext, l
     keyboard = shop.keyboards.keyboards[language]['shop_menu']
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard)
-def register_handlers(dp: Dispatcher):
-	pass
