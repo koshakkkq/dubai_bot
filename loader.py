@@ -14,38 +14,3 @@ bot = Bot(token=config.API_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 dp.middleware.setup(LoggingMiddleware())
 #client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://localhost:27017')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ToDo Убрать в клиентскую часть
-from aiogram.dispatcher.filters.builtin import CommandStart
-from aiogram.types import Message
-
-
-@dp.message_handler(CommandStart())
-async def bot_start(message: Message):
-    await message.answer(f"Привет, {message.from_user.full_name}!")
