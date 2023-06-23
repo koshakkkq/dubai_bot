@@ -8,3 +8,14 @@ async def get_available_order_info_message(user_id, order_id, language):
                f'Car model: {order_info["model"]}\n'\
                f'Part: {order_info["part"]}\n'\
                f'Additional information: {order_info["additional"]}\n'
+
+
+async def get_active_order_info(user_id, order_id, language):
+    order_info = await shop.logic.orders.get_available_order_info(order_id)
+
+    if language == 'eng':
+        return f'Order №1:\n\n' \
+               f'Car brand: {order_info["brand"]}\n' \
+               f'Car model: {order_info["model"]}\n' \
+               f'Part: {order_info["part"]}\n' \
+               f'Additional information: {order_info["additional"]}\n'

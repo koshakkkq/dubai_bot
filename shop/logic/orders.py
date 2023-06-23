@@ -8,3 +8,7 @@ async def get_available_order_info(order_id:str):
         'part': 'wheel',
         'additional': 'I need 2 wheels for my car, for regular use.',
     }
+
+
+async def get_active_orders(user_id, skip, limit):
+    return ['Mazda CX-5', 'Mazda 6']

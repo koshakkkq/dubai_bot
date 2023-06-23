@@ -5,4 +5,5 @@ eng_messages = {
     'shop_available_orders': 'Active requests for you',
     'shop_order_price': 'Write the price for this position',
     'shop_available_order_finish': 'Successfully',
+    'shop_active_orders': "❗️ Don't forget to confirm the delivery of the order"
 }
