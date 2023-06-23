@@ -23,8 +23,6 @@ class AvailableOrdersStates(StatesGroup):
 )
 @decorators.picked_language
 async def show_available_orders(callback: types.CallbackQuery, state: FSMContext, language='eng'):
-    await state.set_state(AvailableOrdersStates.orders.state)
-
     data = await state.get_data()
     if 'available_orders_page' not in data:
         await state.update_data(available_orders_page=1)
@@ -90,3 +88,43 @@ async def set_order_price(message: types.Message, state:FSMContext, language='en
     keyboard = shop.keyboards.keyboards[language]['shop_available_order_finish']
 
     await message.answer(text=msg, reply_markup=keyboard)
+
+
+@dp.callback_query_handler(
+    filters.Text(equals="shop_active_orders"),
+    state="*",
+)
+@decorators.picked_language
+async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, language='eng'):
+    data = await state.get_data()
+    if "active_orders_page" not in data:
+        data['active_orders_page'] = 1
+        await state.update_data(active_orders_page=1)
+
+    page = data['active_orders_page']
+    await state.update_data(active_orders_page=1)
+
+    msg = shop.messages.messages[language]['shop_active_orders']
+
+    keyboard = await shop.keyboards.orders.get_active_orders(callback.from_user.id, language, page)
+
+    await callback.message.edit_text(text=msg, reply_markup=keyboard)
+
+
+@dp.callback_query_handler(
+    filters.Text(startswith="shop_get_active_order_"),
+    state="*",
+)
+@decorators.picked_language
+async def get_active_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng'):
+    order_id = callback.data.split('_')[-1]
+
+    msg = await shop.messages.orders.get_active_order_info(
+        callback.from_user.id,
+        order_id,
+        language,
+    )
+
+    keyboard = shop.keyboards.keyboards[language]['shop_active_order_info']
+
+    await callback.message.edit_text(text=msg, reply_markup=keyboard)
