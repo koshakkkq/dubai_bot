@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery
 from user.keyboards import inline
 from user.keyboards import reply
 from aiogram.dispatcher import FSMContext
-from user.filters.states import AddressStates
+from user.filters.states import AddressStates, ApplicationStates
 from user.utils import send_message_of_interest
 
 
@@ -50,8 +50,9 @@ async def price_of(call: CallbackQuery, state: FSMContext):
 @dp.callback_query_handler(lambda call: "wasnt_deliveried" == call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
 	await call.message.edit_text("Can you please tell me what is the problem?", reply_markup=None)
+	await ApplicationStates.MAIN_STATE.set()
 
 
 @dp.callback_query_handler(lambda call: "mark" == call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
-	await call.message.edit_text("Thank you", reply_markup=None)
+	await call.message.edit_text("Thank you", reply_markup=None) 

@@ -7,3 +7,15 @@ class AddressStates(StatesGroup):
 
 class ApplicationStates(StatesGroup):
 	MAIN_STATE = State() # Заглушка
+
+
+class CarDetailStates(StatesGroup):
+	BRAND_STATE = State()
+	MODEL_STATE = State()
+	DETAIL_TYPE_STATE = State()
+	DETAIL_NAME_STATE = State()
+	ARTICLE_STATE = State()
+
+
+class LanguageStates(StatesGroup):
+	MAIN_STATE = State()

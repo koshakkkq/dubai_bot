@@ -68,6 +68,12 @@ def was_deliveried(): # Were you able to pick up your order?
 	return keyboard
 
 
+def no_btn(): # Working in filter
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('❌ NO', callback_data=f"user_no_filter"))
+	return keyboard
+
+
 def mark_keyboard():
 	keyboard = InlineKeyboardMarkup()
 	keyboard.row(InlineKeyboardButton('5️⃣', callback_data=f"mark"))
@@ -75,4 +81,12 @@ def mark_keyboard():
 	keyboard.row(InlineKeyboardButton('3️⃣', callback_data=f"mark"))
 	keyboard.row(InlineKeyboardButton('2️⃣', callback_data=f"mark"))
 	keyboard.row(InlineKeyboardButton('1️⃣', callback_data=f"mark"))
+	return keyboard
+
+
+def language_choice():
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('ENG', callback_data=f"eng"))
+	keyboard.row(InlineKeyboardButton('RUS', callback_data=f"rus"))
+	keyboard.row(InlineKeyboardButton('ARA', callback_data=f"ara"))
 	return keyboard
