@@ -5,9 +5,9 @@ def menu():
 	keyboard = InlineKeyboardMarkup()
 	keyboard.row(InlineKeyboardButton('🔍 Find a spare part', callback_data=f"find_spare_part")) # strong
 	keyboard.row(InlineKeyboardButton('🆘 How to use the bot', callback_data=f"help")) # strong
-	keyboard.row(InlineKeyboardButton('🎯 Ваши отклики', callback_data=f"feedback")) # strong
-	keyboard.row(InlineKeyboardButton('🔐 Зарегистрировать магазин', callback_data=f"register_store"))
-	keyboard.row(InlineKeyboardButton('🚚 Стать курьером', callback_data=f"become_courier"))
+	keyboard.row(InlineKeyboardButton('🎯 Your responses', callback_data=f"feedback")) # strong
+	keyboard.row(InlineKeyboardButton('🔐 Register a store', callback_data=f"register_store"))
+	keyboard.row(InlineKeyboardButton('🚚 Become courier', callback_data=f"become_courier"))
 	return keyboard
 
 
@@ -23,7 +23,7 @@ def feedback_menu(): # list pof prices
 	keyboard.row(InlineKeyboardButton('PRICE 2 rating', callback_data=f"price_of"))
 	keyboard.row(InlineKeyboardButton('Title 3', callback_data=f"price_of"))
 	btn1 = InlineKeyboardButton('More...', callback_data=f"more")
-	btn2 = InlineKeyboardButton('⬅️', callback_data=f"to_menu")
+	btn2 = InlineKeyboardButton('↩️', callback_data=f"to_menu")
 	keyboard.row(btn1, btn2)
 	return keyboard
 
@@ -56,7 +56,7 @@ def choice_courier(): # Choose a courier for delivery
 	keyboard.row(InlineKeyboardButton('Courier 2', callback_data=f"courier"))
 	keyboard.row(InlineKeyboardButton('Courier 3', callback_data=f"courier"))
 	btn1 = InlineKeyboardButton('More...', callback_data=f"more")
-	btn2 = InlineKeyboardButton('⬅️', callback_data=f"to_menu")
+	btn2 = InlineKeyboardButton('↩️', callback_data=f"to_menu")
 	keyboard.row(btn1, btn2)
 	return keyboard
 
