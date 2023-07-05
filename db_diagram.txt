@@ -1,0 +1,117 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+Table user {
+  id integer [primary key]
+  telegram_id varchar
+}
+
+
+Table shop {
+  id integer [primary key]
+  shop_name varchar
+  shop_location varchar
+  shop_phone varchar
+}
+
+Table shop_members {
+  id integer [primary key]
+  user_id integer
+  shop_id integer
+}
+Ref: user.id - shop_members.user_id
+Ref: shop_members.shop_id > shop.id
+
+Table shop_available_models{
+  id integer [primary key]
+  shop_id integer
+  model_id integer
+}
+Ref: shop_available_models.shop_id > shop.id
+Ref: shop_available_models.model_id > car_models.id
+
+Table shop_notification_models{
+  id integer [primary key]
+  shop_id integer
+  model_id integer
+}
+Ref: shop_notification_models.shop_id > shop.id
+Ref: shop_notification_models.model_id > car_models.id
+
+Table shop_orders{
+  id integer [primary key]
+  shop_id integer
+  customer_id integer
+  status varchar [note: "active || done || pending"]
+  model_id integer
+  credentials_id integer 
+  product varchar [note: "Что именно заказано"]
+  additional varchar [note: "comment или что то ещё"]
+  price float [note: "Не 0 если active или done"]
+}
+Ref: shop_orders.shop_id - shop.id
+Ref: shop_orders.customer_id > user.id
+Ref: shop_orders.model_id > car_models.id
+Ref: shop_orders.credentials_id - order_credentials.id
+
+
+
+
+Table order_credentials{
+  id integer [primary key]
+  phone varchar [note: "если type = pickup, то пустая строка"]
+  adress varchar [note: "если type = pickup, то пустая строка"]
+  courier_id integer [note: "Пустышка если pickup"]
+  type varchar [note: "delivery || pickup"]
+}
+
+
+
+Table shop_order_offers{
+  id integer [primary key]
+  order_id integer
+  shop_id integer
+  price integer
+}
+Ref: shop_order_offers.order_id > shop_orders.id
+Ref: shop_order_offers.shop_id > shop.id
+
+Table car_brands{
+  id integer
+  name varchar
+}
+
+
+Table car_models{
+  id integer
+  brand_id integer
+  name varchar
+}
+
+Ref: car_brands.id < car_models.brand_id
+
+Table courier{
+  user_id integer
+  name varchar
+  phone varchar
+}
+Ref: courier.user_id - user.id
+
+Table courier_feedbacks{
+  id integer
+  courier_id integer
+  comment varchar
+  rating integer
+}
+
+
+Ref: courier_feedbacks.id > courier.user_id
+
+Table shop_feedbacks{
+  id integer
+  shop_id integer
+  comment varchar
+  ratins integer
+}
+Ref: shop_feedbacks.shop_id > shop.id
