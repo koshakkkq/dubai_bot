@@ -2,8 +2,20 @@ from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 import logging
+
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+
 import config
 
+
+
+
+engine = create_async_engine(
+    config.DATABASE_URL,
+    #echo=True, #выводит запросы
+)
+sessions = sessionmaker(bind=engine,class_=AsyncSession,)
 
 info_log = logging.FileHandler(config.BASE_DIR/'log/info.log')
 console_out = logging.StreamHandler()

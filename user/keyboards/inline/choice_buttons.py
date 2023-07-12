@@ -86,7 +86,7 @@ def mark_keyboard():
 
 def language_choice():
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('ENG', callback_data=f"eng"))
-	keyboard.row(InlineKeyboardButton('RUS', callback_data=f"rus"))
-	keyboard.row(InlineKeyboardButton('ARA', callback_data=f"ara"))
+	keyboard.row(InlineKeyboardButton('ENG', callback_data=f"pick_language_eng"))
+	keyboard.row(InlineKeyboardButton('RUS', callback_data=f"pick_language_rus"))
+	keyboard.row(InlineKeyboardButton('ARA', callback_data=f"pick_language_ara"))
 	return keyboard
