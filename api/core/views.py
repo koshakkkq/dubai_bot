@@ -1,10 +1,61 @@
 from rest_framework import generics
 from rest_framework.views import APIView
-from rest_framework.response import Response
+
 from core.models import CarBrand
-from core.serializers import CarBrandSerializer
+from core.serializers import *
+from .models import *
+from .utils import *
 
 
-class CarBrandApiView(generics.ListAPIView):  # List of all car`s brands
-    queryset = CarBrand.objects.all()
+
+class CourierApiView(APIView, DataMixin):
+    serializer_class = CourierSerializer
+    model = Courier
+
+
+class CourierFeedbackApiView(APIView, DataMixin):
+    serializer_class = CourierFeedbackSerializer
+    model = CourierFeedback
+
+class TelegramUserApiView(APIView, DataMixin):
+    serializer_class = TelegramUserSerializer
+    model = TelegramUser
+
+class CarBrandApiView(APIView, DataMixin):
     serializer_class = CarBrandSerializer
+    model = CarBrand
+
+
+
+class CarModelApiView(APIView, DataMixin):
+    serializer_class = CarModelSerializer
+    model = CarModel
+
+
+class ShopApiView(APIView, DataMixin):
+    serializer_class = ShopSerializer
+    model = Shop
+
+class ShopFeedbackApiView(APIView, DataMixin):
+    serializer_class = ShopFeedbackSerializer
+    model = ShopFeedback
+
+class CourierFeedbackApiView(APIView, DataMixin):
+    serializer_class = CourierFeedbackSerializer
+    model = CourierFeedback
+
+class ShopMemberApiView(APIView, DataMixin):
+    serializer_class = ShopMemberSerializer
+    model = ShopMember
+
+class OrderCredentialApiView(APIView, DataMixin):
+    serializer_class = OrderCredential
+    model = OrderCredential
+
+class OrderApiView(APIView, DataMixin):
+    serializer_class = OrderSerializer
+    model = Order
+
+class OrderOfferApiView(APIView, DataMixin):
+    serializer_class = OrderOfferSerializer
+    model = OrderOffer

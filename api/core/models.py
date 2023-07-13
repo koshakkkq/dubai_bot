@@ -15,11 +15,11 @@ class Courier(models.Model):
 
 class CourierFeedback(models.Model):
 	comment = models.TextField()
-	raiting = models.PositiveIntegerField()
+	rating = models.PositiveIntegerField()
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="feedbacks")
 
 	def __str__(self):
-		return f"{self.courier}|{self.raiting}"
+		return f"{self.courier}|{self.rating}"
 
 	class Meta:
 		verbose_name = "Отзыв на курьере"
