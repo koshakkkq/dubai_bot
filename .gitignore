@@ -6,3 +6,4 @@ env/
 .env
 log.txt
 *.log
+*.sqlite3
