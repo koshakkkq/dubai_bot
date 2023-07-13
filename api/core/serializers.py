@@ -2,66 +2,93 @@ from rest_framework import serializers
 from core.models import *
 
 
-
-class CourierSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Courier
-        fields = ('__all__')
-
-
-class CourierFeedbackSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CourierFeedback
-        fields = ('__all__')
-
-
-class TelegramUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TelegramUser
-        fields = ('__all__')
-
-
-class CarBrandSerializer(serializers.ModelSerializer):
+class CarBrandListSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarBrand
-        fields = ('__all__')
+        fields = ["id", "name", "models"]
 
 
-class CarModelSerializer(serializers.ModelSerializer):
+class CarBrandDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarBrand
+        fields = ["id", "name", "models"]
+        depth = 2
+
+
+class CarModelListSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarModel
-        fields = ('__all__')
+        fields = ["id", "name", "internal_name", "years", "brand"]
 
 
-class ShopSerializer(serializers.ModelSerializer):
+class CarModelDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarModel
+        fields = ["id", "name", "internal_name", "years", "brand"]
+        depth = 2
+
+
+class CourierListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Courier
+        fields = ["id", "name", "phone", "feedbacks", "telegram_user"]
+
+
+class CourierDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Courier
+        fields = ["id", "name", "phone", "feedbacks", "telegram_user"]
+        depth = 2
+
+
+class TelegramUserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TelegramUser
+        fields = ["id", "telegram_id", "language", "courier", "member", "orders"]
+
+
+class TelegramUserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TelegramUser
+        fields = ["id", "telegram_id", "language", "courier", "member", "orders"]
+        depth = 2
+
+
+class ShopListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shop
-        fields = ('__all__')
+        fields = ["id", "name", "location", "phone", "available_models", "feedbacks", "members", "offers"]
 
 
-class ShopFeedbackSerializer(serializers.ModelSerializer):
+class ShopDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ShopFeedback
-        fields = ('__all__')
-
-class ShopMemberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model =  ShopMember
-        fields = ('__all__')
+        model = Shop
+        fields = ["id", "name", "location", "phone", "available_models", "feedbacks", "members", "offers"]
+        depth = 2
 
 
-class OrderCredentialSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderCredential
-        fields = ('__all__')
-
-class OrderSerializer(serializers.ModelSerializer):
+class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ('__all__')
+        fields = ["id", "status", "product", "additional", "datetime", "customer", "credential", "model", "offers"]
+        depth = 2
 
-class OrderOfferSerializer(serializers.ModelSerializer):
+
+class OrderListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ["id", "status", "product", "additional", "datetime", "customer", "credential", "model", "offers"]
+        depth = 2
+
+
+class OrderOfferListSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderOffer
-        fields = ('__all__')
+        fields = '__all__'
 
+
+class OrderOfferDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderOffer
+        fields = '__all__'
+        depth = 2
