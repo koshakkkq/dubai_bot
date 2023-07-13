@@ -1,4 +1,5 @@
 from django.db import models
+from .constants import VERBOSE_ORDER_TYPE, VERBOSE_RAITING_TYPE
 
 
 class Courier(models.Model):
@@ -15,7 +16,7 @@ class Courier(models.Model):
 
 class CourierFeedback(models.Model):
 	comment = models.TextField()
-	rating = models.PositiveIntegerField()
+	rating = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=0)
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="feedbacks")
 
 	def __str__(self):
@@ -80,7 +81,7 @@ class Shop(models.Model):
 
 class ShopFeedback(models.Model):
 	comment = models.TextField()
-	raiting = models.PositiveIntegerField()
+	raiting = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=0)
 	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="feedbacks")
 
 	def __str__(self):
@@ -121,7 +122,7 @@ class Order(models.Model):
 	customer = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name="orders")
 	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True)
 	model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="orders")
-	status = models.CharField(max_length=30)
+	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	product = models.CharField(max_length=100)
 	additional = models.TextField()
 	datetime =  models.DateTimeField(auto_now=True)
