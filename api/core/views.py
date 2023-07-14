@@ -1,61 +1,66 @@
 from rest_framework import generics
 from rest_framework.views import APIView
-
 from core.models import CarBrand
 from core.serializers import *
 from .models import *
-from .utils import *
+from .mixins import DataListMixin, DataDetailMixin
 
 
-
-class CourierApiView(APIView, DataMixin):
-    serializer_class = CourierSerializer
-    model = Courier
-
-
-class CourierFeedbackApiView(APIView, DataMixin):
-    serializer_class = CourierFeedbackSerializer
-    model = CourierFeedback
-
-class TelegramUserApiView(APIView, DataMixin):
-    serializer_class = TelegramUserSerializer
-    model = TelegramUser
-
-class CarBrandApiView(APIView, DataMixin):
-    serializer_class = CarBrandSerializer
+class CarBrandListApiView(APIView, DataListMixin):
+    serializer_class = CarBrandListSerializer
     model = CarBrand
 
 
+class CarBrandDetailApiView(APIView, DataDetailMixin):
+    serializer_class = CarBrandDetailSerializer
+    model = CarBrand
 
-class CarModelApiView(APIView, DataMixin):
-    serializer_class = CarModelSerializer
+
+class CarModelListApiView(APIView, DataListMixin):
+    serializer_class = CarModelListSerializer
     model = CarModel
 
 
-class ShopApiView(APIView, DataMixin):
-    serializer_class = ShopSerializer
+class CarModelDetailApiView(APIView, DataDetailMixin):
+    serializer_class = CarModelDetailSerializer
+    model = CarModel
+
+
+class CourierListApiView(APIView, DataListMixin):
+    serializer_class = CourierListSerializer
+    model = Courier
+
+
+class CourierDetailApiView(APIView, DataDetailMixin):
+    serializer_class = CourierDetailSerializer
+    model = Courier
+
+
+class TelegramUserListApiView(APIView, DataListMixin):
+    serializer_class = TelegramUserListSerializer
+    model = TelegramUser
+
+
+class TelegramUserDetailApiView(APIView, DataDetailMixin):
+    serializer_class = TelegramUserDetailSerializer
+    model = TelegramUser
+
+
+class ShopListApiView(APIView, DataListMixin):
+    serializer_class = ShopListSerializer
     model = Shop
 
-class ShopFeedbackApiView(APIView, DataMixin):
-    serializer_class = ShopFeedbackSerializer
-    model = ShopFeedback
 
-class CourierFeedbackApiView(APIView, DataMixin):
-    serializer_class = CourierFeedbackSerializer
-    model = CourierFeedback
-
-class ShopMemberApiView(APIView, DataMixin):
-    serializer_class = ShopMemberSerializer
-    model = ShopMember
-
-class OrderCredentialApiView(APIView, DataMixin):
-    serializer_class = OrderCredential
-    model = OrderCredential
-
-class OrderApiView(APIView, DataMixin):
-    serializer_class = OrderSerializer
+class OrderListApiView(APIView, DataListMixin):
+    serializer_class = OrderListSerializer
     model = Order
 
-class OrderOfferApiView(APIView, DataMixin):
-    serializer_class = OrderOfferSerializer
+
+class OrderOfferListApiView(APIView, DataListMixin):
+    serializer_class = OrderOfferListSerializer
+    model = OrderOffer
+
+
+class OrderOfferDetailApiView(APIView, DataDetailMixin):
+    serializer_class = OrderOfferDetailSerializer
     model = OrderOffer

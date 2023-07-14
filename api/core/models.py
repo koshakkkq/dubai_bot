@@ -1,4 +1,5 @@
 from django.db import models
+from .constants import VERBOSE_ORDER_TYPE, VERBOSE_RAITING_TYPE
 
 
 class Courier(models.Model):
@@ -15,7 +16,7 @@ class Courier(models.Model):
 
 class CourierFeedback(models.Model):
 	comment = models.TextField()
-	rating = models.PositiveIntegerField()
+	rating = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=0)
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="feedbacks")
 
 	def __str__(self):
@@ -80,7 +81,7 @@ class Shop(models.Model):
 
 class ShopFeedback(models.Model):
 	comment = models.TextField()
-	raiting = models.PositiveIntegerField()
+	raiting = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=0)
 	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="feedbacks")
 
 	def __str__(self):
@@ -105,12 +106,12 @@ class ShopMember(models.Model):
 
 class OrderCredential(models.Model):
 	adress = models.CharField(max_length=30)
-	courier = models.ForeignKey(CourierFeedback, on_delete = models.CASCADE, related_name="credentials")
+	courier = models.ForeignKey(CourierFeedback, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
 	is_delivery = models.BooleanField()
 	phone = models.CharField(max_length=30)
 
 	def __str__(self):
-		return self.order
+		return self.adress
 
 	class Meta:
 		verbose_name = "Часть заказа"
@@ -119,9 +120,9 @@ class OrderCredential(models.Model):
 
 class Order(models.Model):
 	customer = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name="orders")
-	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order")
+	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True)
 	model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="orders")
-	status = models.CharField(max_length=30)
+	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	product = models.CharField(max_length=100)
 	additional = models.TextField()
 	datetime =  models.DateTimeField(auto_now=True)
@@ -141,8 +142,8 @@ class OrderOffer(models.Model):
 	order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="offers")
 
 	def __str__(self):
-		return "ToDo"
+		return f"{self.pk}|{self.shop}"
 
 	class Meta:
-		verbose_name = "ToDo"
-		verbose_name_plural = "ToDo"
+		verbose_name = "Заявка на заказ"
+		verbose_name_plural = "Заявки на заказ"
