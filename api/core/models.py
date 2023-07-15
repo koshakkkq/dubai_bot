@@ -105,8 +105,8 @@ class ShopMember(models.Model):
 
 
 class OrderCredential(models.Model):
-	adress = models.CharField(max_length=30)
-	courier = models.ForeignKey(CourierFeedback, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
+	address = models.CharField(max_length=30)
+	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="courier", null=True, blank=True)
 	is_delivery = models.BooleanField()
 	phone = models.CharField(max_length=30)
 
