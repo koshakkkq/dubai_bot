@@ -19,6 +19,7 @@ class CourierFeedback(models.Model):
 	rating = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=0)
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="feedbacks")
 
+
 	def __str__(self):
 		return f"{self.courier}|{self.rating}"
 
@@ -64,6 +65,8 @@ class CarModel(models.Model):
 		verbose_name = "Модель машины"
 		verbose_name_plural = "Модели машин"
 
+class ShopAvailableModels(models.Model):
+	shop_id = models.ForeignKey
 
 class Shop(models.Model):
 	name = models.CharField(max_length=30)
@@ -106,7 +109,7 @@ class ShopMember(models.Model):
 
 class OrderCredential(models.Model):
 	address = models.CharField(max_length=30)
-	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="courier", null=True, blank=True)
+	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
 	is_delivery = models.BooleanField()
 	phone = models.CharField(max_length=30)
 
@@ -125,7 +128,7 @@ class Order(models.Model):
 	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	product = models.CharField(max_length=100)
 	additional = models.TextField()
-	datetime =  models.DateTimeField(auto_now=True)
+	datetime = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return f"{self.customer}|{self.status}"

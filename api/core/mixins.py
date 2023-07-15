@@ -1,3 +1,4 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 class DataMixin:
@@ -50,8 +51,3 @@ class DataMixin:
         serializer.save()
         return Response({'post': serializer.data})
 
-
-class DataDetailMixin:
-    def get(self, request, pk):
-        model = self.model.objects.get(pk=pk)
-        return Response(self.serializer_class(model).data)

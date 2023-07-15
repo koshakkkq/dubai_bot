@@ -14,7 +14,7 @@ urlpatterns = [
     path("shop/", views.ShopApiView.as_view()),
     path("shop_feedback/", views.ShopFeedbackApiView.as_view()),
     path("shop_member/", views.ShopMemberApiView.as_view()),
-    path("order_credentioal/", views.OrderCredentialApiView.as_view()),
+    path("order_credentials/", views.OrderCredentialApiView.as_view()),
     path("order/", views.OrderApiView.as_view()),
     path("order_offer/", views.OrderOfferApiView.as_view()),
 
