@@ -1,11 +1,23 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+class DataMixin:
 
-class DataListMixin:
+
+
+
     def get(self, request):
         skip = int(request.GET.get('skip', 0))
         limit = int(request.GET.get('limit', -1))
-        objs = self.model.objects.all()
+
+        filters = {}
+
+        for i in request.GET:
+            if i not in ['skip', 'limit']:
+                filters[i] = request.GET[i]
+
+
+        objs = self.model.objects.filter(**filters)
 
         if skip >= len(objs):
             return Response(
@@ -39,8 +51,3 @@ class DataListMixin:
         serializer.save()
         return Response({'post': serializer.data})
 
-
-class DataDetailMixin:
-    def get(self, request, pk):
-        model = self.model.objects.get(pk=pk)
-        return Response(self.serializer_class(model).data)
