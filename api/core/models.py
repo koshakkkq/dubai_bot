@@ -150,3 +150,9 @@ class OrderOffer(models.Model):
 	class Meta:
 		verbose_name = "Заявка на заказ"
 		verbose_name_plural = "Заявки на заказ"
+
+
+class ShopRegistrationCode(models.Model):
+	code = models.TextField()
+	used = models.BooleanField(default=False)
+	user = models.IntegerField(null=True)
