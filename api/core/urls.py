@@ -5,7 +5,7 @@ app_name = "core"
 
 urlpatterns = [
 
-    path("car_brands/", views.CarBrandApiView.as_view()),
+    path("car_brands/", views.CarBrandApiView.as_view(), name="car_brands"),
     path("courier/", views.CourierApiView.as_view()),
     path("courier_feedback/", views.CourierFeedbackApiView.as_view()),
     path("telegram_user/", views.TelegramUserApiView.as_view()),
