@@ -2,9 +2,7 @@
 
 {% block object-tools %}
   <form action="import/" method="POST">
-    <input type="text" name= "name" value="Занчение">
     {% csrf_token %}
-    <input type="submit" value="Импорт" />
+    <input type="submit" value="Create Code." />
   </form>
-    {{ block.super }}
 {% endblock %}

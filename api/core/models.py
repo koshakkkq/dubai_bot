@@ -1,17 +1,18 @@
+import datetime
+
 from django.db import models
 from .constants import VERBOSE_ORDER_TYPE, VERBOSE_RAITING_TYPE
-
-
+import django.utils.timezone
 class Courier(models.Model):
 	name = models.CharField(max_length=50)
 	phone = models.CharField(max_length=15)
 
 	def __str__(self):
-		return self.name
+		return f'Name: {self.name}, Phone: {self.phone}'
 
 	class Meta:
-		verbose_name = "Курьер"
-		verbose_name_plural = "Курьеры"
+		verbose_name = "Courier"
+		verbose_name_plural = "Couriers"
 
 
 class CourierFeedback(models.Model):
@@ -24,8 +25,8 @@ class CourierFeedback(models.Model):
 		return f"{self.courier}|{self.rating}"
 
 	class Meta:
-		verbose_name = "Отзыв на курьере"
-		verbose_name_plural = "Отзывы на курьере"
+		verbose_name = "Courier Feedback"
+		verbose_name_plural = "Courier Feedbacks"
 
 
 class TelegramUser(models.Model):
@@ -37,8 +38,8 @@ class TelegramUser(models.Model):
 		return f"user:{self.telegram_id}"
 
 	class Meta:
-		verbose_name = "Пользователь Телеграма"
-		verbose_name_plural = "Пользователи Телеграма"
+		verbose_name = "Telegram user"
+		verbose_name_plural = "Telegram users"
 
 
 class CarBrand(models.Model):
@@ -48,8 +49,8 @@ class CarBrand(models.Model):
 		return self.name
 
 	class Meta:
-		verbose_name = "Производитель автомобилей"
-		verbose_name_plural = "Производители автомобилей"
+		verbose_name = "Car brand"
+		verbose_name_plural = "Car brands"
 
 
 class CarModel(models.Model):
@@ -62,24 +63,29 @@ class CarModel(models.Model):
 		return f"{self.brand} {self.name}"
 
 	class Meta:
-		verbose_name = "Модель машины"
-		verbose_name_plural = "Модели машин"
+		verbose_name = "Car model"
+		verbose_name_plural = "Car models"
 
 class ShopAvailableModels(models.Model):
 	shop_id = models.ForeignKey
 
+
+
 class Shop(models.Model):
+
+
 	name = models.CharField(max_length=30)
 	location = models.CharField(max_length=50)
 	phone = models.CharField(max_length=15)
-	available_models = models.ManyToManyField(CarModel, related_name="shops")
+	available_models = models.ManyToManyField(CarModel, related_name="shops", )
+
 
 	def __str__(self):
 		return self.name
 
 	class Meta:
-		verbose_name = "Магазин"
-		verbose_name_plural = "Магазины"
+		verbose_name = "Shop"
+		verbose_name_plural = "Shops"
 
 
 class ShopFeedback(models.Model):
@@ -91,8 +97,8 @@ class ShopFeedback(models.Model):
 		return f"{self.shop}|{self.raiting}"
 
 	class Meta:
-		verbose_name = "Отзыв на магазине"
-		verbose_name_plural = "Отзывы на магазин"
+		verbose_name = "Shop Feedback"
+		verbose_name_plural = "Shop Feedbacks"
 
 
 class ShopMember(models.Model):
@@ -103,8 +109,8 @@ class ShopMember(models.Model):
 		return f"{self.shop}|{self.user}"
 
 	class Meta:
-		verbose_name = "Сотрудник магазина"
-		verbose_name_plural = "Сотрудники магазина"
+		verbose_name = "Shop employee"
+		verbose_name_plural = "Shop employees"
 
 
 class OrderCredential(models.Model):
@@ -114,11 +120,19 @@ class OrderCredential(models.Model):
 	phone = models.CharField(max_length=30)
 
 	def __str__(self):
-		return self.adress
+		s = f'Address: {self.address}, '
+		if self.courier is not None:
+			s += f'Courier: {self.courier}, '
+		if self.is_delivery == True:
+			s += f'Delivery, '
+		else:
+			s += 'Pickup '
 
+		s += f'Phone: {self.phone}'
+		return s
 	class Meta:
-		verbose_name = "Часть заказа"
-		verbose_name_plural = "Части заказа"
+		verbose_name = "Order credential"
+		verbose_name_plural = "Order credentials"
 
 
 class Order(models.Model):
@@ -131,11 +145,11 @@ class Order(models.Model):
 	datetime = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
-		return f"{self.customer}|{self.status}"
+		return f"Order from: {self.customer}| Order status: {self.status}"
 
 	class Meta:
-		verbose_name = "Заказ"
-		verbose_name_plural = "Заказы"
+		verbose_name = "Order"
+		verbose_name_plural = "Orders"
 
 
 class OrderOffer(models.Model):
@@ -148,11 +162,16 @@ class OrderOffer(models.Model):
 		return f"{self.pk}|{self.shop}"
 
 	class Meta:
-		verbose_name = "Заявка на заказ"
-		verbose_name_plural = "Заявки на заказ"
+		verbose_name = "Order offer"
+		verbose_name_plural = "Order offers"
 
 
 class ShopRegistrationCode(models.Model):
 	code = models.TextField()
 	used = models.BooleanField(default=False)
 	user = models.IntegerField(null=True)
+	creation_time = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		verbose_name = "Invite codes."
+		verbose_name_plural = "Invite codes."

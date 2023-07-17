@@ -3,9 +3,9 @@ PENDING = 1
 DONE = 2
 
 VERBOSE_ORDER_TYPE = (
-    (ACTIVE, "Активно"),
-    (PENDING, "В ожидание"),
-    (DONE, "Готово"),
+    (ACTIVE, "Active."),
+    (PENDING, "Pending."),
+    (DONE, "Done."),
 )
 
 VERBOSE_RAITING_TYPE = (
