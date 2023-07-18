@@ -19,7 +19,7 @@ from .models import *
 
 
 @admin.register(ShopRegistrationCode)
-class ShopRegistrationCodeAdmin(ImportExportMixin, admin.ModelAdmin):
+class ShopRegistrationCodeAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
