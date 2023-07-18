@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  bot_api:
+    container_name: api
+    build: .
+    expose:
+        - "8000"
+  nginx:
+    build: ./nginx
+    ports:
+      - 8000:80
+    depends_on:
+      - bot_api

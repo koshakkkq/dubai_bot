@@ -8,6 +8,7 @@ from django.forms import CheckboxSelectMultiple
 from django.http import HttpResponseRedirect
 from django.urls import re_path
 from django.urls import path
+from import_export.admin import ImportExportMixin
 
 
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
@@ -18,7 +19,7 @@ from .models import *
 
 
 @admin.register(ShopRegistrationCode)
-class ShopRegistrationCodeAdmin(admin.ModelAdmin):
+class ShopRegistrationCodeAdmin(ImportExportMixin, admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
@@ -56,7 +57,7 @@ class ShopRegistrationCodeAdmin(admin.ModelAdmin):
 
 
 @admin.register(TelegramUser)
-class TelegramUserAdmin(admin.ModelAdmin):
+class TelegramUserAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('id','telegram_id','get_courier')
 
     @admin.display(description='Courier')
@@ -68,15 +69,15 @@ class TelegramUserAdmin(admin.ModelAdmin):
 
 
 @admin.register(Courier)
-class CourierAdmin(admin.ModelAdmin):
+class CourierAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('name', 'phone')
 
 @admin.register(CourierFeedback)
-class CourierFeedbackAdmin(admin.ModelAdmin):
+class CourierFeedbackAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('comment', 'rating', 'courier')
 
 @admin.register(Shop)
-class ShopAdmin(admin.ModelAdmin):
+class ShopAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('id', 'name', 'location', 'phone')
 
     def get_form(self, request, obj=None, **kwargs):
@@ -88,35 +89,39 @@ class ShopAdmin(admin.ModelAdmin):
         models.ManyToManyField: {'widget': CheckboxSelectMultiple},
     }
 @admin.register(ShopFeedback)
-class ShopFeedbackAdmin(admin.ModelAdmin):
+class ShopFeedbackAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('comment', 'raiting', 'shop')
 
 
 @admin.register(CarBrand)
-class CarBrandAdmin(admin.ModelAdmin):
+class CarBrandAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('id', 'name')
 
 @admin.register(CarModel)
-class CarBrandAdmin(admin.ModelAdmin):
-    list_display = ('id','brand','name', 'internal_name',  'years', )
+class CarBrandAdmin(ImportExportMixin, admin.ModelAdmin):
+    list_display = ('id','brand','name', 'internal_name',  'get_years', )
+
+    @admin.display(description='years')
+    def get_years(self, obj: CarModel):
+        return f'{obj.production_start}-{obj.production_end}'
 
 
 @admin.register(ShopMember)
-class ShopMemberAdmin(admin.ModelAdmin):
+class ShopMemberAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('user', 'shop')
 
 
 @admin.register(OrderCredential)
-class OrderCredential(admin.ModelAdmin):
+class OrderCredential(ImportExportMixin, admin.ModelAdmin):
     list_display = ('address', 'get_courier', 'is_delivery', 'phone')
-
+    @admin.display(description='courier')
     def get_courier(self, obj):
         return obj.courier
 
     get_courier.admin_order_field = 'courier'
     get_courier.empty_value_display = 'Not a courier'
 @admin.register(Order)
-class Order(admin.ModelAdmin):
+class Order(ImportExportMixin, admin.ModelAdmin):
     list_display = ('customer', 'credential', 'model', 'status', 'product', 'additional', 'get_time')
 
     @admin.display(description='Order creation')
@@ -124,7 +129,7 @@ class Order(admin.ModelAdmin):
         return obj.datetime.strftime("%d %b %Y %H:%M:%S")
 
 @admin.register(OrderOffer)
-class OrderOfferAdmin(admin.ModelAdmin):
+class OrderOfferAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('get_shop', 'price', 'get_order', 'order')
 
     @admin.display(description='shop')
