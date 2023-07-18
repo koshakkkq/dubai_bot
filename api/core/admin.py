@@ -99,7 +99,11 @@ class CarBrandAdmin(ImportExportMixin, admin.ModelAdmin):
 
 @admin.register(CarModel)
 class CarBrandAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ('id','brand','name', 'internal_name',  'years', )
+    list_display = ('id','brand','name', 'internal_name',  'get_years', )
+
+    @admin.display(description='years')
+    def get_years(self, obj: CarModel):
+        return f'{obj.production_start}-{obj.production_end}'
 
 
 @admin.register(ShopMember)
@@ -110,7 +114,7 @@ class ShopMemberAdmin(ImportExportMixin, admin.ModelAdmin):
 @admin.register(OrderCredential)
 class OrderCredential(ImportExportMixin, admin.ModelAdmin):
     list_display = ('address', 'get_courier', 'is_delivery', 'phone')
-
+    @admin.display(description='courier')
     def get_courier(self, obj):
         return obj.courier
 

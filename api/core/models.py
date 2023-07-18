@@ -57,7 +57,8 @@ class CarModel(models.Model):
 	brand = models.ForeignKey(CarBrand, on_delete = models.CASCADE, related_name="models")
 	name = models.CharField(max_length=30)
 	internal_name = models.CharField(max_length=30)
-	years = models.CharField(max_length=30)
+	production_start = models.PositiveIntegerField(default=0)
+	production_end = models.PositiveIntegerField(default=0)
 
 	def __str__(self):
 		return f"{self.brand} {self.name}"
