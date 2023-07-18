@@ -9,9 +9,10 @@ from django.http import HttpResponseRedirect
 from django.urls import re_path
 from django.urls import path
 from import_export.admin import ImportExportMixin
-
+from .resources import CarModelResource
 
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
+from import_export.admin import ImportExportModelAdmin
 
 from .models import *
 
@@ -98,7 +99,8 @@ class CarBrandAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('id', 'name')
 
 @admin.register(CarModel)
-class CarBrandAdmin(ImportExportMixin, admin.ModelAdmin):
+class CarModelAdmin(ImportExportModelAdmin, ImportExportMixin, admin.ModelAdmin):
+    resource_class = CarModelResource
     list_display = ('id','brand','name', 'internal_name',  'get_years', )
 
     @admin.display(description='years')

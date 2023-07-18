@@ -59,6 +59,7 @@ class CarModel(models.Model):
 	internal_name = models.CharField(max_length=30)
 	production_start = models.PositiveIntegerField(default=0)
 	production_end = models.PositiveIntegerField(default=0)
+	#years = models.CharField(max_length=30)
 
 	def __str__(self):
 		return f"{self.brand} {self.name}"
