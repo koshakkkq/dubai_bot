@@ -1,3 +1,5 @@
+from django.core.handlers.wsgi import WSGIRequest
+from django.http import JsonResponse
 from rest_framework import generics
 from rest_framework.views import APIView
 
@@ -60,4 +62,5 @@ class OrderApiView(APIView, DataMixin):
 class OrderOfferApiView(APIView, DataMixin):
     serializer_class = OrderOfferSerializer
     model = OrderOffer
+
 

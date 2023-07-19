@@ -18,11 +18,6 @@ async def help(call: CallbackQuery, state: FSMContext):
     await call.message.edit_text("*file how to use the bot*", reply_markup=to_menu())
 
 
-@dp.callback_query_handler(lambda call: "register_store" == call.data)
-async def register_store(call: CallbackQuery, state: FSMContext):
-    await call.message.edit_text("*shop registration form*", reply_markup=to_menu())
-
-
 @dp.callback_query_handler(lambda call: "become_courier" == call.data)
 async def become_courier(call: CallbackQuery, state: FSMContext):
     await call.message.edit_text("*courier registration form*", reply_markup=to_menu())

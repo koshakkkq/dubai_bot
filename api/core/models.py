@@ -177,3 +177,9 @@ class ShopRegistrationCode(models.Model):
 	class Meta:
 		verbose_name = "Invite codes."
 		verbose_name_plural = "Invite codes."
+
+class ShopMemberRegistrationCode(models.Model):
+	code = models.TextField()
+	used = models.BooleanField(default=False)
+	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+	creation_time = models.DateTimeField(auto_now_add=True)

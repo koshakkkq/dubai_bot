@@ -1,6 +1,9 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+
+
+
 class DataMixin:
 
 
@@ -20,12 +23,7 @@ class DataMixin:
         objs = self.model.objects.filter(**filters)
 
         if skip >= len(objs):
-            return Response(
-                {
-                    'error': 'skipped value greater than amount of objects',
-                },
-                status=400,
-            )
+            return Response(self.serializer_class(objs, many=True).data)
         objs = objs[skip:]
 
         if limit < -1:
