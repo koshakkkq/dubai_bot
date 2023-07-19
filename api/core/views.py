@@ -60,3 +60,4 @@ class OrderApiView(APIView, DataMixin):
 class OrderOfferApiView(APIView, DataMixin):
     serializer_class = OrderOfferSerializer
     model = OrderOffer
+
