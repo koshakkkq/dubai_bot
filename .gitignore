@@ -7,3 +7,4 @@ env/
 log.txt
 *.log
 *.sqlite3
+*.swp
