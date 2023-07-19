@@ -1,5 +1,5 @@
 from django.urls import path
-from core import views
+from core import views, views_shop
 
 app_name = "core"
 
@@ -18,4 +18,8 @@ urlpatterns = [
     path("order/", views.OrderApiView.as_view()),
     path("order_offer/", views.OrderOfferApiView.as_view()),
 
+    path("shop_member_status/<int:id>/", views_shop.shop_member_status),
+    path('is_code_correct/<int:user_id>/<str:code>/', views_shop.is_code_correct),
+    path('set_language/', views_shop.SetUserLanguage.as_view()),
+    path('create_shop/', views_shop.CreateShop.as_view()),
 ]
