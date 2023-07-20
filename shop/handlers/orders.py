@@ -7,7 +7,7 @@ import shop.logic
 from .shop_menu import ShopMenuStates, shop_menu_callback
 
 
-import decorators
+import utils.decorators as decorators
 import shop.messages
 import shop.keyboards.orders
 

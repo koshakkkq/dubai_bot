@@ -3,7 +3,7 @@ import typing
 
 import aiogram.types.message
 
-from decorators_utils import get_current_language, bot_start, get_shop_id
+from .decorators_utils import get_current_language, bot_start, get_shop_id
 
 def picked_language(func):
 	async def wrapper(

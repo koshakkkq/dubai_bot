@@ -7,7 +7,7 @@ from aiogram.dispatcher import filters
 from loader import dp
 
 
-import decorators
+import utils.decorators as decorators
 import shop.messages
 import shop.keyboards
 

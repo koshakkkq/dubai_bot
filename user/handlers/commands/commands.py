@@ -1,7 +1,7 @@
 from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.types import Message
 
-import decorators
+import utils.decorators as decorators
 from loader import dp
 from user.keyboards.inline import *
 from user.keyboards.reply import *
