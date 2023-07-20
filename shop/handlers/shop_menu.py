@@ -16,7 +16,8 @@ class ShopMenuStates(StatesGroup):
 
 
 @decorators.picked_language
-async def menu_msg_handler(message: types.Message, state: FSMContext, language='eng'):
+@decorators.is_member
+async def menu_msg_handler(message: types.Message, state: FSMContext, language='eng', shop_id = -1):
     await state.reset_data()
     await state.set_state(ShopMenuStates.in_menu.state)
 
@@ -33,12 +34,13 @@ async def menu_msg_handler(message: types.Message, state: FSMContext, language='
     state="*",
 )
 @decorators.picked_language
-async def shop_menu_callback(callback: types.CallbackQuery, state: FSMContext, language='eng'):
+@decorators.is_member
+async def shop_menu_callback(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id = -1):
     await state.reset_data()
     await state.set_state(ShopMenuStates.in_menu.state)
-
     msg = shop.messages.messages[language]['shop_menu']
 
     keyboard = shop.keyboards.keyboards[language]['shop_menu']
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard)
+

@@ -62,7 +62,7 @@ class CarModel(models.Model):
 	#years = models.CharField(max_length=30)
 
 	def __str__(self):
-		return f"{self.brand} {self.name}"
+		return f"{self.brand} {self.name} {self.production_start}-{self.production_end}"
 
 	class Meta:
 		verbose_name = "Car model"
@@ -156,7 +156,7 @@ class Order(models.Model):
 
 class OrderOffer(models.Model):
 	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="offers")
-	price = models.PositiveIntegerField()
+	price = models.TextField()
 	is_approved = models.BooleanField(default=False)
 	order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="offers")
 
@@ -183,3 +183,7 @@ class ShopMemberRegistrationCode(models.Model):
 	used = models.BooleanField(default=False)
 	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 	creation_time = models.DateTimeField(auto_now_add=True)
+
+class ShopOrdersBlacklist(models.Model):
+	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+	order = models.ForeignKey(Order, on_delete=models.CASCADE)

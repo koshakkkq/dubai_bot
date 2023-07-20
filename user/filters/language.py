@@ -4,7 +4,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 from .states import LanguageStates
 from user.keyboards import inline
-from language_selection import set_language
+from decorators_utils import set_language
 from aiogram.dispatcher import filters
 from user.handlers.callbacks.strong import to_menu_callback
 import asyncio

@@ -1,9 +1,10 @@
+import json
+
 from django.core.handlers.wsgi import WSGIRequest
+from django.db.models import Subquery
 from django.http import JsonResponse, HttpResponse
 from rest_framework.views import APIView
-
 from .models import *
-
 def shop_member_status(request: WSGIRequest, id):
 
     shop_member = ShopMember.objects.filter(user__telegram_id=id)
@@ -50,14 +51,76 @@ class SetUserLanguage(APIView):
         return JsonResponse({'status':'success'}, status=200)
 
 def create_shop_member(shop_id, tg_id):
-    ShopMember.object.create(user__telegram_id=tg_id, shop__id=shop_id)
+    obj = TelegramUser.objects.get(telegram_id=tg_id)
+    ShopMember.objects.create(user=obj, shop_id=shop_id)
+
+
+class AvailableOrders(APIView):
+    def get(self, request: WSGIRequest, shop_id, skip, limit):
+        black_list = ShopOrdersBlacklist.objects.filter(shop_id=shop_id)
+        orders = Order.objects.order_by('model').filter(status=1).exclude(id__in=black_list.values('order'))
+        black_list = OrderOffer.objects.filter(shop_id=shop_id)
+        orders = orders.exclude(id__in=black_list.values('order'))
+        available_orders_cnt = len(orders)
+        if len(orders) <= skip:
+            return JsonResponse({'available_orders_cnt': available_orders_cnt, 'data':[]}, safe=False)
+        limit = min(skip + limit, len(orders))
+        orders = orders[skip:limit]
+        res = {'available_orders_cnt':available_orders_cnt, 'data': []}
+        for i in orders:
+            res['data'].append({
+                'id': i.id,
+                'title': i.model.__str__(),
+            })
+        return JsonResponse(res)
 
 
 class CreateShop(APIView):
     def post(self, request: WSGIRequest):
         tg_id = request.POST['tg_id']
-        del request.path['tg_id']
-        obj = Shop.objects.create(**request.POST)
+        obj = Shop.objects.create(
+            name=request.POST['name'],
+            location=request.POST['location'],
+            phone=request.POST['phone'],
+        )
         create_shop_member(obj.id, tg_id)
         return JsonResponse({'status':'success'}, status=200)
 
+
+class OrderInfo(APIView):
+
+    def get(self, request, order_id):
+        try:
+            order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            return JsonResponse({'status': 'does_not_exist', 'data': {}})
+            return
+        res = {
+            'id': order.id,
+            'product': order.product,
+            'model': str(order.model),
+            'additional': order.additional,
+        }
+
+        return JsonResponse({'status':'order_info', 'data': res})
+
+
+class CreateOrderOffer(APIView):
+
+    def post(self, request: WSGIRequest):
+        shop_id = request.POST.get('shop_id')
+        order_id = request.POST.get('order_id')
+        price = request.POST.get('price')
+
+        OrderOffer.objects.create(shop_id=shop_id, order_id=order_id, price = price)
+
+        return JsonResponse({'status':'success'}, status=200)
+
+class AddShopOrderToBlackList(APIView):
+    def post(self, request: WSGIRequest):
+        shop_id = request.POST.get('shop_id')
+        order_id = request.POST.get('order_id')
+
+        ShopOrdersBlacklist.objects.create(shop_id=shop_id, order_id=order_id)
+
+        return JsonResponse({'status':'success'}, status=200)
