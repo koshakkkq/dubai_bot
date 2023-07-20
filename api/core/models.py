@@ -141,7 +141,7 @@ class OrderCredential(models.Model):
 class OrderOffer(models.Model):
 	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="offers")
 	price = models.IntegerField()
-	order = models.ForeignKey('Order', on_delete=models.CASCADE)
+	order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='offers')
 
 	def __str__(self):
 		return f"{self.pk}|{self.shop}"
