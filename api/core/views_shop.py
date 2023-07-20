@@ -1,10 +1,12 @@
 import json
 
 from django.core.handlers.wsgi import WSGIRequest
+from django.db import reset_queries, connection
 from django.db.models import Subquery
 from django.http import JsonResponse, HttpResponse
 from rest_framework.views import APIView
 from .models import *
+from .constants import OrderStatus
 def shop_member_status(request: WSGIRequest, id):
 
     shop_member = ShopMember.objects.filter(user__telegram_id=id)
@@ -58,21 +60,40 @@ def create_shop_member(shop_id, tg_id):
 class AvailableOrders(APIView):
     def get(self, request: WSGIRequest, shop_id, skip, limit):
         black_list = ShopOrdersBlacklist.objects.filter(shop_id=shop_id)
-        orders = Order.objects.order_by('model').filter(status=1).exclude(id__in=black_list.values('order'))
+
+        orders = Order.objects.order_by('model').filter(status=OrderStatus.PENDING).exclude(id__in=black_list.values('order'))
+
         black_list = OrderOffer.objects.filter(shop_id=shop_id)
+
         orders = orders.exclude(id__in=black_list.values('order'))
+
         available_orders_cnt = len(orders)
         if len(orders) <= skip:
-            return JsonResponse({'available_orders_cnt': available_orders_cnt, 'data':[]}, safe=False)
+            return JsonResponse({'cnt': available_orders_cnt, 'data':[]}, safe=False)
         limit = min(skip + limit, len(orders))
         orders = orders[skip:limit]
-        res = {'available_orders_cnt':available_orders_cnt, 'data': []}
+        res = {'cnt':available_orders_cnt, 'data': []}
         for i in orders:
             res['data'].append({
                 'id': i.id,
                 'title': i.model.__str__(),
             })
         return JsonResponse(res)
+
+class ActiveOrders(APIView):
+
+    def get(self, request, shop_id, skip, limit):
+        reset_queries()
+        orders = Order.objects.filter(status=OrderStatus.ACTIVE, shop_id=shop_id)[skip:limit]
+        res = {}
+        for i in orders:
+            res['data'].append({
+                'id': i.id,
+                'title': f'{i.model}-{i.shop_offer_price}',
+            })
+        print(connection.queries)
+        return JsonResponse(res)
+
 
 
 class CreateShop(APIView):

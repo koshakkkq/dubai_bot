@@ -137,6 +137,19 @@ class OrderCredential(models.Model):
 		verbose_name_plural = "Order credentials"
 
 
+
+class OrderOffer(models.Model):
+	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="offers")
+	price = models.IntegerField()
+	order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='offers')
+
+	def __str__(self):
+		return f"{self.pk}|{self.shop}"
+
+	class Meta:
+		verbose_name = "Order offer"
+		verbose_name_plural = "Order offers"
+
 class Order(models.Model):
 	customer = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name="orders")
 	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True)
@@ -144,6 +157,7 @@ class Order(models.Model):
 	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	product = models.CharField(max_length=100)
 	additional = models.TextField()
+	offer = models.OneToOneField(OrderOffer, on_delete=models.CASCADE, null=True, related_name='+')
 	datetime = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
@@ -154,18 +168,6 @@ class Order(models.Model):
 		verbose_name_plural = "Orders"
 
 
-class OrderOffer(models.Model):
-	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="offers")
-	price = models.TextField()
-	is_approved = models.BooleanField(default=False)
-	order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="offers")
-
-	def __str__(self):
-		return f"{self.pk}|{self.shop}"
-
-	class Meta:
-		verbose_name = "Order offer"
-		verbose_name_plural = "Order offers"
 
 
 class ShopRegistrationCode(models.Model):
