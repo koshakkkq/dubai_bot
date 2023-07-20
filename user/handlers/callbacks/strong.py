@@ -1,4 +1,4 @@
-import decorators
+import utils.decorators as decorators
 from loader import dp
 from aiogram.types import CallbackQuery
 from user.keyboards.inline import *

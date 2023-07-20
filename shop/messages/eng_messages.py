@@ -11,5 +11,7 @@ eng_messages = {
     'code_incorrect': 'Your code is incorrect, try again!',
     'get_shop_name': "Enter your shop's name. You can change any info later.",
     'get_shop_phone': "Enter your shop's phone.",
-    'get_shop_location': "Enter your shop's location."
+    'get_shop_location': "Enter your shop's location.",
+    'creation_success': 'Click button to go into shop menu.',
+    'err_on_server': 'Sorry, there was an error on the server, please contact administration.',
 }

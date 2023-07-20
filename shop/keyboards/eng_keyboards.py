@@ -24,8 +24,8 @@ eng_keyboards['shop_info'] = InlineKeyboardMarkup(inline_keyboard=info_keyboard)
 
 
 available_order_info_keyboard = [
-    [InlineKeyboardButton(text='✅ Accept', callback_data='shop_accept_order')],
-    [InlineKeyboardButton(text='❌ Decline', callback_data='shop_customer_requests')],
+    [InlineKeyboardButton(text='❌ Decline', callback_data='shop_order_decline')],
+    [InlineKeyboardButton(text='🚚 Customer requests.', callback_data='shop_customer_requests')],
 ]
 eng_keyboards['available_order_info'] = InlineKeyboardMarkup(inline_keyboard=available_order_info_keyboard)
 

@@ -1,5 +1,6 @@
 import logging
 
+from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from utils.requests import make_get_request, make_post_request
@@ -21,9 +22,22 @@ async def set_language(user_id, language):
 	await make_post_request(url, post_data)
 
 
-async def bot_start(message: Message):
+async def get_shop_id(tg_id):
+	url = f'{SERVER_URL}/shop_member?user__telegram_id={tg_id}'
+	try:
+		res = await make_get_request(url)
+	except Exception as e:
+		logging.error(e)
+		return None
+	if len(res) == 0:
+		return None
+	return res[0]['shop']
+async def bot_start(message: Message, state: FSMContext):
 
+	await state.reset_state()
 	await message.answer(f"Hello, {message.from_user.full_name}!\nChoose language!", reply_markup=language_choice())
+
+
 
 
 def language_choice():

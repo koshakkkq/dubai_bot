@@ -9,7 +9,7 @@ from loader import dp
 
 import courier.keyboards
 import courier.messages
-import decorators
+import utils.decorators as decorators
 class CourierStates(StatesGroup):
 	in_menu = State()
 	available_orders = State()

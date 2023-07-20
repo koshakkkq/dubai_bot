@@ -6,7 +6,7 @@ from aiogram.dispatcher import filters
 from loader import dp
 from .shop_menu import ShopMenuStates, shop_menu_callback
 
-import decorators
+import utils.decorators as decorators
 import shop.messages
 import shop.keyboards
 

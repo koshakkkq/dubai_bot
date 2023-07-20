@@ -6,7 +6,7 @@ from aiogram.dispatcher import filters
 from loader import dp
 from .shop_menu import ShopMenuStates, shop_menu_callback
 from shop.logic.registartion import *
-import decorators
+import utils.decorators as decorators
 import shop.messages
 import shop.keyboards
 
@@ -25,7 +25,7 @@ async def shop_begin_registration(callback: types.CallbackQuery, state: FSMConte
 	await state.reset_data()
 	status = await get_shop_member_status(callback.from_user.id)
 	if status == 'member':
-		print(status)
+		await shop_menu_callback(callback, state)
 		return
 	if status == 'can_create_shop':
 		await shop_registration_begin(callback, state, language)
@@ -104,11 +104,12 @@ async def shop_registration_get_name(message: types.Message, state: FSMContext, 
 	await state.update_data(shop_location=location)
 
 	data = await state.get_data()
+	await state.reset_state()
+
 
 	await create_shop(user_id=message.from_user.id, data=data)
 
-	await state.reset_data()
 	msg = shop.messages.messages[language]['get_shop_name']
-	keyboard = shop.keyboards.keyboards[language]['code_correct']
+	keyboard = shop.keyboards.keyboards[language]['creation_success']
 
 	await message.answer(text=msg, reply_markup=keyboard)

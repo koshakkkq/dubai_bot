@@ -114,6 +114,9 @@ class CarModelAdmin(ImportExportModelAdmin, ImportExportMixin, admin.ModelAdmin)
 class ShopMemberAdmin( admin.ModelAdmin):
     list_display = ('user', 'shop')
 
+@admin.register(ShopOrdersBlacklist)#todo удалить для клиента
+class ShopOrdersBlacklistAdmin(admin.ModelAdmin):
+    list_display = ('shop', 'order')
 
 @admin.register(OrderCredential)
 class OrderCredential( admin.ModelAdmin):
