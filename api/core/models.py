@@ -157,7 +157,7 @@ class Order(models.Model):
 	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	product = models.CharField(max_length=100)
 	additional = models.TextField()
-	offer = models.ForeignKey(OrderOffer, on_delete=models.CASCADE, null=True, related_name='+')
+	offer = models.OneToOneField(OrderOffer, on_delete=models.CASCADE, null=True, related_name='+')
 	datetime = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
