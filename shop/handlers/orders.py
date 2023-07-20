@@ -138,20 +138,23 @@ async def shop_order_decline(callback: types.CallbackQuery, state: FSMContext, l
     state="*",
 )
 @decorators.picked_language
-async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, language='eng'):
+@decorators.is_member
+async def show_active_orders_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
     data = await state.get_data()
-    if "active_orders_page" not in data:
-        data['active_orders_page'] = 1
-        await state.update_data(active_orders_page=1)
+    if "shop_active_orders_page" not in data:
+        data['shop_active_orders_page'] = 1
+        await state.update_data(shop_active_orders_page=1)
 
     page = data['active_orders_page']
-    await state.update_data(active_orders_page=1)
 
     msg = shop.messages.messages[language]['shop_active_orders']
 
     keyboard = await shop.keyboards.orders.get_active_orders(callback.from_user.id, language, page)
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard)
+
+async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id, page):
+    keyboard = await shop.keyboards.orders.get_active_orders(shop_id, language, page)
 
 
 @dp.callback_query_handler(
