@@ -129,7 +129,7 @@ class OrderCredential( admin.ModelAdmin):
     get_courier.empty_value_display = 'Not a courier'
 @admin.register(Order)
 class Order( admin.ModelAdmin):
-    list_display = ('customer', 'credential', 'model', 'status', 'product', 'additional', 'get_time')
+    list_display = ('customer', 'credential', 'model', 'status', 'additional', 'get_time')
 
     @admin.display(description='Order creation')
     def get_time(self, obj):
