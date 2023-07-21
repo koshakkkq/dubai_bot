@@ -61,7 +61,7 @@ async def edit_reply_available_orders_with_page(callback: types.CallbackQuery, s
         msg = shop.messages.messages[language]['shop_available_orders']
 
         await callback.message.edit_text(text=msg, reply_markup=keyboard)
-        callback.answer()
+        await callback.answer()
     else:
         await callback.message.edit_reply_markup(reply_markup=keyboard)
         await callback.answer()
@@ -147,14 +147,18 @@ async def show_active_orders_begin(callback: types.CallbackQuery, state: FSMCont
 
     page = data['active_orders_page']
 
-    msg = shop.messages.messages[language]['shop_active_orders']
 
-    keyboard = await shop.keyboards.orders.get_active_orders(callback.from_user.id, language, page)
 
-    await callback.message.edit_text(text=msg, reply_markup=keyboard)
-
-async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, shop_id, page, language='eng'):
+async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, language, shop_id, page, edit_msg = False):
     keyboard = await shop.keyboards.orders.get_active_orders(shop_id, language, page)
+
+    if edit_msg == True:
+        msg = shop.messages.messages[language]['shop_active_orders']
+
+        await callback.message.edit_text(text=msg, reply_markup=keyboard)
+    else:
+        await callback.message.edit_reply_markup(reply_markup=keyboard)
+        await callback.answer()
 
 
 @dp.callback_query_handler(
