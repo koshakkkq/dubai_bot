@@ -155,7 +155,6 @@ class Order(models.Model):
 	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True)
 	model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="orders")
 	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
-	product = models.CharField(max_length=100)
 	additional = models.TextField()
 	offer = models.OneToOneField(OrderOffer, on_delete=models.CASCADE, null=True, related_name='+')
 	datetime = models.DateTimeField(auto_now=True)

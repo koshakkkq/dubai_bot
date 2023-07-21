@@ -13,3 +13,14 @@ async def get_cars():
 		return None
 	else:
 		return data
+
+
+async def order_create(user_id, model_id, additional):
+	url = f"{SERVER_URL}/order/create/"
+	post_data = {
+		'telegram_user_id': user_id,
+		'model_id': model_id,
+		'additional': additional,
+	}
+	data = await make_post_request(url, post_data)
+	return data

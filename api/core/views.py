@@ -66,5 +66,11 @@ class OrderOfferApiView(APIView, DataMixin):
 
 class OrderCreateApiView(APIView):
     def post(self, request: WSGIRequest):
-        # ToDo
+        telegram_user_id = request.POST.get("telegram_user_id")
+        additional = request.POST.get("additional")
+        model_id = request.POST.get("model_id")
+
+        telegram_user = TelegramUser.objects.get(telegram_id=telegram_user_id)
+        model = CarModel.objects.get(id=model_id)
+        order = Order.objects.create(customer=telegram_user, model=model, additional=additional)
         return JsonResponse({'status':'success'}, status=200)

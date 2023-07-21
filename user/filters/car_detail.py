@@ -18,6 +18,7 @@ async def text_msg(message: Message, state: FSMContext):
         if car["brand"]["name"].lower() == message.text.lower():
             async with state.proxy() as data:
                 data["brand"] = car["brand"]["name"]
+                data["brand_id"] = car["brand"]["id"]
             await CarDetailStates.MODEL_STATE.set()
             await message.answer(f"2. Write a model", reply_markup=None)
             return
@@ -66,6 +67,7 @@ async def text_msg(message: Message, state: FSMContext):
         if message.text.replace(" ", "") == years.replace(" ", ""):
             async with state.proxy() as data:
                 data["years"] = years
+                data["model_id"] = car["id"]
             await CarDetailStates.DETAIL_TYPE_STATE.set()
             await message.answer(f"Select the part type", reply_markup=reply.iter_btns(PART_TYPES))
             return
@@ -97,8 +99,8 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     await call.message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 25 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = None
-        log_message = f"brand: {data['brand']} model: {data['model']} year: {data['years']} detail_type: {data['detail_type']} detail_name: {data['detail_name']} article: {data['article']}"
-        logging.info(log_message)
+        additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
+        data = await api.order_create(call.message.chat.id, data["model_id"], additional)
     await asyncio.sleep(30)
     await state.finish()
     await call.message.answer("You are in the main menu", reply_markup=inline.menu())
@@ -109,8 +111,8 @@ async def text_msg(message: Message, state: FSMContext):
     await message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 25 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = message.text
-        log_message = f"brand: {data['brand']} model: {data['model']} detail_type: {data['detail_type']} detail_name: {data['detail_name']} article: {data['article']}"
-        logging.info(log_message)
+        additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
+        data = await api.order_create(message.chat.id, data["model_id"], additional)
     await asyncio.sleep(30)
     await state.finish()
     await message.answer("You are in the main menu", reply_markup=inline.menu())
