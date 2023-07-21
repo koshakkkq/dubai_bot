@@ -26,7 +26,7 @@ class CarModelResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         exclude = ('id',)
-        import_id_fields = ["internal_name",]
+        import_id_fields = ["internal_name", "name", "production_start", "production_end"]
         #fields = ('id', 'brand', 'name', 'internal_name', 'production_start', 'production_end')
 
     def before_import(self, dataset, using_transactions, dry_run, **kwargs):

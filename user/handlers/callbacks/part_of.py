@@ -42,7 +42,7 @@ async def price_of(call: CallbackQuery, state: FSMContext):
 	await send_message_of_interest(call.message.chat.id)
 
 
-@dp.callback_query_handler(lambda call: "was_deliveried" == call.data)
+@dp.callback_query_handler(lambda call: "was_deliveried" in call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
 	await call.message.edit_text("We're glad you got it all!\nPlease rate the quality of service ❤️\nSEND NUMBERS FROM 1 TO 5 ⤵️", reply_markup=inline.mark_keyboard())
 

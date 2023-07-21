@@ -12,6 +12,7 @@ class ApplicationStates(StatesGroup):
 class CarDetailStates(StatesGroup):
 	BRAND_STATE = State()
 	MODEL_STATE = State()
+	YEAR_STATE = State()
 	DETAIL_TYPE_STATE = State()
 	DETAIL_NAME_STATE = State()
 	ARTICLE_STATE = State()
