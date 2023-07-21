@@ -23,6 +23,7 @@ urlpatterns = [
     path('set_language/', views_shop.SetUserLanguage.as_view()),
 
     path('create_shop/', views_shop.CreateShop.as_view()),
+    path('brands/<int:skip>/<int:limit>/', views_shop.AvailableBrands.as_view()),
     path('shop_info/<int:shop_id>/', views_shop.ShopInfo.as_view()),
     path('shop_available_orders/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.AvailableOrders.as_view()),
     path('shop_active_orders/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.ActiveOrders.as_view()),

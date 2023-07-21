@@ -68,7 +68,7 @@ class AvailableOrders(APIView):
         orders = orders.exclude(id__in=black_list.values('order'))
 
         available_orders_cnt = len(orders)
-        if len(orders) <= skip:
+        if available_orders_cnt <= skip:
             return JsonResponse({'cnt': available_orders_cnt, 'data':[]}, safe=False)
         limit = min(skip + limit, len(orders))
         orders = orders[skip:limit]
@@ -230,3 +230,28 @@ class ShopInfo(APIView):
 
         shop.save()
         return JsonResponse({'status': 'success'})
+
+class AvailableBrands(APIView):
+    def get(self, request, skip, limit):
+        brands = CarBrand.objects.all().order_by('name')
+        cnt = len(brands)
+
+        if cnt <= skip:
+            return JsonResponse({'cnt': cnt, 'data': []})
+        limit = min(skip + limit, cnt)
+
+        brands = brands[skip:limit]
+
+        data = []
+
+        for i in brands:
+            data.append({
+                'id': i.id,
+                'title': i.name,
+            })
+
+        return JsonResponse({'cnt': cnt, 'data': data})
+def create_test_brands(self):
+    for i in range(40, 0, -1):
+        brand = CarBrand(name=f'Brand name {i}')
+        brand.save()

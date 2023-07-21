@@ -5,7 +5,7 @@ from aiogram.types import InlineKeyboardButton
 buttons = defaultdict(lambda: {})
 buttons['eng']['shop_menu'] = InlineKeyboardButton(text=f"↩️ Back", callback_data="shop_menu")
 
-buttons['eng']['shop_info'] = InlineKeyboardButton(text=f"↩️ Back", callback_data="shop_info")
+buttons['eng']['shop_info_back'] = InlineKeyboardButton(text=f"↩️ Back", callback_data="shop_info")
 
 buttons['eng']['shop_get_brands'] = InlineKeyboardButton(text=f"↩️ Back", callback_data="shop_get_brands")
 

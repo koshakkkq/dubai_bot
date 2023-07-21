@@ -42,72 +42,53 @@ async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, l
 	state="*",
 )
 @decorators.picked_language
-async def get_brands_callback(callback: types.CallbackQuery, state: FSMContext, language='eng'):
-	await state.update_data(brands_page = 1)
-	await show_all_brands_callback(
-		callback=callback,
-		state=state,
-		language=language,
-	)#для вывода отдельная функция чтобы можно было сделать удобную пагинацию(просто менять brands_page и выводить
-	 # в show_all_brands_callback все бренды.
-
-@decorators.picked_language
-async def show_all_brands_callback(
-		callback: types.CallbackQuery,
-		state: FSMContext,
-		language = 'eng'
-):
-	await state.set_state(ShopInfoStates.brands.state)
-
+@decorators.is_member
+async def show_brands_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
 	data = await state.get_data()
+	if "shop_info_brands_page" not in data:
+		data['shop_info_brands_page'] = 1
+		await state.update_data(shop_info_brands_page=1)
 
-	page = data['brands_page']
+	page = data['shop_info_brands_page']
 
+	await show_brands(callback, state, language, shop_id, page, edit_msg=True)
 
-	keyboard = await shop.keyboards.get_brands_keyboard(
-		user_id=callback.from_user.id,
-		current_language=language,
-		page=page,
-	)
+async def show_brands(callback: types.CallbackQuery, state: FSMContext, language, shop_id, page, edit_msg = False):
+	keyboard = await shop.keyboards.get_brands_keyboard(language,page)
 
+	if edit_msg == True:
+		msg = shop.messages.messages[language]['shop_info_brands']
 
-	message = shop.messages.messages[language]['shop_info_brands']
-
-	await callback.message.edit_text(text=message, reply_markup=keyboard)
-	await callback.answer()
-
+		await callback.message.edit_text(text=msg, reply_markup=keyboard)
+	else:
+		await callback.message.edit_reply_markup(reply_markup=keyboard)
+		await callback.answer()
 
 @dp.callback_query_handler(
-	filters.Text(startswith="pick_brand_"),
+	filters.Text(startswith="shop_info_brand_orders_page_"),
 	state="*",
 )
 @decorators.picked_language
-async def pick_brand(callback:types.CallbackQuery, state: FSMContext, language='eng'):
-	brand_id = callback.data.split('_')[-1]
-	await state.update_data(brand_id=brand_id)
-	await state.update_data(model_page = 1)
-	await show_models(callback=callback, state=state, language=language,page=1)#тоже самое что и get_brands_callback
-
-
-@decorators.picked_language
-async def show_models(callback:types.CallbackQuery, state:FSMContext, language='eng', page = 1):
-	await state.set_state(ShopInfoStates.models.state)
-
-
+@decorators.is_member
+async def change_done_orders_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
+	command = int(callback.data.split('_')[-1])
 	data = await state.get_data()
-	brand_id = data['brand_id']
 
-	message = shop.messages.messages[language]['shop_info_models']
+	cur_page = data.get('shop_info_brands_page', 0)
+	cur_page += command
+	await state.update_data(shop_info_brands_page=cur_page)
+	print(cur_page)
+	await show_brands(callback, state, language, shop_id, cur_page, edit_msg=False)
 
-	keyboard = await shop.keyboards.get_models_keyboard(
-		user_id=callback.from_user.id,
-		brand_id=brand_id,
-		current_language=language,
-		page=page,
-	)
-
-	await callback.message.edit_text(text=message, reply_markup=keyboard)
-	await callback.answer()
+@dp.callback_query_handler(
+	filters.Text(startswith='shop_info_get_brand_'),
+	state='*',
+)
+@decorators.picked_language
+async def picked_brand(callback:types.CallbackQuery, state:FSMContext, language='eng', page = 1):
+	brand = callback.data.split('_')[-1]
+	print(brand)
+	await callback.answer(brand)
 
 
 class ChangeShopInfoStates(StatesGroup):
