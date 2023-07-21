@@ -3,6 +3,7 @@ import logging
 from utils.requests import make_get_request, make_post_request
 from config import SERVER_URL
 from shop.constants import order_buttons_on_page
+from .utils import get_real_page
 async def get_available_orders(shop_id, skip, limit):
     url = f'{SERVER_URL}/shop_available_orders/{shop_id}/{skip}/{limit}/'
 
@@ -36,38 +37,40 @@ async def get_available_orders_enabled_page(shop_id, page):
     if page < 1:
         return 1
 
-    data = await get_available_orders(shop_id, 0, 0)
-    cnt = data.get('cnt', 0)
-    max_page = (cnt + order_buttons_on_page - 1) // order_buttons_on_page
-    max_page = max(max_page, 1)
-    if page > max_page:
-        return max_page
-    return page
+    try:
+        data = await get_available_orders(shop_id, 0, 0)
+        cnt = data.get('cnt', 0)
+        return get_real_page(page, order_buttons_on_page, cnt)
+    except Exception as e:
+        logging.error(e)
+        return 1
+
 
 
 async def get_done_orders_enabled_page(shop_id, page):
     if page < 1:
         return 1
+    try:
+        data = await get_done_orders(shop_id, 0, 0)
+        cnt = data.get('cnt', 0)
+        return get_real_page(page, order_buttons_on_page, cnt)
+    except Exception as e:
+        logging.error(e)
+        return 1
 
-    data = await get_done_orders(shop_id, 0, 0)
-    cnt = data.get('cnt', 0)
-    max_page = (cnt + order_buttons_on_page - 1) // order_buttons_on_page
-    max_page = max(max_page, 1)
-    if page > max_page:
-        return max_page
-    return page
 
 async def get_active_orders_enabled_page(shop_id, page):
     if page < 1:
         return 1
 
-    data = await get_active_orders(shop_id, 0, 0)
-    cnt = data.get('cnt', 0)
-    max_page = (cnt + order_buttons_on_page - 1) // order_buttons_on_page
-    max_page = max(max_page, 1)
-    if page > max_page:
-        return max_page
-    return page
+    try:
+        data = await get_active_orders(shop_id, 0, 0)
+        cnt = data.get('cnt', 0)
+        return get_real_page(page, order_buttons_on_page, cnt)
+    except Exception as e:
+        logging.error(e)
+        return 1
+
 
 async def get_available_order_info(order_id:int):
     url = f'{SERVER_URL}/shop_order_info/{order_id}'
