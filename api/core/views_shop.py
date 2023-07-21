@@ -155,7 +155,6 @@ class OrderInfo(APIView):
             return
         res = {
             'id': order.id,
-            'product': order.product,
             'model': str(order.model),
             'additional': order.additional,
             'customer_id': order.customer.telegram_id,
