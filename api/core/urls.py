@@ -23,10 +23,16 @@ urlpatterns = [
     path('set_language/', views_shop.SetUserLanguage.as_view()),
 
     path('create_shop/', views_shop.CreateShop.as_view()),
+    path('shop_info/<int:shop_id>/', views_shop.ShopInfo.as_view()),
     path('shop_available_orders/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.AvailableOrders.as_view()),
     path('shop_active_orders/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.ActiveOrders.as_view()),
+    path('shop_done_orders/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.DoneOrders.as_view()),
     path('shop_order_info/<int:order_id>/', views_shop.OrderInfo.as_view()),
     path('shop_create_order_offer/', views_shop.CreateOrderOffer.as_view()),
     path('shop_add_order_blacklist/', views_shop.AddShopOrderToBlackList.as_view()),
+    path('set_order_status/', views_shop.SetOrderStatus.as_view()),
+
+
+
     path("order/create", views.OrderCreateApiView.as_view())
 ]

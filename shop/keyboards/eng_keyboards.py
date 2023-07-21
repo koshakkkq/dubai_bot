@@ -2,20 +2,18 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardBu
 
 eng_keyboards = {}
 menu_buttons = [[InlineKeyboardButton(text='🚚 Customer requests', callback_data='shop_customer_requests')],
-				[InlineKeyboardButton(text='📍 Fill out the card', callback_data='shop_info')],
-				[InlineKeyboardButton(text='✅ Orders', callback_data='shop_active_orders')],
-				[InlineKeyboardButton(text='🔔 Notifications', callback_data='shop_notifications')]]
+				[InlineKeyboardButton(text='🚗 Active orders', callback_data='shop_active_orders')],
+                [InlineKeyboardButton(text='✅Done orders', callback_data='shop_done_orders')],
+                [InlineKeyboardButton(text='📍 Shop information', callback_data='shop_info')],
+                ]
 menu_keyboard = InlineKeyboardMarkup(inline_keyboard=menu_buttons)
 eng_keyboards['shop_menu'] = menu_keyboard
 
 info_keyboard = [
     [
         InlineKeyboardButton(text='📍 Location', callback_data='shop_change_location'),
-        InlineKeyboardButton(text='📲 Phone', callback_data='shop_change_phone')
-    ],
-[
-        InlineKeyboardButton(text='🏢 Name', callback_data='shop_change_location'),
-        InlineKeyboardButton(text='💬 Information', callback_data='shop_change_phone')
+        InlineKeyboardButton(text='📲 Phone', callback_data='shop_change_phone'),
+        InlineKeyboardButton(text='🏢 Name', callback_data='shop_change_name'),
     ],
     [InlineKeyboardButton(text='Brands and models', callback_data='shop_get_brands')],
     [InlineKeyboardButton(text='↩️ Back', callback_data='shop_menu')],
@@ -38,8 +36,8 @@ eng_keyboards['shop_available_order_finish'] = InlineKeyboardMarkup(inline_keybo
 
 
 shop_active_order_info_keyboard = [
-    [InlineKeyboardButton(text='✅ Order is completed', callback_data='shop_active_order_done')],
-    [InlineKeyboardButton(text='❌ Order cancelled', callback_data='shop_active_order_cancel')],
+    [InlineKeyboardButton(text='✅ Order is completed', callback_data='shop_active_order_status_done')],
+    [InlineKeyboardButton(text='❌ Order cancelled', callback_data='shop_active_order_status_cancel')],
     [InlineKeyboardButton(text='↩️ Back', callback_data='shop_active_orders')]
 ]
 eng_keyboards['shop_active_order_info'] = InlineKeyboardMarkup(inline_keyboard=shop_active_order_info_keyboard)
@@ -61,3 +59,22 @@ code_incorrect = [
 ]
 
 eng_keyboards['code_incorrect'] = InlineKeyboardMarkup(inline_keyboard=code_incorrect)
+
+
+shop_active_order_finish = [
+    [InlineKeyboardButton(text='💬 Menu.', callback_data='shop_menu')],
+    [InlineKeyboardButton(text='🚗 Active orders', callback_data='shop_active_orders')],
+]
+
+eng_keyboards['shop_active_order_finish'] = InlineKeyboardMarkup(inline_keyboard=shop_active_order_finish)
+
+shop_done_order_info_keyboard = [
+    [InlineKeyboardButton(text='↩️ Back', callback_data='shop_done_orders')]
+]
+eng_keyboards['shop_done_order_info'] = InlineKeyboardMarkup(inline_keyboard=shop_done_order_info_keyboard)
+
+
+shop_back_from_change = [
+    [InlineKeyboardButton(text='↩️ Back', callback_data='shop_info')]
+]
+eng_keyboards['shop_back_from_change'] = InlineKeyboardMarkup(inline_keyboard=shop_back_from_change)

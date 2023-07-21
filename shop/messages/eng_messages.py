@@ -13,5 +13,11 @@ eng_messages = {
     'get_shop_phone': "Enter your shop's phone.",
     'get_shop_location': "Enter your shop's location.",
     'creation_success': 'Click button to go into shop menu.',
+    'shop_done_orders': 'Done and canceled orders.',
     'err_on_server': 'Sorry, there was an error on the server, please contact administration.',
+    'ok': 'Ok.',
+
+    'shop_change_name': 'Enter new name.',
+    'shop_change_location': 'Enter new location.',
+    'shop_change_phone': 'Enter new phone.'
 }

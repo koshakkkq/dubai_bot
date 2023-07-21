@@ -9,7 +9,7 @@ from .shop_menu import ShopMenuStates, shop_menu_callback
 import utils.decorators as decorators
 import shop.messages
 import shop.keyboards
-
+import shop.logic
 
 class ShopInfoStates(StatesGroup):
 	info = State()
@@ -25,11 +25,12 @@ class ShopInfoStates(StatesGroup):
 )
 
 @decorators.picked_language
-async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, language='eng'):
+@decorators.is_member
+async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
 	await state.reset_data()
 	await state.set_state(ShopInfoStates.info.state)
 
-	msg = await shop.messages.get_shop_info_message(callback.message.from_user.id)
+	msg = await shop.messages.get_shop_info_message(shop_id)
 
 	keyboard = shop.keyboards.keyboards[language]['shop_info']
 
@@ -107,3 +108,44 @@ async def show_models(callback:types.CallbackQuery, state:FSMContext, language='
 
 	await callback.message.edit_text(text=message, reply_markup=keyboard)
 	await callback.answer()
+
+
+class ChangeShopInfoStates(StatesGroup):
+	pending_value = State()
+	empty = State()
+@dp.callback_query_handler(
+	filters.Text(startswith="shop_change_"),
+	state="*",
+)
+@decorators.picked_language
+@decorators.is_member
+async def change_shop_information(callback:types.CallbackQuery, state:FSMContext, language='eng', shop_id = -1):
+	to_change = callback.data.split('_')[-1]
+	await state.set_state(ChangeShopInfoStates.pending_value.state)
+	await state.update_data(shop_filed_to_change = to_change)
+
+	msg = shop.messages.messages[language][f'shop_change_{to_change}']
+	keyboard = shop.keyboards.keyboards[language]['shop_back_from_change']
+
+	await callback.message.edit_text(text=msg, reply_markup=keyboard)
+
+	await callback.answer()
+
+
+@dp.message_handler(
+	state=ChangeShopInfoStates.pending_value
+)
+@decorators.picked_language
+@decorators.is_member
+async def get_value_to_change(message: types.Message, state: FSMContext, language='eng', shop_id = -1):
+	value = message.text
+	data = await state.get_data()
+	await state.reset_state()
+	field = data['shop_filed_to_change']
+	await shop.logic.change_shop_information(shop_id, field=field, value=value)
+	keyboard = shop.keyboards.keyboards[language]['shop_back_from_change']
+	msg = shop.messages.messages[language]['ok']
+	await message.answer(text=msg, reply_markup=keyboard)
+
+
+

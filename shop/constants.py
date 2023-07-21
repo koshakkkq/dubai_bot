@@ -1,1 +1,1 @@
-buttons_on_page = 2
+order_buttons_on_page = 2
