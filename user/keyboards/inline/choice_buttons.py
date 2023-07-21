@@ -61,9 +61,9 @@ def choice_courier(): # Choose a courier for delivery
 	return keyboard
 
 
-def was_deliveried(): # Were you able to pick up your order?
+def was_deliveried(order_id): # Were you able to pick up your order?
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('✅ Yes', callback_data=f"was_deliveried"))
+	keyboard.row(InlineKeyboardButton('✅ Yes', callback_data=f"was_deliveried:{order_id}"))
 	keyboard.row(InlineKeyboardButton('❌ No', callback_data=f"wasnt_deliveried"))
 	return keyboard
 
@@ -89,4 +89,18 @@ def language_choice():
 	keyboard.row(InlineKeyboardButton('ENG', callback_data=f"pick_language_eng"))
 	keyboard.row(InlineKeyboardButton('RUS', callback_data=f"pick_language_rus"))
 	keyboard.row(InlineKeyboardButton('ARA', callback_data=f"pick_language_ara"))
+	return keyboard
+
+
+def payed_order_btns(current_order_id, current, length):
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('✅ Received', callback_data=f"was_deliveried:{current_order_id}"))
+	keyboard.row(InlineKeyboardButton('🆘 Help', url=f"https://t.me/k0shakq")) # Strong # 
+	btns = []
+	if current > 0:
+		btns.append(InlineKeyboardButton('⬅️ Back', callback_data=f"payed_orders:{current-1}"))
+	btns.append(InlineKeyboardButton(f'{current+1}/{length}', callback_data=f"payed_orders:0")) # Pages 10/12
+	if current != length - 1:
+		btns.append(InlineKeyboardButton('Next ➡️', callback_data=f"payed_orders:{current+1}"))
+	keyboard.row(*btns)
 	return keyboard

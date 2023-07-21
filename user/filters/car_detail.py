@@ -3,33 +3,68 @@ from aiogram.types import Message
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 from .states import CarDetailStates
-from user.keyboards import inline
+from user.keyboards import inline, reply
 import asyncio
 import logging
+from utils import api
+from utils.constants import PART_TYPES
 
 
 @dp.message_handler(state=CarDetailStates.BRAND_STATE)
 async def text_msg(message: Message, state: FSMContext):
-    await message.answer(f"2. Write a model", reply_markup=None)
-    async with state.proxy() as data:
-        data["brand"] = message.text
-    await CarDetailStates.MODEL_STATE.set()
+    find = False
+    cars = await api.get_cars()
+    brands = set()
+    for car in cars:
+        if car["brand"]["name"].lower() == message.text.lower():
+            find = True
+            break
+        elif message.text.lower() in car["brand"]["name"].lower():
+            brands.add(car["brand"]["name"])
+    if find:
+        async with state.proxy() as data:
+            data["brand"] = message.text
+        await CarDetailStates.MODEL_STATE.set()
+        await message.answer(f"2. Write a model", reply_markup=None)
+    else:
+        if brands:
+            await message.answer("Please, select brand", reply_markup=reply.iter_btns(brands))
+        else:
+            await message.answer("Please, enter brand name", reply_markup=None)
 
 
 @dp.message_handler(state=CarDetailStates.MODEL_STATE)
 async def text_msg(message: Message, state: FSMContext):
-    await message.answer(f"3. Write the part type", reply_markup=None)
-    async with state.proxy() as data:
-        data["model"] = message.text
-    await CarDetailStates.DETAIL_TYPE_STATE.set()
+    find = False
+    cars = await api.get_cars()
+    car_names = set()
+    for car in cars:
+        if car["name"].lower() == message.text.lower():
+            find = True
+            break
+        elif message.text.lower() in car["name"].lower():
+            car_names.add(car["name"])
+    if find:
+        async with state.proxy() as data:
+            data["model"] = message.text
+        await CarDetailStates.DETAIL_TYPE_STATE.set()
+        await message.answer(f"3. Select the part type", reply_markup=reply.iter_btns(PART_TYPES))
+    else:
+        if car_names:
+            await message.answer("Please, select a car model", reply_markup=reply.iter_btns(car_names))
+        else:
+            await message.answer(f"2. Write a model", reply_markup=None)
 
 
 @dp.message_handler(state=CarDetailStates.DETAIL_TYPE_STATE)
 async def text_msg(message: Message, state: FSMContext):
-    await message.answer(f"4. Write the name of the spare part", reply_markup=None)
-    async with state.proxy() as data:
-        data["detail_type"] = message.text
-    await CarDetailStates.DETAIL_NAME_STATE.set()
+    if message.text in PART_TYPES:
+        async with state.proxy() as data:
+            data["detail_type"] = message.text
+        await CarDetailStates.DETAIL_NAME_STATE.set()
+        await message.answer(f"4. Write the name of the spare part", reply_markup=None)
+    else:
+        await message.answer(f"3. Select the part type", reply_markup=reply.iter_btns(PART_TYPES))
 
 
 @dp.message_handler(state=CarDetailStates.DETAIL_NAME_STATE)
