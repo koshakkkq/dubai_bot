@@ -77,6 +77,7 @@ async def get_available_order_info(callback: types.CallbackQuery, state: FSMCont
     order_id = callback.data.split('_')[-1]
     await state.update_data(shop_order_id=order_id)
     msg = await shop.messages.get_available_order_info_message(order_id, language)
+    print(msg)
     if msg[0] == 'does_not_exist':
         msg = shop.keyboards.keyboards[language]['err_on_server']
         keyboard = shop.keyboards.keyboards[language]['shop_available_order_finish']
@@ -145,8 +146,9 @@ async def show_active_orders_begin(callback: types.CallbackQuery, state: FSMCont
         data['shop_active_orders_page'] = 1
         await state.update_data(shop_active_orders_page=1)
 
-    page = data['active_orders_page']
+    page = data['shop_active_orders_page']
 
+    await show_active_orders(callback, state, language, shop_id, page, edit_msg=True)
 
 
 async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, language, shop_id, page, edit_msg = False):
@@ -160,18 +162,141 @@ async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, l
         await callback.message.edit_reply_markup(reply_markup=keyboard)
         await callback.answer()
 
+@dp.callback_query_handler(
+    filters.Text(startswith="shop_active_orders_page"),
+    state="*",
+)
+@decorators.picked_language
+@decorators.is_member
+async def change_active_orders_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
+    command = int(callback.data.split('_')[-1])
+    data = await state.get_data()
 
+    cur_page = data.get('shop_active_orders_page', 0)
+    cur_page += command
+    await state.update_data(shop_active_orders_page=cur_page)
+    await show_active_orders(callback, state, language, shop_id, cur_page, edit_msg=False)
+
+class ActiveOrdersStates(StatesGroup):
+    order_info = State()
+    empty_state = State()
 @dp.callback_query_handler(
     filters.Text(startswith="shop_get_active_order_"),
     state="*",
 )
 @decorators.picked_language
-async def get_active_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng'):
+@decorators.is_member
+async def get_active_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
     order_id = callback.data.split('_')[-1]
+    await state.update_data(active_order_id=order_id)
+    await state.set_state(ActiveOrdersStates.order_info.state)
 
     msg = await shop.messages.orders.get_active_order_info(
-        callback.from_user.id,
         order_id,
         language,
     )
 
+    if msg[0] == 'does_not_exist':
+        msg = shop.messages.messages[language]['err_on_server']
+        keyboard = shop.keyboards.keyboards[language]['to_menu']
+        await callback.message.edit_text(msg, keyboard)
+        await callback.answer()
+        return
+
+    msg = msg[1]
+    keyboard = shop.keyboards.keyboards[language]['shop_active_order_info']
+    await callback.message.edit_text(text=msg, reply_markup=keyboard,  parse_mode="HTML")
+    await callback.answer()
+
+@dp.callback_query_handler(
+    filters.Text(startswith='shop_active_order_status_'),
+    state=ActiveOrdersStates.order_info,
+)
+@decorators.picked_language
+@decorators.is_member
+async def shop_active_order_set_status(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
+    await state.set_state(ActiveOrdersStates.empty_state.state)
+
+    data = await state.get_data()
+
+
+    order_id = data['active_order_id']
+
+    command = callback.data.split('_')[-1]
+
+    await shop.logic.set_order_offer_status(order_id, command)
+
+    await show_active_orders_begin(callback, state)
+
+
+@dp.callback_query_handler(
+    filters.Text(equals="shop_done_orders"),
+    state="*",
+)
+@decorators.picked_language
+@decorators.is_member
+async def show_done_orders_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
+    data = await state.get_data()
+    if "shop_done_orders_page" not in data:
+        data['shop_done_orders_page'] = 1
+        await state.update_data(shop_done_orders_page=1)
+
+    page = data['shop_done_orders_page']
+
+    await show_done_orders(callback, state, language, shop_id, page, edit_msg=True)
+
+async def show_done_orders(callback: types.CallbackQuery, state: FSMContext, language, shop_id, page, edit_msg = False):
+    keyboard = await shop.keyboards.orders.get_done_orders(shop_id, language, page)
+
+    if edit_msg == True:
+        msg = shop.messages.messages[language]['shop_done_orders']
+
+        await callback.message.edit_text(text=msg, reply_markup=keyboard)
+    else:
+        await callback.message.edit_reply_markup(reply_markup=keyboard)
+        await callback.answer()
+
+@dp.callback_query_handler(
+    filters.Text(startswith="shop_done_orders_page"),
+    state="*",
+)
+@decorators.picked_language
+@decorators.is_member
+async def change_done_orders_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
+    command = int(callback.data.split('_')[-1])
+    data = await state.get_data()
+
+    cur_page = data.get('shop_done_orders_page', 0)
+    cur_page += command
+    await state.update_data(shop_done_orders_page=cur_page)
+    print(cur_page)
+    await show_done_orders(callback, state, language, shop_id, cur_page, edit_msg=False)
+
+
+@dp.callback_query_handler(
+    filters.Text(startswith="shop_get_done_order_"),
+    state="*",
+)
+@decorators.picked_language
+@decorators.is_member
+async def get_done_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
+    order_id = callback.data.split('_')[-1]
+    await state.update_data(done_order_id=order_id)
+    await state.set_state(ActiveOrdersStates.order_info.state)
+
+    msg = await shop.messages.orders.get_done_order_info(
+        order_id,
+        language,
+    )
+
+    if msg[0] == 'does_not_exist':
+        msg = shop.messages.messages[language]['err_on_server']
+        keyboard = shop.keyboards.keyboards[language]['to_menu']
+        await callback.message.edit_text(msg, keyboard)
+        await callback.answer()
+        return
+
+    msg = msg[1]
+    keyboard = shop.keyboards.keyboards[language]['shop_done_order_info']
+    await callback.message.edit_text(text=msg, reply_markup=keyboard,  parse_mode="HTML")
+    await callback.answer()

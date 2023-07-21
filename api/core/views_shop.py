@@ -83,15 +83,52 @@ class AvailableOrders(APIView):
 class ActiveOrders(APIView):
 
     def get(self, request, shop_id, skip, limit):
-        reset_queries()
-        orders = Order.objects.filter(status=OrderStatus.ACTIVE, shop_id=shop_id)[skip:limit]
-        res = {}
+        orders = Order.objects.order_by('model').filter(status=OrderStatus.ACTIVE, offer__shop_id=shop_id)
+        active_orders_cnt = len(orders)
+        if active_orders_cnt <= skip:
+            return JsonResponse({'cnt': active_orders_cnt, 'data': []})
+
+
+
+        limit = min(skip + limit, active_orders_cnt)
+
+        orders = orders[skip:limit]
+
+        res = {'cnt': active_orders_cnt, 'data': []}
+
         for i in orders:
             res['data'].append({
                 'id': i.id,
-                'title': f'{i.model}-{i.shop_offer_price}',
+                'title': f'{i.model}, Price: {i.offer.price} DH',
             })
-        print(connection.queries)
+        return JsonResponse(res)
+
+
+class DoneOrders(APIView):
+
+    def get(self, request, shop_id, skip, limit):
+        orders = Order.objects.order_by('-id').filter(status__in=[OrderStatus.DONE, OrderStatus.CANCELED], offer__shop_id=shop_id)
+        active_orders_cnt = len(orders)
+        if active_orders_cnt <= skip:
+            return JsonResponse({'cnt': active_orders_cnt, 'data': []})
+
+
+
+        limit = min(skip + limit, active_orders_cnt)
+
+        orders = orders[skip:limit]
+
+        res = {'cnt': active_orders_cnt, 'data': []}
+
+        for i in orders:
+            res['data'].append({
+                'id': i.id,
+                'title': f'{i.model}, Price: {i.offer.price} DH, ',
+            })
+            if i.status == OrderStatus.DONE:
+                res['data'][-1]['title'] += 'Status: done'
+            else:
+                res['data'][-1]['title'] += 'Status: cancel'
         return JsonResponse(res)
 
 
@@ -121,7 +158,14 @@ class OrderInfo(APIView):
             'product': order.product,
             'model': str(order.model),
             'additional': order.additional,
+            'customer_id': order.customer.telegram_id,
         }
+        for i in OrderStatus.__dict__:
+            if OrderStatus.__dict__[i] == order.status:
+                res['status'] = i
+
+        if order.offer is not None:
+            res['price'] = order.offer.price
 
         return JsonResponse({'status':'order_info', 'data': res})
 
@@ -145,3 +189,44 @@ class AddShopOrderToBlackList(APIView):
         ShopOrdersBlacklist.objects.create(shop_id=shop_id, order_id=order_id)
 
         return JsonResponse({'status':'success'}, status=200)
+
+
+class SetOrderStatus(APIView):
+    def post(self, request):
+        order_id = request.POST.get('order_id')
+        status = request.POST.get('status')
+        order = Order.objects.get(id=order_id)
+        if status == 'done':
+            status = OrderStatus.DONE
+        if status == 'cancel':
+            status = OrderStatus.CANCELED
+
+        order.status = status
+        order.save()
+
+        return JsonResponse({'status': 'success'})
+
+class ShopInfo(APIView):
+    def get(self, request, shop_id):
+        shop = Shop.objects.get(id=shop_id)
+        return JsonResponse({
+            'name': shop.name,
+            'location': shop.location,
+            'phone': shop.phone,
+        })
+
+
+    def post(self, request, shop_id):
+        shop = Shop.objects.get(id=shop_id)
+        print(request.POST)
+        if 'name' in request.POST:
+            shop.name = request.POST['name']
+
+        if 'location' in request.POST:
+            shop.location = request.POST['location']
+
+        if 'phone' in request.POST:
+            shop.phone = request.POST['phone']
+
+        shop.save()
+        return JsonResponse({'status': 'success'})

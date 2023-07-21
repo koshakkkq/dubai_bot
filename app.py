@@ -3,20 +3,23 @@ import sys
 
 from aiogram.utils import executor
 
-import db
 import asyncio
 from aiogram import executor
 from loader import dp, bot
 from register_handlers import register_handlers
 
-
-
-
-
 register_handlers(dp)
 async def on_startup(dp):
     me = await bot.get_me()
     logging.error(f'Running {me.username}')
+
+import courier
+import shop
+import user
+
+
+
+
 
 
 
