@@ -64,3 +64,7 @@ class OrderOfferApiView(APIView, DataMixin):
     model = OrderOffer
 
 
+class OrderCreateApiView(APIView):
+    def post(self, request: WSGIRequest):
+        # ToDo
+        return JsonResponse({'status':'success'}, status=200)

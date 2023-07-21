@@ -153,7 +153,7 @@ async def show_active_orders_begin(callback: types.CallbackQuery, state: FSMCont
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard)
 
-async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id, page):
+async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, shop_id, page, language='eng'):
     keyboard = await shop.keyboards.orders.get_active_orders(shop_id, language, page)
 
 
