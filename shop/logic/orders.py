@@ -2,7 +2,7 @@ import logging
 
 from utils.requests import make_get_request, make_post_request
 from config import SERVER_URL
-from shop.constants import buttons_on_page
+from shop.constants import order_buttons_on_page
 async def get_available_orders(shop_id, skip, limit):
     url = f'{SERVER_URL}/shop_available_orders/{shop_id}/{skip}/{limit}/'
 
@@ -23,23 +23,48 @@ async def get_active_orders(shop_id, skip, limit):
         logging.error(e)
         return []
 
+async def get_done_orders(shop_id, skip, limit):
+    url = f'{SERVER_URL}/shop_done_orders/{shop_id}/{skip}/{limit}/'
+    try:
+        data = await make_get_request(url)
+        return data
+    except Exception as e:
+        logging.error(e)
+        return []
+
 async def get_available_orders_enabled_page(shop_id, page):
     if page < 1:
         return 1
 
     data = await get_available_orders(shop_id, 0, 0)
-    cnt = data.get('available_orders_cnt', 0)
-    max_page = (cnt + buttons_on_page - 1) // buttons_on_page
+    cnt = data.get('cnt', 0)
+    max_page = (cnt + order_buttons_on_page - 1) // order_buttons_on_page
+    max_page = max(max_page, 1)
     if page > max_page:
         return max_page
     return page
 
 
+async def get_done_orders_enabled_page(shop_id, page):
+    if page < 1:
+        return 1
+
+    data = await get_done_orders(shop_id, 0, 0)
+    cnt = data.get('cnt', 0)
+    max_page = (cnt + order_buttons_on_page - 1) // order_buttons_on_page
+    max_page = max(max_page, 1)
+    if page > max_page:
+        return max_page
+    return page
 
 async def get_active_orders_enabled_page(shop_id, page):
-    data = await get_available_orders(shop_id, 0, 0)
-    cnt = data.get('available_orders_cnt', 0)
-    max_page = (cnt + buttons_on_page - 1) // buttons_on_page
+    if page < 1:
+        return 1
+
+    data = await get_active_orders(shop_id, 0, 0)
+    cnt = data.get('cnt', 0)
+    max_page = (cnt + order_buttons_on_page - 1) // order_buttons_on_page
+    max_page = max(max_page, 1)
     if page > max_page:
         return max_page
     return page
@@ -72,6 +97,19 @@ async def create_order_offer(shop_id, price, order_id):
         'order_id': order_id,
         'price': price,
     }
+    try:
+        await make_post_request(url, data)
+    except Exception as e:
+        logging.error(e)
+
+async def set_order_offer_status(order_id, status):
+    url = f'{SERVER_URL}/set_order_status/'
+
+    data = {
+        'status': status,
+        'order_id': order_id,
+    }
+
     try:
         await make_post_request(url, data)
     except Exception as e:
