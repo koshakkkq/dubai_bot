@@ -1,12 +1,12 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from .buttons import buttons
 import shop.logic.cars
-from shop.constants import car_brands_buttons_on_page
+from shop.constants import car_brands_buttons_on_page, car_models_buttons_on_page
 
 async def get_brands_keyboard( language: str, page = 1):
 
 
-	page = await shop.logic.get_brands_page(page)
+	#page = await shop.logic.get_brands_page(page)
 
 	brands = await shop.logic.get_brands((page - 1) * car_brands_buttons_on_page,
 													   car_brands_buttons_on_page)
@@ -46,8 +46,8 @@ def get_keyboard(vals,orders_cnt , language, page, command):
 
 	btn_page_cnt = InlineKeyboardButton(f'{page}/{max_page}', callback_data='empty_callback')
 
-	btn_forward = InlineKeyboardButton('➡', callback_data=f'shop_info_{command}_orders_page_1')
-	btn_back = InlineKeyboardButton('⬅', callback_data=f'shop_info_{command}_orders_page_-1')
+	btn_forward = InlineKeyboardButton('➡', callback_data=f'shop_info_{command}_page_1')
+	btn_back = InlineKeyboardButton('⬅', callback_data=f'shop_info_{command}_-1')
 
 	if max_page <= 1:
 		pass
@@ -62,36 +62,44 @@ def get_keyboard(vals,orders_cnt , language, page, command):
 
 	return InlineKeyboardMarkup(inline_keyboard=orders_buttons)
 
-async def get_models_keyboard(user_id, brand_id, current_language: str, page = 1):
-	all_models = await shop.logic.cars.get_models_by_brand(
+async def get_models_keyboard(shop_id, brand_id, language: str, page = 1):
+	data = await shop.logic.cars.get_models_by_brand(
+		shop_id=shop_id,
 		brand_id=brand_id,
-		skip=(page-1)*10,
-		limit=10
-	)#по 10 на странице.
-	print(all_models)
+		skip=(page-1)*car_models_buttons_on_page,
+		limit=car_models_buttons_on_page,
+	)
+	orders_buttons = []
 
-	models_buttons = []
-	for i in all_models:
-		model_picked = await shop.logic.cars.is_model_picked(
-			model_id=i,
-			user_id=user_id,
-		)
-		if model_picked == True:
-				models_buttons.append([
-					InlineKeyboardButton(
-						text=f'{i}✅', callback_data=f'unpick_model_{i}'
-					)
-				])
-		else:
-			models_buttons.append([
-				InlineKeyboardButton(
-					text=f'{i}❌', callback_data=f'pick_model_{i}'
-				)
-			])
+	vals = data['data']
+	cnt = data['cnt']
 
-	models_buttons.append([buttons[current_language]['pick_all_models']])
-	models_buttons.append([buttons[current_language]['pick_page_models']])
+	for index, i in enumerate(vals):
+		orders_buttons.append(
+			[InlineKeyboardButton(text=i['title'], callback_data=i['callback_data'])])
 
-	models_buttons.append([buttons[current_language]['shop_get_brands']])
 
-	return InlineKeyboardMarkup(inline_keyboard=models_buttons)
+	max_page = (cnt + car_models_buttons_on_page - 1) // car_models_buttons_on_page
+
+	btn_page_cnt = InlineKeyboardButton(f'{page}/{max_page}', callback_data='empty_callback')
+
+	btn_forward = InlineKeyboardButton('➡', callback_data=f'shop_info_model_page_1')
+	btn_back = InlineKeyboardButton('⬅', callback_data=f'shop_info_model_page_-1')
+
+	if max_page <= 1:
+		pass
+	elif page == max_page:
+		orders_buttons.append([btn_back, btn_page_cnt])
+	elif page == 1:
+		orders_buttons.append([btn_page_cnt, btn_forward])
+	else:
+		orders_buttons.append([btn_back, btn_page_cnt, btn_forward])
+
+	orders_buttons.append([buttons[language]['pick_all_models']])
+	orders_buttons.append([buttons[language]['unpick_all_models']])
+	orders_buttons.append([buttons[language]['pick_page_models']])
+	orders_buttons.append([buttons[language]['unpick_page_models']])
+
+	orders_buttons.append([buttons[language]['shop_get_brands']])
+
+	return InlineKeyboardMarkup(inline_keyboard=orders_buttons)
