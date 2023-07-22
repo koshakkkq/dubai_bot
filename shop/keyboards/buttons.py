@@ -10,8 +10,15 @@ buttons['eng']['shop_info_back'] = InlineKeyboardButton(text=f"↩️ Back", cal
 buttons['eng']['shop_get_brands'] = InlineKeyboardButton(text=f"↩️ Back", callback_data="shop_get_brands")
 
 
-buttons['eng']['pick_all_models'] = InlineKeyboardButton(text=f"Select all models", callback_data="pick_all_models")
+buttons['eng']['pick_all_models'] = InlineKeyboardButton(text=f"Select all models", callback_data="shop_info_pick_all_models_1")
+buttons['eng']['unpick_all_models'] = InlineKeyboardButton(text=f"Unselect all models", callback_data="shop_info_pick_all_models_0")
+
 buttons['eng']['pick_page_models'] = InlineKeyboardButton(
 	text=f"Select all models on page",
-	callback_data="pick_page_models",
+	callback_data="shop_info_pick_page_models_1",
+)
+
+buttons['eng']['unpick_page_models'] = InlineKeyboardButton(
+	text=f"Unselect all models on page",
+	callback_data="shop_info_pick_page_models_0",
 )

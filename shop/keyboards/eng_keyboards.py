@@ -5,7 +5,7 @@ menu_buttons = [[InlineKeyboardButton(text='🚚 Customer requests', callback_da
 				[InlineKeyboardButton(text='🚗 Active orders', callback_data='shop_active_orders')],
                 [InlineKeyboardButton(text='✅ Done orders', callback_data='shop_done_orders')],
                 [InlineKeyboardButton(text='📍 Shop information', callback_data='shop_info')],
-                [InlineKeyboardButton(text='↩️ To main menu', callback_data='menu')],
+                [InlineKeyboardButton(text='↩️ To main menu', callback_data='to_menu')],
                 ]
 menu_keyboard = InlineKeyboardMarkup(inline_keyboard=menu_buttons)
 eng_keyboards['shop_menu'] = menu_keyboard
@@ -16,7 +16,8 @@ info_keyboard = [
         InlineKeyboardButton(text='📲 Phone', callback_data='shop_change_phone'),
         InlineKeyboardButton(text='🏢 Name', callback_data='shop_change_name'),
     ],
-    [InlineKeyboardButton(text='Brands and models', callback_data='shop_get_brands')],
+    [InlineKeyboardButton(text='🚗 Brands and models', callback_data='shop_get_brands')],
+    [InlineKeyboardButton(text='➕ Get invite code for employee', callback_data='shop_info_create_invite')],
     [InlineKeyboardButton(text='↩️ Back', callback_data='shop_menu')],
 ]
 eng_keyboards['shop_info'] = InlineKeyboardMarkup(inline_keyboard=info_keyboard)

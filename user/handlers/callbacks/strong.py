@@ -7,8 +7,11 @@ from aiogram.dispatcher import FSMContext
 from user.filters.states import CarDetailStates
 
 
+@dp.callback_query_handler(
+    lambda call: "to_menu" == call.data,
+    state="*",
+)
 @decorators.picked_language
-@dp.callback_query_handler(lambda call: "to_menu" == call.data)
 async def to_menu_callback(call: CallbackQuery, state: FSMContext, language='eng'):
     await call.message.edit_text("Main menu", reply_markup=menu())
 
