@@ -47,7 +47,7 @@ def get_keyboard(vals,orders_cnt , language, page, command):
 	btn_page_cnt = InlineKeyboardButton(f'{page}/{max_page}', callback_data='empty_callback')
 
 	btn_forward = InlineKeyboardButton('➡', callback_data=f'shop_info_{command}_page_1')
-	btn_back = InlineKeyboardButton('⬅', callback_data=f'shop_info_{command}_-1')
+	btn_back = InlineKeyboardButton('⬅', callback_data=f'shop_info_{command}_page_-1')
 
 	if max_page <= 1:
 		pass

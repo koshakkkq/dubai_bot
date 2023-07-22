@@ -23,7 +23,6 @@ def shop_member_status(request: WSGIRequest, id):
     return JsonResponse({'status':'not_member'})
 
 def is_code_correct(request: WSGIRequest, user_id, code):
-    print(code)
     try:
         reg_code = ShopRegistrationCode.objects.get(code=code, used=False)
         reg_code.user = user_id
@@ -36,7 +35,6 @@ def is_code_correct(request: WSGIRequest, user_id, code):
 
     try:
         shop_reg_code = ShopMemberRegistrationCode.objects.get(code = code, used=False)
-        print(shop_reg_code)
         shop_reg_code.used = True
         shop_reg_code.save()
         shop_id = shop_reg_code.shop.id
