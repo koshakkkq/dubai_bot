@@ -1,4 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from .callbacks import IterCallback
 
 
 def menu():
@@ -92,15 +93,41 @@ def language_choice():
 	return keyboard
 
 
-def payed_order_btns(current_order_id, current, length):
+def iter_btns(items, current_page=0, pagination=27): # paggination % 3 == 0 !
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('✅ Received', callback_data=f"was_deliveried:{current_order_id}"))
-	keyboard.row(InlineKeyboardButton('🆘 Help', url=f"https://t.me/k0shakq")) # Strong # 
+	length = len(items)
+	pages = length // pagination + bool(length % pagination) # if this value > 0 than return 1 else 0
 	btns = []
-	if current > 0:
-		btns.append(InlineKeyboardButton('⬅️ Back', callback_data=f"payed_orders:{current-1}"))
-	btns.append(InlineKeyboardButton(f'{current+1}/{length}', callback_data=f"payed_orders:0")) # Pages 10/12
-	if current != length - 1:
-		btns.append(InlineKeyboardButton('Next ➡️', callback_data=f"payed_orders:{current+1}"))
-	keyboard.row(*btns)
+	data = []
+	for i, (key, val) in enumerate(items.items(), 0):
+		callback_data = IterCallback(current_page=current_page, action=val).pack()
+		btns.append(InlineKeyboardButton(key, callback_data=callback_data))
+		if i % pagination == pagination - 1:
+			data.append(btns)
+			btns = []
+	if length % pagination != pagination - 1:
+		data.append(btns)
+		btns = []
+	keyboard.add(*data[current_page])
+	if current_page > 0:
+		callback_data = IterCallback(current_page=current_page, action="back").pack()
+		btns.append(InlineKeyboardButton('⬅️', callback_data=callback_data))
+	callback_data = IterCallback(current_page=1, action="back").pack()
+	btns.append(InlineKeyboardButton(f'{current_page+1}/{pages}', callback_data=callback_data)) # Pages 10/12
+	if current_page != pages - 1:
+		callback_data = IterCallback(current_page=current_page+2, action="back").pack()
+		btns.append(InlineKeyboardButton('➡️', callback_data=callback_data))
+	keyboard.add(*btns)
+	callback_data = IterCallback(current_page=current_page, action="previous_state").pack()
+	keyboard.row(InlineKeyboardButton("↩️ Back", callback_data=callback_data))
+	return keyboard
+
+
+def tuple_btns(tuple):
+	keyboard = InlineKeyboardMarkup()
+	for i in tuple:
+		callback_data = IterCallback(current_page=0, action=i).pack()
+		keyboard.row(InlineKeyboardButton(i, callback_data=callback_data))
+	callback_data = IterCallback(current_page=0, action="previous_state").pack()
+	keyboard.row(InlineKeyboardButton("↩️ Back", callback_data=callback_data))
 	return keyboard
