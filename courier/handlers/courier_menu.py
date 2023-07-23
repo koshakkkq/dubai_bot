@@ -115,3 +115,22 @@ async def delivered_orders_list(callback: types.CallbackQuery, state: FSMContext
 
 
 	await callback.answer()
+
+
+
+
+
+class Testing:
+    def __init__(self, dp: Dispatcher):
+        self.dp = dp
+        self.msg = 'ajsdfkl;j'
+
+    @decorators.picked_language
+    @decorators.is_member
+    async def kek(self, msg: types.Message, state, language, shop_id):
+       await msg.answer(shop_id)
+
+    def register_handlers(self):
+        self.dp.register_message_handler(self.kek,commands=['kek'])
+
+Testing(dp).register_handlers()

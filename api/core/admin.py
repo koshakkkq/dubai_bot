@@ -53,7 +53,7 @@ class ShopRegistrationCodeAdmin(admin.ModelAdmin):
         return HttpResponseRedirect("../")
 
 
-    list_display = ('code', 'used', 'user', 'get_time',)
+    list_display = ('id', 'code', 'used', 'user', 'get_time',)
     change_list_template = 'admin/core/shopregistrationcode/change_list.html'
     get_time.admin_order_field = 'creation_time'
     ordering = ('creation_time', )
@@ -62,6 +62,10 @@ class ShopRegistrationCodeAdmin(admin.ModelAdmin):
 @admin.register(TelegramUser)
 class TelegramUserAdmin(admin.ModelAdmin):
     list_display = ('id','telegram_id','get_courier')
+    sortable_by = (
+        "id",
+        "telegram_id",
+    )
 
     @admin.display(description='Courier')
     def get_courier(self, obj: TelegramUser):
@@ -147,5 +151,43 @@ class OrderOfferAdmin( admin.ModelAdmin):
     def get_order(self, obj):
         return obj.order.product
 
+
+
+@admin.register(CourierRegistrationCode)
+class CourierRegistrationCodeAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+    def get_actions(self, request):
+        return {}
+
+
+    @admin.display(description='Creation time')
+    def get_time(self, obj: ShopRegistrationCode):
+        return obj.creation_time.strftime("%d %b %Y %H:%M:%S")
+
+    def get_urls(self):
+        urls = super(CourierRegistrationCodeAdmin, self).get_urls()
+        custom_urls = [
+            re_path('^import/$', self.create_secret_code, name='process_import')
+        ]
+        return custom_urls+urls
+
+    def create_secret_code(self, request):
+        code = str(time.time())
+        code += str(random.randint(10, 100000000) * random.randint(10, 100000000) / random.randint(10, 100000000))
+        code = hashlib.sha256(code.encode()).hexdigest()[:20]
+        new_code = CourierRegistrationCode(code=code)
+        new_code.save()
+        self.message_user(request, f"Created code: {new_code.code}")
+        return HttpResponseRedirect("../")
+
+
+    list_display = ('id','code', 'used', 'user', 'get_time',)
+    change_list_template = 'admin/core/shopregistrationcode/change_list.html'
+    get_time.admin_order_field = 'creation_time'
+    ordering = ('creation_time', )
 
 
