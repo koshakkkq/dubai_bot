@@ -63,9 +63,17 @@ def create_shop_member(shop_id, tg_id):
 
 class AvailableOrders(APIView):
     def get(self, request: WSGIRequest, shop_id, skip, limit):
+        shop = Shop.objects.get(id=shop_id)
+
+        available_models = shop.available_models.values('id')
+
+
+
         black_list = ShopOrdersBlacklist.objects.filter(shop_id=shop_id)
 
-        orders = Order.objects.order_by('model').filter(status=OrderStatus.PENDING).exclude(id__in=black_list.values('order'))
+        orders = Order.objects.order_by('model').filter(
+            status=OrderStatus.PENDING,
+            model_id__in=available_models).exclude(id__in=black_list.values('order'))
 
         black_list = OrderOffer.objects.filter(shop_id=shop_id)
 
@@ -87,7 +95,11 @@ class AvailableOrders(APIView):
 class ActiveOrders(APIView):
 
     def get(self, request, shop_id, skip, limit):
-        orders = Order.objects.order_by('model').filter(status=OrderStatus.ACTIVE, offer__shop_id=shop_id)
+        orders = Order.objects.order_by('model').filter(
+            status=OrderStatus.ACTIVE,
+            offer__shop_id=shop_id,
+        )
+        print(orders)
         active_orders_cnt = len(orders)
         if active_orders_cnt <= skip:
             return JsonResponse({'cnt': active_orders_cnt, 'data': []})
@@ -258,7 +270,7 @@ class AvailableBrands(APIView):
 
 class Models(APIView):
     def get(self, request, shop_id, brand_id,limit, skip, ):
-        models = CarModel.objects.filter(brand__id = brand_id)
+        models = CarModel.objects.filter(brand__id = brand_id).order_by('name')
 
         cnt = len(models)
         if cnt <= skip:
@@ -326,7 +338,7 @@ class ShopMemberCodeCreation(APIView):
         new_code.save()
         return JsonResponse({'code': new_code.code})
 def create_test_brands(self):
-    for i in range(40, 0, -1):
-        brand = CarBrand(name=f'Brand name {i}')
+    for i in range(45, 0, -1):
+        brand = CarBrand(name=f'Brand name {i}testing')
         brand.save()
 

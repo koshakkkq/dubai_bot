@@ -144,7 +144,7 @@ class OrderOffer(models.Model):
 	order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='offers')
 
 	def __str__(self):
-		return f"{self.pk}|{self.shop}"
+		return f"From shop: {self.shop}, price: {self.price}"
 
 	class Meta:
 		verbose_name = "Order offer"
@@ -156,7 +156,7 @@ class Order(models.Model):
 	model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="orders")
 	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	additional = models.TextField()
-	offer = models.OneToOneField(OrderOffer, on_delete=models.CASCADE, null=True, related_name='+')
+	offer = models.OneToOneField(OrderOffer, on_delete=models.CASCADE, null=True, related_name='+', blank=True)
 	datetime = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
