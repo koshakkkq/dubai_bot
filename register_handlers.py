@@ -1,6 +1,6 @@
 from aiogram import Dispatcher
-from courier.handlers.courier_menu import menu_msg_handler as courier_menu
-from shop.handlers.shop_menu import menu_msg_handler as shop_menu
+from courier.handlers.register import courier_registration_proceed
+from shop.handlers.shop_creation import shop_begin_registration
 def register_handlers(dp: Dispatcher):
-	dp.register_message_handler(courier_menu, state='*',commands=['courier'])
-	dp.register_message_handler(shop_menu, state='*', commands=['account'])
+	dp.register_message_handler(courier_registration_proceed, state='*',commands=['courier'])
+	dp.register_message_handler(shop_begin_registration, state='*', commands=['account'])

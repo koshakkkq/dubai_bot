@@ -1,8 +1,10 @@
 import datetime
 
 from django.db import models
+from django.db.models.signals import pre_delete
+
 from .constants import VERBOSE_ORDER_TYPE, VERBOSE_RAITING_TYPE
-import django.utils.timezone
+from django.dispatch.dispatcher import receiver
 class Courier(models.Model):
 	name = models.CharField(max_length=50)
 	phone = models.CharField(max_length=15)
@@ -32,14 +34,18 @@ class CourierFeedback(models.Model):
 class TelegramUser(models.Model):
 	telegram_id = models.IntegerField(db_index=True)
 	language = models.CharField(max_length=40)
-	courier = models.OneToOneField(Courier, on_delete = models.CASCADE, related_name="telegram_user", null=True, blank=True)
+	courier = models.OneToOneField(Courier, on_delete = models.CASCADE, related_name="telegram_user", null=True, blank=True,
+								   )
 
 	def __str__(self):
 		return f"Tg id: {self.telegram_id}"
 
+
 	class Meta:
 		verbose_name = "Telegram user"
 		verbose_name_plural = "Telegram users"
+
+
 
 
 class CarBrand(models.Model):
@@ -176,8 +182,8 @@ class ShopRegistrationCode(models.Model):
 	creation_time = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
-		verbose_name = "Invite codes."
-		verbose_name_plural = "Invite codes."
+		verbose_name = "Shop invite code."
+		verbose_name_plural = "Shop invite codes."
 
 class ShopMemberRegistrationCode(models.Model):
 	code = models.TextField()
@@ -194,3 +200,12 @@ class CourierRegistrationCode(models.Model):
 	used = models.BooleanField(default=False)
 	user = models.IntegerField(null=True)
 	creation_time = models.DateTimeField(auto_now_add=True)
+
+
+
+@receiver(pre_delete, sender=TelegramUser)
+def pre_delete(sender, instance: TelegramUser, *args, **kwargs):
+	tg_id = instance.telegram_id
+	CourierRegistrationCode.objects.filter(user=tg_id).delete()
+	courier = instance.courier
+	#courier.delete()

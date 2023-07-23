@@ -99,7 +99,6 @@ class ActiveOrders(APIView):
             status=OrderStatus.ACTIVE,
             offer__shop_id=shop_id,
         )
-        print(orders)
         active_orders_cnt = len(orders)
         if active_orders_cnt <= skip:
             return JsonResponse({'cnt': active_orders_cnt, 'data': []})

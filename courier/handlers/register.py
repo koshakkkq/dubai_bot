@@ -24,7 +24,7 @@ class CourierRegister(StatesGroup):
 	state="*",
 )
 @decorators.picked_language
-async def shop_registration_proceed(callback: types.CallbackQuery, state: FSMContext, language='eng'):
+async def courier_registration_proceed(callback: types.CallbackQuery, state: FSMContext, language='eng'):
 	await state.reset_data()
 	status = await shop_get_courier_status(callback.from_user.id)
 	if status == 'courier':

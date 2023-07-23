@@ -32,7 +32,17 @@ async def get_shop_id(tg_id):
 	if len(res) == 0:
 		return None
 	return res[0]['shop']
-async def bot_start(message: Message):
+
+async def get_courier_id(tg_id):
+	url = f'{SERVER_URL}/shop_courier/{tg_id}/'
+	try:
+		res = await make_get_request(url)
+		return res.get('courier_id', None)
+	except Exception as e:
+		logging.error(e)
+		return None
+
+async def bot_start(message: Message, state):
 
 	await state.reset_state()
 	await message.answer(f"Hello, {message.from_user.full_name}!\nChoose language!", reply_markup=language_choice())

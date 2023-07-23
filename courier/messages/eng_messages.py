@@ -7,6 +7,8 @@ eng_messages = {
 	'code_incorrect': 'Sorry, your code incorrect.',
 	'code_correct': 'Your code is correct, click on button to proceed next steps, for your shop creation.',
 	'courier_finish_registration': 'Click button to go into courier menu.',
+	'courier_get_new_value': 'Enter new value.',
+	'courier_ok': 'Ok.',
 
 }
 
