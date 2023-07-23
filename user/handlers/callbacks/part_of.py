@@ -55,4 +55,4 @@ async def price_of(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: "mark" == call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
-	await call.message.edit_text("Thank you", reply_markup=None) 
+	await call.message.edit_text("Thank you", reply_markup=None)
