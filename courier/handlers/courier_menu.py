@@ -4,6 +4,8 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.storage import FSMContext
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import filters
+
+from courier.logic.courier import change_courier_info
 from loader import dp
 
 
@@ -34,7 +36,8 @@ async def menu_msg_handler(message: types.Message, state:FSMContext, language= '
 	state="*",
 )
 @decorators.picked_language
-async def menu_callback(callback: types.CallbackQuery, state: FSMContext, language= 'eng'):
+@decorators.is_courier
+async def menu_callback(callback: types.CallbackQuery, state: FSMContext, language= 'eng', courier_id=-1):
 	await state.reset_data()
 	await state.set_state(CourierStates.in_menu.state)
 	msg = courier.messages.messages[language]['courier_menu']
@@ -116,21 +119,74 @@ async def delivered_orders_list(callback: types.CallbackQuery, state: FSMContext
 
 	await callback.answer()
 
+class CourierInfoStates(StatesGroup):
+	in_info = State()
+	pending_value = State()
 
+@dp.callback_query_handler(
+	filters.Text(equals='courier_info'),
+	state='*',
+)
+@decorators.picked_language
+@decorators.is_courier
+async def get_courier_info(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id = -1):
+	await state.set_state(CourierInfoStates.in_info.state)
+	msg = await courier.messages.get_courier_info_msg(callback.from_user.id, language)
+	keyboard = courier.keyboards.keyboards[language]['change_information']
 
+	await callback.message.edit_text(msg, reply_markup=keyboard)
+	await callback.answer()
+@dp.callback_query_handler(
+	filters.Text(startswith='courier_change_'),
+	state='*',
+)
+@decorators.picked_language
+@decorators.is_courier
+async def change_courier_field(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id = -1):
+	await state.set_state(CourierInfoStates.pending_value.state)
 
+	field = callback.data.split('_')[-1]
 
-class Testing:
-    def __init__(self, dp: Dispatcher):
-        self.dp = dp
-        self.msg = 'ajsdfkl;j'
+	await state.update_data(courier_field_to_change=field)
 
-    @decorators.picked_language
-    @decorators.is_member
-    async def kek(self, msg: types.Message, state, language, shop_id):
-       await msg.answer(shop_id)
+	msg = courier.messages.messages[language]['courier_get_new_value']
+	keyboard = courier.keyboards.keyboards[language]['back_to_courier_info']
 
-    def register_handlers(self):
-        self.dp.register_message_handler(self.kek,commands=['kek'])
+	await callback.message.edit_text(msg, reply_markup=keyboard)
+	await callback.answer()
 
-Testing(dp).register_handlers()
+@dp.message_handler(
+	state=CourierInfoStates.pending_value
+)
+@decorators.picked_language
+@decorators.is_courier
+async def get_new_value(message: types.Message, state: FSMContext, language='eng', courier_id = -1):
+	await state.reset_state(with_data=False)
+	data = await state.get_data()
+
+	field = data['courier_field_to_change']
+	value = message.text
+
+	await change_courier_info(courier_id, field, value)
+
+	msg = courier.messages.messages[language]['courier_ok']
+	keyboard = courier.keyboards.keyboards[language]['back_to_courier_info']
+
+	await message.answer(msg, reply_markup=keyboard)
+
+#
+#
+# class Testing:
+# 	def __init__(self, dp: Dispatcher):
+# 		self.dp = dp
+# 		self.msg = 'ajsdfkl;j'
+#
+# 	@decorators.picked_language
+# 	@decorators.is_member
+# 	async def kek(self, msg: types.Message, state, language, shop_id):
+# 		await msg.answer(shop_id)
+#
+# 	def register_handlers(self):
+# 		self.dp.register_message_handler(self.kek,commands=['kek'])
+#
+# Testing(dp).register_handlers()

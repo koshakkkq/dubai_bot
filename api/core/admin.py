@@ -56,7 +56,7 @@ class ShopRegistrationCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'code', 'used', 'user', 'get_time',)
     change_list_template = 'admin/core/shopregistrationcode/change_list.html'
     get_time.admin_order_field = 'creation_time'
-    ordering = ('creation_time', )
+    ordering = ('-id', )
 
 
 @admin.register(TelegramUser)
@@ -188,6 +188,6 @@ class CourierRegistrationCodeAdmin(admin.ModelAdmin):
     list_display = ('id','code', 'used', 'user', 'get_time',)
     change_list_template = 'admin/core/shopregistrationcode/change_list.html'
     get_time.admin_order_field = 'creation_time'
-    ordering = ('creation_time', )
+    ordering = ('-id', )
 
 

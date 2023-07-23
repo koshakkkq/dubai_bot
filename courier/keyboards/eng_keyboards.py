@@ -2,8 +2,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardBu
 eng_keyboards = {}
 menu_buttons = [[InlineKeyboardButton(text='🚚 Available orders', callback_data='courier_available_orders')],
 				[InlineKeyboardButton(text='⚡️ Delivered orders', callback_data='courier_delivered_orders')],
+				[InlineKeyboardButton(text='💼 Your information.', callback_data='courier_info')],
 				[InlineKeyboardButton(text='🆘 Help', callback_data='empty_callback')],
-				[InlineKeyboardButton(text='️↩️ To main menu', callback_data='to_menu')]]
+				[InlineKeyboardButton(text='️↩️ To main menu', callback_data='to_menu')],
+				]
 
 menu_keyboard = InlineKeyboardMarkup(inline_keyboard=menu_buttons)
 eng_keyboards['courier_menu'] = menu_keyboard
@@ -28,3 +30,17 @@ code_correct = [
 ]
 
 eng_keyboards['code_correct'] = InlineKeyboardMarkup(inline_keyboard=code_correct)
+
+
+back_to_courier_info = [
+	[InlineKeyboardButton(text='↩️ Back', callback_data='courier_info')]
+]
+eng_keyboards['back_to_courier_info'] = InlineKeyboardMarkup(inline_keyboard=back_to_courier_info)
+
+
+change_information = [
+	[InlineKeyboardButton(text='📋 Name', callback_data='courier_change_name')],
+	[InlineKeyboardButton(text='📱 Phone', callback_data='courier_change_phone')],
+	[InlineKeyboardButton(text=f"↩️ Back", callback_data=f"courier_menu")],
+]
+eng_keyboards['change_information'] = InlineKeyboardMarkup(inline_keyboard=change_information)

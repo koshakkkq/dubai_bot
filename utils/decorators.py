@@ -3,7 +3,7 @@ import typing
 
 import aiogram.types.message
 
-from .decorators_utils import get_current_language, bot_start, get_shop_id
+from .decorators_utils import get_current_language, bot_start, get_shop_id, get_courier_id
 
 def picked_language(func):
 	async def wrapper(
@@ -61,7 +61,43 @@ def is_member(func):
 					break
 
 			user_id = int(event['from']['id'])
-			shop_id = await get_shop_id(user_id)
+			courier_id = await get_shop_id(user_id)
+			if courier_id is None:
+				return
+		except Exception as e:
+			logging.error(e)
+			return
+		await func(*real_args,event,state, language, courier_id)
+
+	return wrapper
+
+
+
+def is_courier(func):
+	async def wrapper(
+			*args,
+			state=None,
+			language=None
+	):
+		try:
+			real_args = []
+			event = None
+			for i in args:
+				if isinstance(i, aiogram.types.CallbackQuery) or isinstance(i, aiogram.types.Message):
+					event = i
+				elif isinstance(i, aiogram.dispatcher.storage.FSMContext):
+					state = i
+				else:
+					real_args.append(i)
+
+			event = None
+			for i in args:
+				if isinstance(i, aiogram.types.CallbackQuery) or isinstance(i, aiogram.types.Message):
+					event = i
+					break
+
+			user_id = int(event['from']['id'])
+			shop_id = await get_courier_id(user_id)
 			if shop_id is None:
 				return
 		except Exception as e:

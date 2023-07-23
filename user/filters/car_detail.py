@@ -88,7 +88,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     await CarDetailStates.MODEL_STATE.set()
 
     models = await api.get_models(brand_id)
-    models = {model["name"]: model["name"] for model in models} 
+    models = {model["name"]: model["name"] for model in models}
     await call.message.edit_text(text=f"2. Select a car model", reply_markup=inline.iter_btns(models))
 
 

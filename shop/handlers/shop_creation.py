@@ -110,6 +110,6 @@ async def shop_registration_get_location(message: types.Message, state: FSMConte
 	await create_shop(user_id=message.from_user.id, data=data)
 
 	msg = shop.messages.messages[language]['get_shop_name']
-	keyboard = shop.keyboards.keyboards[language]['creation_success']
+	keyboard = shop.keyboards.keyboards[language]['code_correct']
 
 	await message.answer(text=msg, reply_markup=keyboard)

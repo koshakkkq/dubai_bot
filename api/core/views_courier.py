@@ -57,3 +57,29 @@ class CreateCourier(APIView):
         user.save()
 
         return JsonResponse({'Success': True})
+
+class CourierInfo(APIView):
+    def get(self, request, tg_id):
+        try:
+            user = TelegramUser.objects.get(telegram_id = tg_id)
+            courier_id = user.courier.id
+            phone = user.courier.phone
+            name = user.courier.name
+            return JsonResponse({
+                'courier_id': courier_id,
+                'phone': phone,
+                'name': name,
+            })
+        except Exception as e:
+            return JsonResponse({})
+
+    def post(self, request, tg_id):
+        courier = Courier.objects.get(id=tg_id)
+
+        field = request.POST['field']
+        value = request.POST['value']
+
+        courier.__dict__[field] = value
+        courier.save()
+
+        return JsonResponse({})
