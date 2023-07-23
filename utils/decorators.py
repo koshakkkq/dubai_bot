@@ -19,10 +19,11 @@ def picked_language(func):
 				if isinstance(event, aiogram.types.message.Message) is False:
 					await event.answer()
 					event = event.message
-				await bot_start(event)
+				await bot_start(event, state)
 				return
 		except Exception as e:
 			logging.error(e)
+			return
 		await func(event, state, language)
 
 	return wrapper
@@ -43,6 +44,7 @@ def is_member(func):
 				return
 		except Exception as e:
 			logging.error(e)
+			return
 		await func(event, state, language, shop_id)
 
 	return wrapper

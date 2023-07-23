@@ -21,9 +21,12 @@ urlpatterns = [
     path("shop_member_status/<int:id>/", views_shop.shop_member_status),
     path('is_code_correct/<int:user_id>/<str:code>/', views_shop.is_code_correct),
     path('set_language/', views_shop.SetUserLanguage.as_view()),
+    path('create_invite_code/<int:shop_id>/', views_shop.ShopMemberCodeCreation.as_view()),
 
     path('create_shop/', views_shop.CreateShop.as_view()),
     path('brands/<int:skip>/<int:limit>/', views_shop.AvailableBrands.as_view()),
+    path('models/<int:shop_id>/<int:brand_id>/<int:skip>/<int:limit>/', views_shop.Models.as_view()),
+    path('pick_models/<int:shop_id>/', views_shop.PickModels.as_view()),
     path('shop_info/<int:shop_id>/', views_shop.ShopInfo.as_view()),
     path('shop_available_orders/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.AvailableOrders.as_view()),
     path('shop_active_orders/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.ActiveOrders.as_view()),
@@ -33,5 +36,6 @@ urlpatterns = [
     path('shop_add_order_blacklist/', views_shop.AddShopOrderToBlackList.as_view()),
     path("order/create/", views.OrderCreateApiView.as_view()),
     path('set_order_status/', views_shop.SetOrderStatus.as_view()),
+
 
 ]

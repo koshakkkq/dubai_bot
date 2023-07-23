@@ -1,4 +1,7 @@
+import hashlib
 import json
+import random
+import time
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import reset_queries, connection
@@ -31,11 +34,12 @@ def is_code_correct(request: WSGIRequest, user_id, code):
 
 
     try:
-        shop_reg_code = ShopMemberRegistrationCode(code = code, used=False)
+        shop_reg_code = ShopMemberRegistrationCode.objects.get(code = code, used=False)
         shop_reg_code.used = True
         shop_reg_code.save()
         shop_id = shop_reg_code.shop.id
-        ShopMember.objects.create(user_telegram_id=user_id, shop_id=shop_id)
+        user = TelegramUser.objects.get(telegram_id=user_id)
+        ShopMember.objects.create(user=user, shop_id=shop_id)
         return JsonResponse({'status': True})
     except ShopMemberRegistrationCode.DoesNotExist:
         pass
@@ -250,7 +254,79 @@ class AvailableBrands(APIView):
             })
 
         return JsonResponse({'cnt': cnt, 'data': data})
+
+
+class Models(APIView):
+    def get(self, request, shop_id, brand_id,limit, skip, ):
+        models = CarModel.objects.filter(brand__id = brand_id)
+
+        cnt = len(models)
+        if cnt <= skip:
+            return JsonResponse({'cnt': cnt, 'data':[]})
+
+        limit = min(skip+limit, cnt)
+
+        models = models[skip:limit]
+
+        shop = Shop.objects.get(id=shop_id)
+        data = []
+        for i in models:
+            if shop.available_models.filter(id=i.id).exists():
+                callback_data = f'shop_info_pick_model_{i.id}_0'
+                title = f'✅ {str(i)}'
+            else:
+                callback_data = f'shop_info_pick_model_{i.id}_1'
+                title = f'❌ {str(i)}'
+
+            data.append({
+                'title': title,
+                'callback_data': callback_data,
+                'id': i.id,
+            })
+        return JsonResponse({'cnt': cnt, 'data': data})
+
+
+class PickModels(APIView):
+    def post(self, request, shop_id):
+        type = request.POST['type']
+        shop = Shop.objects.get(id=shop_id)
+        if type == 'all':
+            brand_id = request.POST['brand_id']
+            models = CarModel.objects.filter(brand_id=brand_id)
+            status = request.POST['status']
+            if status == '1':
+                shop.available_models.add(*models)
+            else:
+                shop.available_models.remove(*models)
+        if type == 'specify':
+            data = request.POST.getlist('data')
+            for i in data:
+                json_acceptable_string = i.replace("'", "\"")
+                i = json.loads(json_acceptable_string)
+                model_id = i['model_id']
+                status = i['status']
+                try:
+                    model = CarModel.objects.get(id=model_id)
+                    if status == '1':
+                        shop.available_models.add(model)
+                    else:
+                        shop.available_models.remove(model)
+                except Exception as e:
+                    print(e)
+                    pass
+
+        return JsonResponse({'status': 'success'})
+
+class ShopMemberCodeCreation(APIView):
+    def get(self, request, shop_id):
+        code = str(time.time())
+        code += str(random.randint(10, 100000000) * random.randint(10, 100000000) / random.randint(10, 100000000))
+        code = hashlib.sha256(code.encode()).hexdigest()[:20]
+        new_code = ShopMemberRegistrationCode(code=code, shop_id=shop_id)
+        new_code.save()
+        return JsonResponse({'code': new_code.code})
 def create_test_brands(self):
     for i in range(40, 0, -1):
         brand = CarBrand(name=f'Brand name {i}')
         brand.save()
+
