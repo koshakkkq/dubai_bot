@@ -35,7 +35,7 @@ class TelegramUser(models.Model):
 	courier = models.OneToOneField(Courier, on_delete = models.CASCADE, related_name="telegram_user", null=True, blank=True)
 
 	def __str__(self):
-		return f"user:{self.telegram_id}"
+		return f"Tg id: {self.telegram_id}"
 
 	class Meta:
 		verbose_name = "Telegram user"
@@ -83,7 +83,7 @@ class Shop(models.Model):
 
 
 	def __str__(self):
-		return self.name
+		return f'Id: {self.id}, name: {self.name}'
 
 	class Meta:
 		verbose_name = "Shop"
@@ -188,3 +188,9 @@ class ShopMemberRegistrationCode(models.Model):
 class ShopOrdersBlacklist(models.Model):
 	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 	order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+class CourierRegistrationCode(models.Model):
+	code = models.TextField()
+	used = models.BooleanField(default=False)
+	user = models.IntegerField(null=True)
+	creation_time = models.DateTimeField(auto_now_add=True)

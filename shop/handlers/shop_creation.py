@@ -86,7 +86,7 @@ async def shop_registration_get_name(message: types.Message, state: FSMContext, 
 @dp.message_handler(
 	state=ShopCreationStates.get_phone
 )
-async def shop_registration_get_name(message: types.Message, state: FSMContext, language='eng'):
+async def shop_registration_get_phone(message: types.Message, state: FSMContext, language='eng'):
 	phone = message.text
 	await state.update_data(shop_phone=phone)
 	await state.set_state(ShopCreationStates.get_location.state)
@@ -99,7 +99,7 @@ async def shop_registration_get_name(message: types.Message, state: FSMContext, 
 @dp.message_handler(
 	state=ShopCreationStates.get_location
 )
-async def shop_registration_get_name(message: types.Message, state: FSMContext, language='eng'):
+async def shop_registration_get_location(message: types.Message, state: FSMContext, language='eng'):
 	location = message.text
 	await state.update_data(shop_location=location)
 

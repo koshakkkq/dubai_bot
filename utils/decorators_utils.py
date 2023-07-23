@@ -32,7 +32,7 @@ async def get_shop_id(tg_id):
 	if len(res) == 0:
 		return None
 	return res[0]['shop']
-async def bot_start(message: Message, state: FSMContext):
+async def bot_start(message: Message):
 
 	await state.reset_state()
 	await message.answer(f"Hello, {message.from_user.full_name}!\nChoose language!", reply_markup=language_choice())

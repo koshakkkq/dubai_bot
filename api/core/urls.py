@@ -1,5 +1,5 @@
 from django.urls import path
-from core import views, views_shop
+from core import views, views_shop, views_courier
 
 app_name = "core"
 
@@ -37,5 +37,8 @@ urlpatterns = [
     path("order/create/", views.OrderCreateApiView.as_view()),
     path('set_order_status/', views_shop.SetOrderStatus.as_view()),
 
+    path('courier_status/<int:user_id>/', views_courier.CourierStatus.as_view()),
+    path('courier_code/<int:user_id>/<str:code>/', views_courier.CheckCourierCode.as_view()),
+    path('create_courier/', views_courier.CreateCourier.as_view()),
 
 ]
