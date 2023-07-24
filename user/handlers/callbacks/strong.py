@@ -7,8 +7,11 @@ from user.filters.states import CarDetailStates
 from utils import api
 
 
+@dp.callback_query_handler(
+    lambda call: "to_menu" == call.data,
+    state="*",
+)
 @decorators.picked_language
-@dp.callback_query_handler(lambda call: "to_menu" == call.data, state="*")
 async def to_menu_callback(call: CallbackQuery, state: FSMContext, language='eng'):
     # await state.finish()
     await call.message.edit_text("Main menu", reply_markup=inline.menu())
