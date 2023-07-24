@@ -1,15 +1,15 @@
 
 class OrderStatus:
-    ACTIVE = 0
-    PENDING = 1
+    PENDING = 0
+    ACTIVE = 1
     DONE = 2
     CANCELED = 3
 
 
 
 VERBOSE_ORDER_TYPE = (
-    (OrderStatus.ACTIVE, "Active."),
     (OrderStatus.PENDING, "Pending."),
+    (OrderStatus.ACTIVE, "Active."),
     (OrderStatus.DONE, "Done."),
     (OrderStatus.CANCELED, 'Canceled.')
 )

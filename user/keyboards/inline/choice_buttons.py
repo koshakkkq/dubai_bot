@@ -113,7 +113,8 @@ def iter_btns(items, current_page=0, pagination=27): # paggination % 3 == 0 !
 		callback_data = IterCallback(current_page=current_page, action="back").pack()
 		btns.append(InlineKeyboardButton('⬅️', callback_data=callback_data))
 	callback_data = IterCallback(current_page=1, action="back").pack()
-	btns.append(InlineKeyboardButton(f'{current_page+1}/{pages}', callback_data=callback_data)) # Pages 10/12
+	if pages > 1:
+		btns.append(InlineKeyboardButton(f'{current_page+1}/{pages}', callback_data=callback_data)) # Pages 10/12
 	if current_page != pages - 1:
 		callback_data = IterCallback(current_page=current_page+2, action="back").pack()
 		btns.append(InlineKeyboardButton('➡️', callback_data=callback_data))

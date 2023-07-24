@@ -27,7 +27,7 @@ async def text_msg(message: Message, state: FSMContext):
         data["article"] = message.text
         additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
         data = await api.order_create(message.chat.id, data["model_id"], additional)
-    await asyncio.sleep(30)
+    await asyncio.sleep(5)
     await state.finish()
     await message.answer("You are in the main menu", reply_markup=inline.menu())
 
@@ -40,7 +40,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
         data["article"] = None
         additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
         data = await api.order_create(call.message.chat.id, data["model_id"], additional)
-    await asyncio.sleep(30)
+    await asyncio.sleep(5)
     await state.finish()
     await call.message.answer("You are in the main menu", reply_markup=inline.menu())
 
