@@ -62,9 +62,9 @@ def choice_courier(): # Choose a courier for delivery
 	return keyboard
 
 
-def was_deliveried(order_id): # Were you able to pick up your order?
+def was_deliveried(): # Were you able to pick up your order?
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('✅ Yes', callback_data=f"was_deliveried:{order_id}"))
+	keyboard.row(InlineKeyboardButton('✅ Yes', callback_data=f"was_deliveried"))
 	keyboard.row(InlineKeyboardButton('❌ No', callback_data=f"wasnt_deliveried"))
 	return keyboard
 
@@ -131,4 +131,29 @@ def tuple_btns(tuple):
 		keyboard.row(InlineKeyboardButton(i, callback_data=callback_data))
 	callback_data = IterCallback(current_page=0, action="previous_state").pack()
 	keyboard.row(InlineKeyboardButton("↩️ Back", callback_data=callback_data))
+	return keyboard
+
+
+def one_page_iter_btns(dct, pages, current_page=0):
+	keyboard = InlineKeyboardMarkup()
+	btns = []
+	print(dct)
+	
+	for offer_id, string in dct.items():
+		callback_data = IterCallback(current_page=current_page, action=str(offer_id)).pack()
+		keyboard.row(InlineKeyboardButton(string, callback_data=callback_data))
+
+	if current_page > 0:
+		callback_data = IterCallback(current_page=current_page, action="back").pack()
+		btns.append(InlineKeyboardButton("⬅️", callback_data=callback_data))
+	if pages > 1:
+		callback_data = IterCallback(current_page=1, action="back").pack()
+		btns.append(InlineKeyboardButton(f'{current_page+1}/{pages}', callback_data=callback_data)) # Pages 10/12
+	if current_page != pages - 1:
+		callback_data = IterCallback(current_page=current_page+2, action="back").pack()
+		btns.append(InlineKeyboardButton("➡️", callback_data=callback_data))
+	keyboard.add(*btns)
+
+	keyboard.row(InlineKeyboardButton('↩️ Back to menu', callback_data=f"to_menu"))
+
 	return keyboard

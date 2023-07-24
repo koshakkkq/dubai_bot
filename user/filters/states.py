@@ -20,3 +20,7 @@ class CarDetailStates(StatesGroup):
 
 class LanguageStates(StatesGroup):
 	MAIN_STATE = State()
+
+
+class ResponseStates(StatesGroup):
+	PRICE_STATE = State()

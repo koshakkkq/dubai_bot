@@ -104,7 +104,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            "id", "status", "additional", "datetime", "customer", "credential",
+            "id", "status", "additional", "datetime", "customer", "credential", "offer", "offers",
             'model_id','customer', 'credential', 'model', 'customer_id', 'credential_id', 'model_id',
         ]
         depth = 2
@@ -116,6 +116,6 @@ class OrderOfferSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderOffer
-        fields = ('shop', 'shop_id', 'price', 'is_approved', 'order')
+        fields = ('shop', 'shop_id', 'price', 'order')
 
 
