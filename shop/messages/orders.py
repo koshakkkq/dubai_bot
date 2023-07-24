@@ -21,10 +21,12 @@ async def get_active_order_info(order_id, language):
 
     order_info = order_info['data']
 
+
+
     if language == 'eng':
         res_msg = f"Order from <a href='tg://user?id={order_info['customer_id']}'>CLIENT</a>: \n\n" \
                   f'Car model: {order_info["model"]}\n' \
-                  f'Additional information: {order_info["additional"]}\n '\
+                  f'Additional information:\n{order_info["additional"]}\n'\
                   f'Your suggested price: {order_info["price"]}'
         return ('info', res_msg)
 
@@ -35,6 +37,7 @@ async def get_done_order_info(order_id, language):
         return ('does_not_exist', '')
 
     order_info = order_info['data']
+
 
     if language == 'eng':
         res_msg = f"Order from <a href='tg://user?id={order_info['customer_id']}'>CLIENT</a>: \n\n" \

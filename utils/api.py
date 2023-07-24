@@ -39,9 +39,13 @@ async def get_years(brand_id, model): #cars
     return cars
 
 
-async def get_orders(user_id, payed=False):
-    url = f'{SERVER_URL}/order/'
-    data = await make_get_request(url)
+async def get_orders(user_id, status=0): # status 0, 1, 2
+    url = f'{SERVER_URL}/extended/order/'
+    post_data = {
+        'telegram_user_id': user_id,
+        'status': status,
+    }
+    data = await make_post_request(url, post_data)
     if len(data) == 0:
         return None
     else:

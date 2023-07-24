@@ -131,6 +131,8 @@ class OrderCredential( admin.ModelAdmin):
 
     get_courier.admin_order_field = 'courier'
     get_courier.empty_value_display = 'Not a courier'
+
+
 @admin.register(Order)
 class Order( admin.ModelAdmin):
     list_display = ('customer', 'credential', 'model', 'status', 'additional', 'get_time')
@@ -141,16 +143,11 @@ class Order( admin.ModelAdmin):
 
 @admin.register(OrderOffer)
 class OrderOfferAdmin( admin.ModelAdmin):
-    list_display = ('get_shop', 'price', 'get_order', 'order')
+    list_display = ('get_shop', 'price', 'order')
 
     @admin.display(description='shop')
     def get_shop(self, obj):
         return obj.shop.name
-
-    @admin.display(description='order')
-    def get_order(self, obj):
-        return obj.order.product
-
 
 
 @admin.register(CourierRegistrationCode)

@@ -98,7 +98,7 @@ class Shop(models.Model):
 
 class ShopFeedback(models.Model):
 	comment = models.TextField()
-	raiting = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=0)
+	raiting = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=1)
 	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="feedbacks")
 
 	def __str__(self):

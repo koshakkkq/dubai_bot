@@ -17,6 +17,7 @@ urlpatterns = [
     path("order_credentials/", views.OrderCredentialApiView.as_view()),
     path("order/", views.OrderApiView.as_view()),
     path("order_offer/", views.OrderOfferApiView.as_view()),
+    path("extended/order/", views.ExtendedOrderApiView.as_view()),
 
     path("shop_member_status/<int:id>/", views_shop.shop_member_status),
     path('is_code_correct/<int:user_id>/<str:code>/', views_shop.is_code_correct),

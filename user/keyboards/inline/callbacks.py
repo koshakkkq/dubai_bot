@@ -1,6 +1,11 @@
 from dataclasses import dataclass
 
 
+class FalseCallback:
+	def filter(self, *args, **kwargs):
+		return False
+
+
 @dataclass
 class IterCallback:
 	prefix = "iter"
@@ -18,7 +23,7 @@ class IterCallback:
 				raise ValueError
 			return IterCallback(int(current_page), action)
 		except ValueError:
-			return None
+			return FalseCallback()
 
 	def filter(self, current_page=None, action=None):
 		if current_page is None:
