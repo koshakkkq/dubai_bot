@@ -80,18 +80,25 @@ class OrderCreateApiView(APIView):
 
 class ExtendedOrderApiView(OrderApiView):
     def post(self, request):
-        status = request.POST.get("status")
-        telegram_user_id = request.POST.get("telegram_user_id")
-        telegram_user = TelegramUser.objects.get(telegram_id=telegram_user_id)
-        orders = Order.objects.filter(customer=telegram_user, status=status)
-        data = []
-        for order in orders:
-            lst = []
-            for offer in order.offers.all():
-                shop = offer.shop
-                feedback = ShopFeedback.objects.filter(shop=shop)
-                raiting = sum(feedback.values_list("raiting", flat=True)) / len(feedback.all())
-                lst.append({"raiting": raiting, "id": offer.id, "price": offer.price, "shop": 
-                    {"name": shop.name, "location": shop.location, "phone": shop.phone}})
-            data.append({"id": order.id, "offers": lst, "model": str(order.model), "additional": order.additional})
-        return JsonResponse(data, status=200, safe=False)
+        try:
+            status = request.POST.get("status")
+            telegram_user_id = request.POST.get("telegram_user_id")
+            telegram_user = TelegramUser.objects.get(telegram_id=telegram_user_id)
+            orders = Order.objects.filter(customer=telegram_user, status=status)
+            data = []
+            for order in orders:
+                lst = []
+                for offer in order.offers.all():
+                    shop = offer.shop
+                    feedback = ShopFeedback.objects.filter(shop=shop)
+                    if len(feedback.all()) == 0:
+                        raiting = 0
+                    else:
+                        raiting = sum(feedback.values_list("raiting", flat=True)) / len(feedback.all())
+                    lst.append({"raiting": raiting, "id": offer.id, "price": offer.price, "shop":
+                        {"name": shop.name, "location": shop.location, "phone": shop.phone}})
+                data.append({"id": order.id, "offers": lst, "model": str(order.model), "additional": order.additional})
+            return JsonResponse(data, status=200, safe=False)
+        except Exception as e:
+            print(e)
+            return JsonResponse([])
