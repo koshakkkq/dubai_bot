@@ -22,12 +22,12 @@ async def text_msg(message: Message, state: FSMContext):
 
 @dp.message_handler(state=CarDetailStates.ARTICLE_STATE)
 async def text_msg(message: Message, state: FSMContext):
-    await message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 25 seconds you will be redirected to the main menu", reply_markup=None)
+    await message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = message.text
         additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
         data = await api.order_create(message.chat.id, data["model_id"], additional)
-    await asyncio.sleep(30)
+    await asyncio.sleep(5)
     await state.finish()
     await message.answer("You are in the main menu", reply_markup=inline.menu())
 
@@ -35,12 +35,12 @@ async def text_msg(message: Message, state: FSMContext):
 # Callbacks
 @dp.callback_query_handler(lambda call: "user_no_filter" == call.data, state=CarDetailStates.ARTICLE_STATE)
 async def user_no_filter(call: CallbackQuery, state: FSMContext):
-    await call.message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 25 seconds you will be redirected to the main menu", reply_markup=None)
+    await call.message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = None
         additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
         data = await api.order_create(call.message.chat.id, data["model_id"], additional)
-    await asyncio.sleep(30)
+    await asyncio.sleep(5)
     await state.finish()
     await call.message.answer("You are in the main menu", reply_markup=inline.menu())
 
