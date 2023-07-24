@@ -25,7 +25,7 @@ async def text_msg(message: Message, state: FSMContext):
     await message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = message.text
-        additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
+        additional = f"Detail name: {data['detail_name']}\nDetail type: {data['detail_type']}\nArticle: {data['article']}"
         data = await api.order_create(message.chat.id, data["model_id"], additional)
     await asyncio.sleep(5)
     await state.finish()
@@ -38,7 +38,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     await call.message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = None
-        additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
+        additional = f"Detail name: {data['detail_name']}\nDetail type: {data['detail_type']}\nArticle: {data['article']}"
         data = await api.order_create(call.message.chat.id, data["model_id"], additional)
     await asyncio.sleep(5)
     await state.finish()

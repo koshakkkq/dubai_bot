@@ -16,6 +16,8 @@ urlpatterns = [
     path("shop_member/", views.ShopMemberApiView.as_view()),
     path("order_credentials/", views.OrderCredentialApiView.as_view()),
     path("order/", views.OrderApiView.as_view()),
+    path("order/create/", views.OrderCreateApiView.as_view()),
+    path("order/update/", views.OrderUpdateApiView.as_view()),
     path("order_offer/", views.OrderOfferApiView.as_view()),
     path("extended/order/", views.ExtendedOrderApiView.as_view()),
 
@@ -35,7 +37,6 @@ urlpatterns = [
     path('shop_order_info/<int:order_id>/', views_shop.OrderInfo.as_view()),
     path('shop_create_order_offer/', views_shop.CreateOrderOffer.as_view()),
     path('shop_add_order_blacklist/', views_shop.AddShopOrderToBlackList.as_view()),
-    path("order/create/", views.OrderCreateApiView.as_view()),
     path('set_order_status/', views_shop.SetOrderStatus.as_view()),
 
     path('courier_status/<int:user_id>/', views_courier.CourierStatus.as_view()),

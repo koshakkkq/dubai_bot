@@ -36,7 +36,7 @@ async def feedback(call: CallbackQuery, state: FSMContext):
     pages = len(orders)
     order = orders[0]
     text = order["model"] + '\n' + order["additional"]
-    offers = {offer["id"]: f'{offer["price"]} {round(offer["raiting"], 2)}' for offer in order["offers"]}
+    offers = {offer["id"]: f'Price: {offer["price"]}, raiting: {round(offer["raiting"], 2)}' for offer in order["offers"]}
     await call.message.edit_text(text=text, reply_markup=inline.one_page_iter_btns(offers, pages))
     await ResponseStates.PRICE_STATE.set()
 

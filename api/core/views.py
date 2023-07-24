@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
+from django.utils.timezone import now
 
 from core.models import CarBrand
 from core.serializers import *
@@ -102,3 +103,23 @@ class ExtendedOrderApiView(OrderApiView):
         except Exception as e:
             print(e)
             return JsonResponse([])
+
+
+class OrderUpdateApiView(APIView):
+    def post(self, request):
+        try:
+            order_id = request.POST.get("order_id")
+            offer_id = request.POST.get("offer_id")
+            is_delivery = request.POST.get("is_delivery")
+            address = request.POST.get("address")
+            status = request.POST.get("status")
+
+            order = Order.objects.get(id=order_id)
+            order.offer_id = offer_id
+            order.status = status
+            order.credential = OrderCredential.objects.create(address=address, is_delivery=is_delivery)
+            order.datetime = now()
+            order.save()
+            return JsonResponse({'status':'success'}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "error"})
