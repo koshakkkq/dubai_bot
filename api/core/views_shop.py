@@ -71,7 +71,8 @@ class AvailableOrders(APIView):
 
         black_list = ShopOrdersBlacklist.objects.filter(shop_id=shop_id)
 
-        orders = Order.objects.order_by('model').filter(
+
+        orders = Order.objects.filter(
             status=OrderStatus.PENDING,
             model_id__in=available_models).exclude(id__in=black_list.values('order'))
 
@@ -83,6 +84,12 @@ class AvailableOrders(APIView):
         if available_orders_cnt <= skip:
             return JsonResponse({'cnt': available_orders_cnt, 'data':[]}, safe=False)
         limit = min(skip + limit, len(orders))
+
+        orders = sorted(
+            orders,
+            key=lambda x: x.model.__str__(),
+        )
+
         orders = orders[skip:limit]
         res = {'cnt':available_orders_cnt, 'data': []}
         for i in orders:
