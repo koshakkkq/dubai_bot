@@ -12,7 +12,8 @@ eng_messages = {
 	'available_orders':'Available orders for you',
 	'courier_pick_order_prefix':"You've picked order!\n\n",
 	'courier_active_order_prefix':"You must deliver this order.\n\n",
-	'courier_done_order_prefix':"This order is !\n\n",
+	'courier_done_order_prefix':"This order is done!\n\n",
+	'courier_cancel_order_prefix':"This order is cancel!\n\n",
 	'active_orders': 'You must deliver this orders.',
 	'done_orders': 'This orders are cancelled or done.',
 }

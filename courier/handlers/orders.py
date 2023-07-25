@@ -49,7 +49,7 @@ class OrderPaginator:
 
         msg = self.msgs[language]
 
-        if edit_msg == True:
+        if edit_msg is True:
             await callback.message.edit_text(text=msg, reply_markup=keyboard)
         else:
             await callback.message.edit_reply_markup(reply_markup=keyboard)
@@ -64,7 +64,7 @@ class OrderPaginator:
 
         await self.get_current_page(state, int(command), courier_id=courier_id)
 
-        await self.show_page(callback, state, language, courier_id)
+        await self.show_page(callback, state, language, courier_id, False)
 
     async def get_current_page(self, state, command = 0,courier_id=-1):
         state_page_key = f'{self.prefix}_page'
@@ -188,3 +188,42 @@ async def reject_available_order(callback: types.CallbackQuery, state: FSMContex
     await courier.logic.add_to_blacklist(order_id=order_id, courier_id=courier_id)
 
     await available_orders_paginator.show_page(callback, state, language, courier_id)
+
+
+@dp.callback_query_handler(
+	filters.Text(startswith="courier_active_orders_get_"),
+	state="*",
+)
+@decorators.picked_language
+@decorators.is_courier
+async def active_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1,):
+    order_id = callback.data.split('_')[-1]
+
+    msg = await courier.messages.get_couriers_order_info_msg(order_id, language, 'courier_active_order_prefix')
+
+    keyboard = courier.keyboards.keyboards[language]['active_orders_finish']
+
+    await callback.message.edit_text(text=msg, reply_markup=keyboard, parse_mode="HTML")
+    await callback.answer()
+
+    await state.reset_state(with_data=False)
+
+
+@dp.callback_query_handler(
+	filters.Text(startswith="courier_done_orders_get_"),
+	state="*",
+)
+@decorators.picked_language
+@decorators.is_courier
+async def active_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1,):
+    order_id = callback.data.split('_')[-1]
+
+    msg = await courier.messages.get_couriers_order_info_msg(order_id, language, 'courier_done_order_prefix')
+
+    keyboard = courier.keyboards.keyboards[language]['done_orders_finish']
+
+    await callback.message.edit_text(text=msg, reply_markup=keyboard, parse_mode="HTML")
+    await callback.answer()
+
+    await state.reset_state(with_data=False)
+

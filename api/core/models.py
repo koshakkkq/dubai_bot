@@ -150,7 +150,7 @@ class OrderOffer(models.Model):
 	order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='offers')
 
 	def __str__(self):
-		return f"From shop: {self.shop}, price: {self.price}"
+		return f"Id: {self.id}, from shop: {self.shop}, price: {self.price}"
 
 	class Meta:
 		verbose_name = "Order offer"
@@ -166,7 +166,7 @@ class Order(models.Model):
 	datetime = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
-		return f"Order from: {self.customer}| Order status: {self.status}"
+		return f"Id:{self.id}, order from: {self.customer}| Order status: {self.status}"
 
 	class Meta:
 		verbose_name = "Order"

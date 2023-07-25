@@ -121,7 +121,7 @@ class ActiveOrders(APIView):
         for i in orders:
             res['data'].append({
                 'id': i.id,
-                'title': f'{i.model}, Price: {i.offer.price} DH',
+                'title': f'Id: {i.id}, {i.model}, Price: {i.offer.price} DH',
             })
         return JsonResponse(res)
 
@@ -145,7 +145,7 @@ class DoneOrders(APIView):
         for i in orders:
             res['data'].append({
                 'id': i.id,
-                'title': f'{i.model}, Price: {i.offer.price} DH, ',
+                'title': f'Id: {i.id}, {i.model}, Price: {i.offer.price} DH, ',
             })
             if i.status == OrderStatus.DONE:
                 res['data'][-1]['title'] += 'Status: done'
