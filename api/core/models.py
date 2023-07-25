@@ -158,7 +158,7 @@ class OrderOffer(models.Model):
 
 class Order(models.Model):
 	customer = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name="orders")
-	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True)
+	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True, db_index=True)
 	model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="orders")
 	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	additional = models.TextField()
@@ -193,6 +193,10 @@ class ShopOrdersBlacklist(models.Model):
 	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 	order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
+class CourierOrdersBlacklist(models.Model):
+	user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
+	order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
 class CourierRegistrationCode(models.Model):
 	code = models.TextField()
 	used = models.BooleanField(default=False)
@@ -202,8 +206,12 @@ class CourierRegistrationCode(models.Model):
 
 
 @receiver(pre_delete, sender=TelegramUser)
-def pre_delete(sender, instance: TelegramUser, *args, **kwargs):
+def wrapper(sender, instance: TelegramUser, *args, **kwargs):
 	tg_id = instance.telegram_id
 	CourierRegistrationCode.objects.filter(user=tg_id).delete()
-	courier = instance.courier
-	#courier.delete()
+	ShopRegistrationCode.objects.filter(user=tg_id).delete()
+
+@receiver(pre_delete, sender=ShopMember)
+def wrapper(sender, instance: ShopMember, *args, **kwargs):
+	tg_id = instance.user.telegram_id
+	ShopRegistrationCode.objects.filter(user=tg_id).delete()
