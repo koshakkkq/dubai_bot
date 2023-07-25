@@ -20,7 +20,8 @@ class CourierStates(StatesGroup):
 
 
 @decorators.picked_language
-async def menu_msg_handler(message: types.Message, state:FSMContext, language= 'eng'):
+@decorators.is_courier
+async def menu_msg_handler(message: types.Message, state:FSMContext, language= 'eng', courier_id=-1):
 	await state.reset_data()
 	await state.set_state(CourierStates.in_menu.state)
 

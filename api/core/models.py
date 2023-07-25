@@ -145,11 +145,11 @@ class OrderCredential(models.Model):
 
 class OrderOffer(models.Model):
 	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="offers")
-	price = models.IntegerField()
+	price = models.FloatField()
 	order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='offers')
 
 	def __str__(self):
-		return f"From shop: {self.shop}, price: {self.price}"
+		return f"Id: {self.id}, from shop: {self.shop}, price: {self.price}"
 
 	class Meta:
 		verbose_name = "Order offer"
@@ -158,7 +158,7 @@ class OrderOffer(models.Model):
 
 class Order(models.Model):
 	customer = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name="orders")
-	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True)
+	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True, db_index=True)
 	model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="orders")
 	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	additional = models.TextField()
@@ -166,7 +166,7 @@ class Order(models.Model):
 	datetime = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
-		return f"Order from: {self.customer}| Order status: {self.status}"
+		return f"Id:{self.id}, order from: {self.customer}| Order status: {self.status}"
 
 	class Meta:
 		verbose_name = "Order"
@@ -193,6 +193,10 @@ class ShopOrdersBlacklist(models.Model):
 	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 	order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
+class CourierOrdersBlacklist(models.Model):
+	user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
+	order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
 class CourierRegistrationCode(models.Model):
 	code = models.TextField()
 	used = models.BooleanField(default=False)
@@ -202,8 +206,12 @@ class CourierRegistrationCode(models.Model):
 
 
 @receiver(pre_delete, sender=TelegramUser)
-def pre_delete(sender, instance: TelegramUser, *args, **kwargs):
+def wrapper(sender, instance: TelegramUser, *args, **kwargs):
 	tg_id = instance.telegram_id
 	CourierRegistrationCode.objects.filter(user=tg_id).delete()
-	courier = instance.courier
-	#courier.delete()
+	ShopRegistrationCode.objects.filter(user=tg_id).delete()
+
+@receiver(pre_delete, sender=ShopMember)
+def wrapper(sender, instance: ShopMember, *args, **kwargs):
+	tg_id = instance.user.telegram_id
+	ShopRegistrationCode.objects.filter(user=tg_id).delete()

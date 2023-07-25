@@ -77,7 +77,6 @@ async def get_available_order_info(callback: types.CallbackQuery, state: FSMCont
     order_id = callback.data.split('_')[-1]
     await state.update_data(shop_order_id=order_id)
     msg = await shop.messages.get_available_order_info_message(order_id, language)
-    print(msg)
     if msg[0] == 'does_not_exist':
         msg = shop.keyboards.keyboards[language]['err_on_server']
         keyboard = shop.keyboards.keyboards[language]['shop_available_order_finish']
@@ -97,15 +96,43 @@ async def get_available_order_info(callback: types.CallbackQuery, state: FSMCont
 @decorators.is_member
 async def set_order_price(message: types.Message, state:FSMContext, language='eng', shop_id = -1):
 
+    price = 0
     data = await state.get_data()
+    order_id = data['shop_order_id']
+    try:
+        price = message.text
+        price.replace(',', '.')
+        price = float(price)
+
+        if price >= 36728.98 or price <= 3.67:
+            raise Exception()
+    except Exception as e:
+        print(e)
+
+        msg_to_add = shop.messages.messages[language]['err_in_price']
+
+        msg = await shop.messages.get_available_order_info_message(order_id, language)
+
+        if msg[0] == 'does_not_exist':
+            msg = shop.keyboards.keyboards[language]['err_on_server']
+            keyboard = shop.keyboards.keyboards[language]['shop_available_order_finish']
+            await message.answer(msg, keyboard)
+            return
+        msg = msg[1]
+
+        msg = msg_to_add + msg
+        keyboard = shop.keyboards.keyboards[language]['shop_available_order_finish']
+
+        await message.answer(text=msg, reply_markup=keyboard)
+
+        return
 
     order_id = data['shop_order_id']
 
-    price = message.text
-    
+
     await shop.logic.create_order_offer(shop_id=shop_id, price=price, order_id=order_id)
 
-    await state.reset_state()
+    await state.reset_state(with_data=False)
 
     msg = shop.messages.messages[language]['shop_available_order_finish']
 
@@ -269,7 +296,6 @@ async def change_done_orders_page(callback: types.CallbackQuery, state: FSMConte
     cur_page = data.get('shop_done_orders_page', 0)
     cur_page += command
     await state.update_data(shop_done_orders_page=cur_page)
-    print(cur_page)
     await show_done_orders(callback, state, language, shop_id, cur_page, edit_msg=False)
 
 

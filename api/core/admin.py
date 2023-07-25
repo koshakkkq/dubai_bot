@@ -122,6 +122,10 @@ class ShopMemberAdmin( admin.ModelAdmin):
 class ShopOrdersBlacklistAdmin(admin.ModelAdmin):
     list_display = ('shop', 'order')
 
+@admin.register(CourierOrdersBlacklist)  # todo удалить для клиента
+class CourierOrdersBlacklistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'order')
+
 @admin.register(OrderCredential)
 class OrderCredential( admin.ModelAdmin):
     list_display = ('address', 'get_courier', 'is_delivery', 'phone')
@@ -134,13 +138,33 @@ class OrderCredential( admin.ModelAdmin):
 
 
 @admin.register(Order)
-class Order( admin.ModelAdmin):
-    list_display = ('customer', 'credential', 'model', 'status', 'additional', 'get_time')
+class OrderAdmin( admin.ModelAdmin):
+    list_display = ('id','customer', 'credential', 'model', 'status', 'additional', 'get_time')
 
     @admin.display(description='Order creation')
     def get_time(self, obj):
         return obj.datetime.strftime("%d %b %Y %H:%M:%S")
 
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(OrderAdmin, self).get_form(request, obj, **kwargs)
+
+        order = obj.offer
+
+        blacklist = Order.objects.exclude(offer=None).values('offer_id')
+
+
+        offers = OrderOffer.objects.exclude(id__in=blacklist)
+
+        if order is not None:
+            try:
+                offer_query = OrderOffer.objects.filter(id=order.id)
+                offers |= offer_query
+            except Exception as e:
+                pass
+        form.base_fields['offer'].queryset = offers
+
+        return form
 @admin.register(OrderOffer)
 class OrderOfferAdmin( admin.ModelAdmin):
     list_display = ('get_shop', 'price', 'order')
