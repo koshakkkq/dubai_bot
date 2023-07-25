@@ -1,5 +1,6 @@
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
@@ -10,6 +11,7 @@ from core.serializers import *
 from .models import *
 from .mixins import *
 import json
+from .constants import VERBOSE_ORDER_TYPE
 
 
 class CourierApiView(APIView, DataMixin):
@@ -67,6 +69,20 @@ class OrderOfferApiView(APIView, DataMixin):
     model = OrderOffer
 
 
+class OrderDetailApiView(APIView):
+    serializer_class = OrderSerializer
+    model = Order
+
+    def get(self, request, id):
+        try:
+            order = Order.objects.get(id=id)
+            serializer = self.serializer_class(order).data
+            return Response(serializer, status=200)
+        except Exception as e:
+            print(e)
+        return JsonResponse({})
+
+
 class OrderCreateApiView(APIView):
     def post(self, request: WSGIRequest):
         telegram_user_id = request.POST.get("telegram_user_id")
@@ -98,7 +114,11 @@ class ExtendedOrderApiView(OrderApiView):
                         raiting = sum(feedback.values_list("raiting", flat=True)) / len(feedback.all())
                     lst.append({"raiting": raiting, "id": offer.id, "price": offer.price, "shop":
                         {"id": shop.id, "name": shop.name, "location": shop.location, "phone": shop.phone}})
-                data.append({"id": order.id, "offers": lst, "model": str(order.model), "additional": order.additional})
+                delta = {"id": order.id, "status": {"id": order.status, "name": VERBOSE_ORDER_TYPE[order.status]}, 
+                         "offers": lst, "model": str(order.model), "additional": order.additional}
+                if int(status) > 0:
+                    delta["offer"] = OrderOfferSerializer(order.offer).data
+                data.append(delta)
             return JsonResponse(data, status=200, safe=False)
         except Exception as e:
             print(e)
@@ -137,3 +157,10 @@ class ShopFeedbackCreateApiView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({"status": "error"})
+
+
+def order_increase(request, order_id):
+    order = Order.objects.get(id=order_id)
+    order.status = order.status + 1
+    order.save()
+    return JsonResponse({})

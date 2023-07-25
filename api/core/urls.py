@@ -16,10 +16,12 @@ urlpatterns = [
     path("shop_member/", views.ShopMemberApiView.as_view()),
     path("order_credentials/", views.OrderCredentialApiView.as_view()),
     path("order/", views.OrderApiView.as_view()),
+    path("order/<int:id>/", views.OrderDetailApiView.as_view()),
     path("order/create/", views.OrderCreateApiView.as_view()),
     path("order/update/", views.OrderUpdateApiView.as_view()),
     path("order_offer/", views.OrderOfferApiView.as_view()),
     path("extended/order/", views.ExtendedOrderApiView.as_view()),
+    path("order/increase/<int:order_id>/", views.order_increase),
 
     path("shop_member_status/<int:id>/", views_shop.shop_member_status),
     path('is_code_correct/<int:user_id>/<str:code>/', views_shop.is_code_correct),

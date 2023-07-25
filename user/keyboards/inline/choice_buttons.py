@@ -7,6 +7,7 @@ def menu():
 	keyboard.row(InlineKeyboardButton('🔍 Find a spare part', callback_data=f"find_spare_part")) # strong
 	keyboard.row(InlineKeyboardButton('🆘 How to use the bot', callback_data=f"help")) # strong
 	keyboard.row(InlineKeyboardButton('🎯 Your responses', callback_data=f"feedback")) # strong
+	keyboard.row(InlineKeyboardButton('💼 My orders', callback_data=f"my_orders")) # strong
 	keyboard.row(InlineKeyboardButton('🔐 Store menu.', callback_data=f"register_store"))
 	keyboard.row(InlineKeyboardButton('🚚 Courier menu.', callback_data=f"register_courier"))
 	return keyboard
@@ -62,10 +63,10 @@ def choice_courier(): # Choose a courier for delivery
 	return keyboard
 
 
-def was_deliveried(shop_id): # Were you able to pick up your order?
+def was_deliveried(shop_id, order_id): # Were you able to pick up your order?
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('✅ Yes', callback_data=f"was_deliveried:{shop_id}"))
-	keyboard.row(InlineKeyboardButton('❌ No', callback_data=f"wasnt_deliveried:{shop_id}"))
+	keyboard.row(InlineKeyboardButton('✅ Yes', callback_data=f"was_deliveried:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('❌ No', callback_data=f"wasnt_deliveried:{shop_id}:{order_id}"))
 	return keyboard
 
 
@@ -137,8 +138,6 @@ def tuple_btns(tuple):
 def one_page_iter_btns(dct, pages, current_page=0):
 	keyboard = InlineKeyboardMarkup()
 	btns = []
-	print(dct)
-	
 	for offer_id, string in dct.items():
 		callback_data = IterCallback(current_page=current_page, action=str(offer_id)).pack()
 		keyboard.row(InlineKeyboardButton(string, callback_data=callback_data))
@@ -153,7 +152,24 @@ def one_page_iter_btns(dct, pages, current_page=0):
 		callback_data = IterCallback(current_page=current_page+2, action="back").pack()
 		btns.append(InlineKeyboardButton("➡️", callback_data=callback_data))
 	keyboard.add(*btns)
-
 	keyboard.row(InlineKeyboardButton('↩️ Back to menu', callback_data=f"to_menu"))
+	return keyboard
 
+
+def my_order_btns(orders, current_page=0):
+	pages = len(orders)
+	order = orders[current_page]
+	shop_id = order['offer']["shop"]
+	keyboard = InlineKeyboardMarkup()
+	print(order['status'])
+	if order['status']['id'] == 1:
+		keyboard.row(InlineKeyboardButton("✅ received", callback_data=f"was_deliveried:{shop_id}:{order['id']}"))
+	btns = []
+	if current_page > 0:
+		btns.append(InlineKeyboardButton("⬅️", callback_data=f"myorder_back:{current_page}"))
+	if pages > 1:
+		btns.append(InlineKeyboardButton(f'{current_page+1}/{pages}', callback_data=f'myorder_back:1')) # Pages 10/12
+	if current_page != pages - 1:
+		btns.append(InlineKeyboardButton("➡️", callback_data=f'myorder_back:{current_page+2}'))
+	keyboard.add(*btns)
 	return keyboard

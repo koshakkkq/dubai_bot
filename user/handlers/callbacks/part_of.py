@@ -4,7 +4,7 @@ from user.keyboards import inline
 from user.keyboards import reply
 from aiogram.dispatcher import FSMContext
 from user.filters.states import ApplicationStates
-from user.utils import send_message_of_interest
+from user.utils import send_message_of_interest, text_for_order
 from utils import api
 
 
@@ -22,7 +22,8 @@ async def to_delivery_method(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: "was_deliveried" in call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
-	_, shop_id = call.data.split(":")
+	_, shop_id, order_id = call.data.split(":")
+	await api.order_status_increase(order_id)
 	await call.message.edit_text("We're glad you got it all!\nPlease rate the quality of service ❤️\nSEND NUMBERS FROM 1 TO 5 ⤵️", reply_markup=inline.mark_keyboard(shop_id))
 
 
@@ -32,8 +33,28 @@ async def price_of(call: CallbackQuery, state: FSMContext):
 	await ApplicationStates.MAIN_STATE.set()
 
 
+@dp.callback_query_handler(lambda call: "myorder_back" in call.data)
+async def user_no_filter(call: CallbackQuery, state: FSMContext):
+    _, current_page = call.data.split(":")
+    current_page = int(current_page) - 1
+
+    orders = []
+    delta = await api.get_orders(call.message.chat.id, 1)
+    if not delta is None:
+        orders += delta
+    delta = await api.get_orders(call.message.chat.id, 2)
+    if not delta is None:
+        orders += delta
+    delta = await api.get_orders(call.message.chat.id, 3)
+    if not delta is None:
+        orders += delta
+    text = await text_for_order(orders[current_page]["id"])
+    await call.message.edit_text(text=text, reply_markup=inline.my_order_btns(orders, current_page))
+
+
 @dp.callback_query_handler(lambda call: "mark" in call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
 	_, mark, shop_id = call.data.split(":")
 	await api.shop_feedback_create(shop_id, mark)
 	await call.message.edit_text("Thank you", reply_markup=None)
+	await call.message.answer("Main menu", reply_markup=inline.menu())

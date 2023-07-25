@@ -87,3 +87,17 @@ async def shop_feedback_create(shop_id, mark, comment=None): # Кто убил �
     }
     data = await make_post_request(url, post_data)
     return data
+
+
+async def get_order(order_id):
+    url = f"{SERVER_URL}/order/{order_id}/"
+    data = await make_get_request(url)
+    if len(data) == 0:
+        return None
+    else:
+        return data
+
+
+async def order_status_increase(order_id): # rec
+    url = f"{SERVER_URL}/order/increase/{order_id}/"
+    data = await make_get_request(url)

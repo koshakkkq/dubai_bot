@@ -73,7 +73,7 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
     status = await api.order_update(order_id, offer_id, status=1, is_delivery=False)
     await call.message.edit_text("Congratulations!\n\nAddress: ...\nYour order number: " + str(state_data["order_id"]), 
         reply_markup=None)
-    await send_message_of_interest(call.message.chat.id, shop_id)
+    await send_message_of_interest(call.message.chat.id, shop_id, order_id)
 
 
 @dp.callback_query_handler(lambda call: "delivery" == call.data, state=ResponseStates.PRICE_STATE)
@@ -117,4 +117,4 @@ async def successful(message: types.Message, state: FSMContext):
     status = await api.order_update(order_id, offer_id, status=1, address=address, is_delivery=True)
     await message.answer("Congratulations!\nTomorrow your goods will be delivered to you", reply_markup=None)
     await state.finish()
-    await send_message_of_interest(message.chat.id, order_id)
+    await send_message_of_interest(message.chat.id, order_id, order_id)

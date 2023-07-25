@@ -5,6 +5,7 @@ from user.keyboards import inline
 from aiogram.dispatcher import FSMContext
 from user.filters.states import CarDetailStates, ResponseStates
 from utils import api
+from user.utils import text_for_order
 
 
 @dp.callback_query_handler(
@@ -27,6 +28,26 @@ async def help(call: CallbackQuery, state: FSMContext):
 async def become_courier(call: CallbackQuery, state: FSMContext):
     await state.finish()
     await call.message.edit_text("*courier registration form*", reply_markup=inline.to_menu())
+
+
+@dp.callback_query_handler(lambda call: "my_orders" == call.data, state="*")
+async def become_courier(call: CallbackQuery, state: FSMContext):
+    await state.finish()
+    orders = []
+    delta = await api.get_orders(call.message.chat.id, 1)
+    if not delta is None:
+        orders += delta
+    delta = await api.get_orders(call.message.chat.id, 2)
+    if not delta is None:
+        orders += delta
+    delta = await api.get_orders(call.message.chat.id, 3)
+    if not delta is None:
+        orders += delta
+    if orders is None:
+        await call.message.edit_text(text="No orders", reply_markup=inline.to_menu())
+    else:
+        text = await text_for_order(orders[0]['id'])
+        await call.message.edit_text(text=text, reply_markup=inline.my_order_btns(orders))
 
 
 @dp.callback_query_handler(lambda call: "feedback" == call.data, state="*")
