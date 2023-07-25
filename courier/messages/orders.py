@@ -1,5 +1,6 @@
 import courier.orders
 from courier.logic import *
+import courier.messages
 
 
 async def get_chosen_order_info(user_id, order_id, language):
@@ -57,6 +58,33 @@ async def set_order_courier_msg(courier_id,order_id ,language, prefix='courier_p
               f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
               f"Shop address: {data['shop_address']}\n" \
               f'Client address: {data["client_address"]}'
+
+
+        return msg
+
+async def get_couriers_order_info_msg(order_id, language, prefix):
+    data = await get_order_information(order_id)
+    data = data['data']
+
+    client_id = data['tg_id']
+
+    prefix_msg = ''
+
+    if prefix == 'courier_done_order_prefix':
+        if data['status'] == 'done':
+            prefix_msg = courier.messages.messages[language]['courier_done_order_prefix']
+        else:
+            prefix_msg = courier.messages.messages[language]['courier_cancel_order_prefix']
+    else:
+        prefix_msg = courier.messages.messages[language][prefix]
+
+    if language == 'eng':
+
+        msg = f"{prefix_msg}" \
+              f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
+              f"Shop address: {data['shop_address']}\n" \
+              f'Client address: {data["client_address"]}\n'\
+              f'Order id: {data["id"]}'
 
 
         return msg

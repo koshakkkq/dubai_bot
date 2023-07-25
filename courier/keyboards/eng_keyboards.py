@@ -54,3 +54,15 @@ available_order_finish = [
 ]
 
 eng_keyboards['available_order_finish'] = InlineKeyboardMarkup(inline_keyboard=available_order_finish)
+
+
+active_orders_finish = [
+[InlineKeyboardButton(text=f"↩️ Back", callback_data=f"courier_active_orders_begin")],
+]
+eng_keyboards['active_orders_finish'] = InlineKeyboardMarkup(inline_keyboard=active_orders_finish)
+
+
+done_orders_finish = [
+[InlineKeyboardButton(text=f"↩️ Back", callback_data=f"courier_done_orders_begin")],
+]
+eng_keyboards['done_orders_finish'] = InlineKeyboardMarkup(inline_keyboard=done_orders_finish)

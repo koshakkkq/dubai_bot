@@ -86,6 +86,6 @@ def get_real_page(page, buttons_on_page, cnt):
 
 
 async def get_active_orders_page(page, courier_id):
-    return await get_couriers_orders_page(page, courier_id, OrderStatus.ACTIVE)
+    return await get_couriers_orders_page(page, OrderStatus.ACTIVE,courier_id, )
 async def get_done_orders_page(page, courier_id):
-    return await get_couriers_orders_page(page, courier_id, OrderStatus.DONE)
+    return await get_couriers_orders_page(page, OrderStatus.DONE, courier_id, )

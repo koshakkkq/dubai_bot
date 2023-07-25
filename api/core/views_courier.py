@@ -128,7 +128,7 @@ class OrderInfo(APIView):
 
     @staticmethod
     def get_order_info(order_id):
-        order = Order.objects.get(id=order_id, credential__courier=None, status=OrderStatus.ACTIVE)
+        order = Order.objects.get(id=order_id)
 
         status = ''
         for i in OrderStatus.__dict__:
@@ -137,6 +137,7 @@ class OrderInfo(APIView):
                 break
 
         return {
+            'id': order.id,
             'shop_address': order.offer.shop.location,
             'client_address': order.credential.address,
             'tg_id': order.customer.telegram_id,
