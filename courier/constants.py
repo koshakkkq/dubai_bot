@@ -1,4 +1,4 @@
-order_buttons_on_page = 2
+order_buttons_on_page = 10
 
 class OrderStatus:
 	PENDING = 0

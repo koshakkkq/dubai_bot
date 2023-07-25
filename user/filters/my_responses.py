@@ -89,6 +89,7 @@ async def text_msg(message: Message, state: FSMContext):
     state_data = await state.get_data()
     price = int(state_data["price"])
     price = types.LabeledPrice(label="Test", amount=price*100)
+
     await bot.send_invoice(
         message.chat.id,
         title="TEST",

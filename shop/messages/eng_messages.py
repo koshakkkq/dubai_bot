@@ -15,6 +15,7 @@ eng_messages = {
     'creation_success': 'Click button to go into shop menu.',
     'shop_done_orders': 'Done and canceled orders.',
     'err_on_server': 'Sorry, there was an error on the server, please contact administration.',
+    'err_in_price': "Your price is invalid, price must be number,it must be greater than 3,67 and less than 36728,98\nValid price examples:\n 127\n 127.0\n 127,0\n\n",
     'ok': 'Ok.',
 
     'shop_change_name': 'Enter new name.',

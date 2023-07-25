@@ -56,6 +56,7 @@ async def set_order_courier_msg(courier_id,order_id ,language, prefix='courier_p
     if language == 'eng':
         msg = f"{prefix_msg}" \
               f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
+              f'User phone: {data["phone"]}\n' \
               f"Shop address: {data['shop_address']}\n" \
               f'Client address: {data["client_address"]}'
 
@@ -65,6 +66,8 @@ async def set_order_courier_msg(courier_id,order_id ,language, prefix='courier_p
 async def get_couriers_order_info_msg(order_id, language, prefix):
     data = await get_order_information(order_id)
     data = data['data']
+
+    print(data)
 
     client_id = data['tg_id']
 
@@ -82,6 +85,7 @@ async def get_couriers_order_info_msg(order_id, language, prefix):
 
         msg = f"{prefix_msg}" \
               f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
+              f'User phone: {data["phone"]}\n' \
               f"Shop address: {data['shop_address']}\n" \
               f'Client address: {data["client_address"]}\n'\
               f'Order id: {data["id"]}'

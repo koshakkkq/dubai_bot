@@ -136,12 +136,19 @@ class OrderInfo(APIView):
                 status = i
                 break
 
+        phone = order.credential.phone
+
+        if phone == None:
+            phone = '-'
+
+
         return {
             'id': order.id,
             'shop_address': order.offer.shop.location,
             'client_address': order.credential.address,
             'tg_id': order.customer.telegram_id,
             'status': status,
+            'phone': phone,
         }
 
     def post(self,request, order_id):
