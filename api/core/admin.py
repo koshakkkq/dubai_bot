@@ -122,6 +122,10 @@ class ShopMemberAdmin( admin.ModelAdmin):
 class ShopOrdersBlacklistAdmin(admin.ModelAdmin):
     list_display = ('shop', 'order')
 
+@admin.register(CourierOrdersBlacklist)  # todo удалить для клиента
+class CourierOrdersBlacklistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'order')
+
 @admin.register(OrderCredential)
 class OrderCredential( admin.ModelAdmin):
     list_display = ('address', 'get_courier', 'is_delivery', 'phone')
@@ -135,7 +139,7 @@ class OrderCredential( admin.ModelAdmin):
 
 @admin.register(Order)
 class Order( admin.ModelAdmin):
-    list_display = ('customer', 'credential', 'model', 'status', 'additional', 'get_time')
+    list_display = ('id','customer', 'credential', 'model', 'status', 'additional', 'get_time')
 
     @admin.display(description='Order creation')
     def get_time(self, obj):

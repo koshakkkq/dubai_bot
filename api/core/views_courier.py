@@ -83,3 +83,121 @@ class CourierInfo(APIView):
         courier.save()
 
         return JsonResponse({})
+
+
+class AvailableOrders(APIView):
+    def get(self, request, courier_id, skip, limit):
+
+        user = TelegramUser.objects.get(courier_id=courier_id)
+
+
+        blacklist = CourierOrdersBlacklist.objects.filter(user=user).values('order')
+
+
+        orders = Order.objects.filter(status=OrderStatus.ACTIVE, credential__is_delivery=True,credential__courier=None,
+                                      ).exclude(id__in=blacklist)
+
+        orders_cnt = len(orders)
+        if orders_cnt <= skip:
+            return JsonResponse({'cnt': orders_cnt, 'data': []}, safe=False)
+
+
+        orders = sorted(
+            orders,
+            key= lambda x: x.model.__str__(),
+        )
+
+
+        limit = min(skip + limit, len(orders))
+
+        orders = orders[skip:limit]
+
+        res = {'cnt': orders_cnt, 'data': []}
+        for i in orders:
+            res['data'].append({
+                'id': i.id,
+                'title': f'Id: {i.id}, {i.model.__str__()}  ',
+            })
+
+        return JsonResponse(res)
+
+
+class OrderInfo(APIView):
+    def get(self, request, order_id):
+        return JsonResponse({'status':True, 'data':self.get_order_info(order_id)})
+
+    @staticmethod
+    def get_order_info(order_id):
+        order = Order.objects.get(id=order_id, credential__courier=None, status=OrderStatus.ACTIVE)
+
+        status = ''
+        for i in OrderStatus.__dict__:
+            if OrderStatus.__dict__[i] == order.status:
+                status = i
+                break
+
+        return {
+            'shop_address': order.offer.shop.location,
+            'client_address': order.credential.address,
+            'tg_id': order.customer.telegram_id,
+            'status': status,
+        }
+
+    def post(self,request, order_id):
+        try:
+
+            order_data = self.get_order_info(order_id)
+            courier_id = request.POST['courier_id']
+
+            order = Order.objects.get(id=order_id, credential__courier=None, status=OrderStatus.ACTIVE)
+
+            courier = Courier.objects.get(id=courier_id)
+
+            order.credential.courier = courier
+
+            order.credential.save()
+
+            return JsonResponse({'status': True, 'data': order_data})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'status':False})
+
+
+class AddOrderToCourierBlacklist(APIView):
+    def get(self, request, order_id, courier_id):
+
+        user = TelegramUser.objects.get(courier_id=courier_id)
+
+        CourierOrdersBlacklist.objects.create(user=user, order_id=order_id)
+
+        return JsonResponse({'status':False})
+
+
+class CouriersOrders(APIView):
+    def get(self, request, courier_id, status, skip, limit):
+        if status == OrderStatus.ACTIVE:
+            orders = Order.objects.filter(status=status, credential__courier_id=courier_id).order_by('id')
+        else:
+            statuses = [OrderStatus.DONE, OrderStatus.CANCELED]
+            orders = Order.objects.filter(status__in=statuses, credential__courier_id=courier_id).order_by('id')
+
+
+        orders_cnt = len(orders)
+        if orders_cnt <= skip:
+            return JsonResponse({'cnt': orders_cnt, 'data': []}, safe=False)
+
+        limit = min(skip + limit, len(orders))
+
+        orders = orders[skip:limit]
+
+        data = []
+
+        for i in orders:
+            data.append({
+                'id': i.id,
+                'title': f'Id: {i.id}, {i.model.__str__()}',
+            })
+
+        return JsonResponse({'cnt': orders_cnt, 'data': data})
+
+
