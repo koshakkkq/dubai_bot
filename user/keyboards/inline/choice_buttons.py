@@ -172,4 +172,5 @@ def my_order_btns(orders, current_page=0):
 	if current_page != pages - 1:
 		btns.append(InlineKeyboardButton("➡️", callback_data=f'myorder_back:{current_page+2}'))
 	keyboard.add(*btns)
+	keyboard.row(InlineKeyboardButton('↩️ Back to menu', callback_data=f"to_menu"))
 	return keyboard
