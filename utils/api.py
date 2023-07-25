@@ -61,3 +61,29 @@ async def order_create(user_id, model_id, additional):
     }
     data = await make_post_request(url, post_data)
     return data
+
+
+async def order_update(order_id, offer_id, status, is_delivery=False, address=None):
+    url = f"{SERVER_URL}/order/update/"
+    post_data = {
+        'order_id': order_id,
+        'offer_id': offer_id,
+        "address": address,
+        "status": status,
+        "is_delivery": is_delivery,
+    }
+    data = await make_post_request(url, post_data)
+    return data
+
+
+async def shop_feedback_create(shop_id, mark, comment=None): # Кто убил Марка???
+    if comment is None:
+        comment = f"Mark: {mark}"
+    url = f"{SERVER_URL}/shop/feedback/create/"
+    post_data = {
+        'shop_id': shop_id,
+        'mark': mark,
+        "comment": comment,
+    }
+    data = await make_post_request(url, post_data)
+    return data

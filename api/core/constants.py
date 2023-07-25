@@ -1,4 +1,3 @@
-
 class OrderStatus:
     PENDING = 0
     ACTIVE = 1

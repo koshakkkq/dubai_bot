@@ -11,7 +11,6 @@ from utils.constants import PART_TYPES
 from user.keyboards.inline.callbacks import IterCallback
 
 
-
 @dp.message_handler(state=CarDetailStates.DETAIL_NAME_STATE)
 async def text_msg(message: Message, state: FSMContext):
     await message.answer(f'6. Write the article \n*if it is not there, click "NO🚫"', reply_markup=inline.no_btn())
@@ -25,7 +24,7 @@ async def text_msg(message: Message, state: FSMContext):
     await message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = message.text
-        additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
+        additional = f"Detail name: {data['detail_name']}\nDetail type: {data['detail_type']}\nArticle: {data['article']}"
         data = await api.order_create(message.chat.id, data["model_id"], additional)
     await asyncio.sleep(5)
     await state.finish()
@@ -38,7 +37,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     await call.message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = None
-        additional = f"Detail name: {data['detail_name']}\n Detail type: {data['detail_type']}\nArticle: {data['article']}"
+        additional = f"Detail name: {data['detail_name']}\nDetail type: {data['detail_type']}\nArticle: {data['article']}"
         data = await api.order_create(call.message.chat.id, data["model_id"], additional)
     await asyncio.sleep(5)
     await state.finish()
@@ -146,5 +145,5 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     callback = IterCallback.unpack(call.data)
     async with state.proxy() as data:
         data["detail_type"] = callback.action
-    await call.message.edit_text(text="5. Write the name of the spare part", reply_markup=inline.tuple_btns([]))
+    await call.message.edit_text(text="5. Write spare part information", reply_markup=inline.tuple_btns([]))
     await CarDetailStates.DETAIL_NAME_STATE.set()

@@ -1,10 +1,6 @@
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 
-class AddressStates(StatesGroup):
-	ADDRESS_STATE = State()
-
-
 class ApplicationStates(StatesGroup):
 	MAIN_STATE = State() # Заглушка
 
@@ -24,3 +20,5 @@ class LanguageStates(StatesGroup):
 
 class ResponseStates(StatesGroup):
 	PRICE_STATE = State()
+	ADDRESS_STATE = State()
+	STRIPE_STATE = State()

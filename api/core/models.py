@@ -122,10 +122,10 @@ class ShopMember(models.Model):
 
 
 class OrderCredential(models.Model):
-	address = models.CharField(max_length=30)
+	address = models.CharField(max_length=30, blank=True, null=True)
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
 	is_delivery = models.BooleanField()
-	phone = models.CharField(max_length=30)
+	phone = models.CharField(max_length=30, blank=True, null=True)
 
 	def __str__(self):
 		s = f'Address: {self.address}, '
@@ -143,7 +143,6 @@ class OrderCredential(models.Model):
 		verbose_name_plural = "Order credentials"
 
 
-
 class OrderOffer(models.Model):
 	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="offers")
 	price = models.IntegerField()
@@ -155,6 +154,7 @@ class OrderOffer(models.Model):
 	class Meta:
 		verbose_name = "Order offer"
 		verbose_name_plural = "Order offers"
+
 
 class Order(models.Model):
 	customer = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name="orders")
@@ -171,8 +171,6 @@ class Order(models.Model):
 	class Meta:
 		verbose_name = "Order"
 		verbose_name_plural = "Orders"
-
-
 
 
 class ShopRegistrationCode(models.Model):

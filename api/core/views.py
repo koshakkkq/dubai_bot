@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
+from django.utils.timezone import now
 
 from core.models import CarBrand
 from core.serializers import *
@@ -96,9 +97,43 @@ class ExtendedOrderApiView(OrderApiView):
                     else:
                         raiting = sum(feedback.values_list("raiting", flat=True)) / len(feedback.all())
                     lst.append({"raiting": raiting, "id": offer.id, "price": offer.price, "shop":
-                        {"name": shop.name, "location": shop.location, "phone": shop.phone}})
+                        {"id": shop.id, "name": shop.name, "location": shop.location, "phone": shop.phone}})
                 data.append({"id": order.id, "offers": lst, "model": str(order.model), "additional": order.additional})
             return JsonResponse(data, status=200, safe=False)
         except Exception as e:
             print(e)
             return JsonResponse([])
+
+
+class OrderUpdateApiView(APIView):
+    def post(self, request):
+        try:
+            order_id = request.POST.get("order_id")
+            offer_id = request.POST.get("offer_id")
+            is_delivery = request.POST.get("is_delivery")
+            address = request.POST.get("address")
+            status = request.POST.get("status")
+
+            order = Order.objects.get(id=order_id)
+            order.offer_id = offer_id
+            order.status = status
+            order.credential = OrderCredential.objects.create(address=address, is_delivery=is_delivery)
+            order.datetime = now()
+            order.save()
+            return JsonResponse({'status':'success'}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "error"})
+
+
+class ShopFeedbackCreateApiView(APIView):
+    def post(self, request):
+        try:
+            shop_id = request.POST.get("shop_id")
+            mark = request.POST.get("mark")
+            comment = request.POST.get("comment")
+            feedback = ShopFeedback.objects.create(shop_id=shop_id, raiting=int(mark), comment=comment)
+            feedback.save()
+            return JsonResponse({'status':'success'}, status=200)
+        except Exception as e:
+            print(e)
+            return JsonResponse({"status": "error"})
