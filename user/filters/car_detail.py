@@ -146,5 +146,5 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     callback = IterCallback.unpack(call.data)
     async with state.proxy() as data:
         data["detail_type"] = callback.action
-    await call.message.edit_text(text="5. Write the name of the spare part", reply_markup=inline.tuple_btns([]))
+    await call.message.edit_text(text="5. Write spare part information", reply_markup=inline.tuple_btns([]))
     await CarDetailStates.DETAIL_NAME_STATE.set()

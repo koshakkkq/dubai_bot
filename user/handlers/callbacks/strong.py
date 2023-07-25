@@ -33,12 +33,15 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
 async def feedback(call: CallbackQuery, state: FSMContext):
     await state.finish()
     orders = await api.get_orders(call.message.chat.id, 0)
-    pages = len(orders)
-    order = orders[0]
-    text = order["model"] + '\n' + order["additional"]
-    offers = {offer["id"]: f'Price: {offer["price"]}, raiting: {round(offer["raiting"], 2)}' for offer in order["offers"]}
-    await call.message.edit_text(text=text, reply_markup=inline.one_page_iter_btns(offers, pages))
-    await ResponseStates.PRICE_STATE.set()
+    if orders is None:
+        await call.message.edit_text(text="No active orders", reply_markup=inline.to_menu())
+    else:
+        pages = len(orders)
+        order = orders[0]
+        text = order["model"] + '\n' + order["additional"]
+        offers = {offer["id"]: f'Price: {offer["price"]}, raiting: {round(offer["raiting"], 2)}' for offer in order["offers"]}
+        await call.message.edit_text(text=text, reply_markup=inline.one_page_iter_btns(offers, pages))
+        await ResponseStates.PRICE_STATE.set()
 
 
 @dp.callback_query_handler(lambda call: "find_spare_part" == call.data, state="*")
