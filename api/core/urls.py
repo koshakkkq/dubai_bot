@@ -25,6 +25,7 @@ urlpatterns = [
     path('is_code_correct/<int:user_id>/<str:code>/', views_shop.is_code_correct),
     path('set_language/', views_shop.SetUserLanguage.as_view()),
     path('create_invite_code/<int:shop_id>/', views_shop.ShopMemberCodeCreation.as_view()),
+    path('shop/feedback/create/', views.ShopFeedbackCreateApiView.as_view()),
 
     path('create_shop/', views_shop.CreateShop.as_view()),
     path('brands/<int:skip>/<int:limit>/', views_shop.AvailableBrands.as_view()),

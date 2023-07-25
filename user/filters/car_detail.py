@@ -11,7 +11,6 @@ from utils.constants import PART_TYPES
 from user.keyboards.inline.callbacks import IterCallback
 
 
-
 @dp.message_handler(state=CarDetailStates.DETAIL_NAME_STATE)
 async def text_msg(message: Message, state: FSMContext):
     await message.answer(f'6. Write the article \n*if it is not there, click "NO🚫"', reply_markup=inline.no_btn())

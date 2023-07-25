@@ -62,10 +62,10 @@ def choice_courier(): # Choose a courier for delivery
 	return keyboard
 
 
-def was_deliveried(): # Were you able to pick up your order?
+def was_deliveried(shop_id): # Were you able to pick up your order?
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('✅ Yes', callback_data=f"was_deliveried"))
-	keyboard.row(InlineKeyboardButton('❌ No', callback_data=f"wasnt_deliveried"))
+	keyboard.row(InlineKeyboardButton('✅ Yes', callback_data=f"was_deliveried:{shop_id}"))
+	keyboard.row(InlineKeyboardButton('❌ No', callback_data=f"wasnt_deliveried:{shop_id}"))
 	return keyboard
 
 
@@ -75,13 +75,13 @@ def no_btn(): # Working in filter
 	return keyboard
 
 
-def mark_keyboard():
+def mark_keyboard(shop_id):
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('5️⃣', callback_data=f"mark"))
-	keyboard.row(InlineKeyboardButton('4️⃣', callback_data=f"mark"))
-	keyboard.row(InlineKeyboardButton('3️⃣', callback_data=f"mark"))
-	keyboard.row(InlineKeyboardButton('2️⃣', callback_data=f"mark"))
-	keyboard.row(InlineKeyboardButton('1️⃣', callback_data=f"mark"))
+	keyboard.row(InlineKeyboardButton('5️⃣', callback_data=f"mark:5:{shop_id}"))
+	keyboard.row(InlineKeyboardButton('4️⃣', callback_data=f"mark:4:{shop_id}"))
+	keyboard.row(InlineKeyboardButton('3️⃣', callback_data=f"mark:3:{shop_id}"))
+	keyboard.row(InlineKeyboardButton('2️⃣', callback_data=f"mark:2:{shop_id}"))
+	keyboard.row(InlineKeyboardButton('1️⃣', callback_data=f"mark:1:{shop_id}"))
 	return keyboard
 
 

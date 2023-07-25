@@ -97,7 +97,7 @@ class ExtendedOrderApiView(OrderApiView):
                     else:
                         raiting = sum(feedback.values_list("raiting", flat=True)) / len(feedback.all())
                     lst.append({"raiting": raiting, "id": offer.id, "price": offer.price, "shop":
-                        {"name": shop.name, "location": shop.location, "phone": shop.phone}})
+                        {"id": shop.id, "name": shop.name, "location": shop.location, "phone": shop.phone}})
                 data.append({"id": order.id, "offers": lst, "model": str(order.model), "additional": order.additional})
             return JsonResponse(data, status=200, safe=False)
         except Exception as e:
@@ -122,4 +122,18 @@ class OrderUpdateApiView(APIView):
             order.save()
             return JsonResponse({'status':'success'}, status=200)
         except Exception as e:
+            return JsonResponse({"status": "error"})
+
+
+class ShopFeedbackCreateApiView(APIView):
+    def post(self, request):
+        try:
+            shop_id = request.POST.get("shop_id")
+            mark = request.POST.get("mark")
+            comment = request.POST.get("comment")
+            feedback = ShopFeedback.objects.create(shop_id=shop_id, raiting=int(mark), comment=comment)
+            feedback.save()
+            return JsonResponse({'status':'success'}, status=200)
+        except Exception as e:
+            print(e)
             return JsonResponse({"status": "error"})

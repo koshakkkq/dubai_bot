@@ -48,6 +48,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
         data["phone"] = phone
         data["price"] = offer['price']
         data["order_id"] = order["id"]
+        data["shop_id"] = offer["shop"]["id"]
     await call.message.edit_text(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\n{offer['price']}\n\n" + "Choose your next action ⤵️",
         reply_markup=inline.choice_company())
 
@@ -68,10 +69,11 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     order_id = state_data['order_id']
     offer_id = state_data["offer_id"]
+    shop_id = state_data["shop_id"]
     status = await api.order_update(order_id, offer_id, status=1, is_delivery=False)
     await call.message.edit_text("Congratulations!\n\nAddress: ...\nYour order number: " + str(state_data["order_id"]), 
         reply_markup=None)
-    await send_message_of_interest(call.message.chat.id)
+    await send_message_of_interest(call.message.chat.id, shop_id)
 
 
 @dp.callback_query_handler(lambda call: "delivery" == call.data, state=ResponseStates.PRICE_STATE)
@@ -110,7 +112,8 @@ async def successful(message: types.Message, state: FSMContext):
     order_id = state_data['order_id']
     offer_id = state_data["offer_id"]
     address = state_data["address"]
+    shop_id = state_data["shop_id"]
     status = await api.order_update(order_id, offer_id, status=1, address=address, is_delivery=True)
     await message.answer("Congratulations!\nTomorrow your goods will be delivered to you", reply_markup=None)
     await state.finish()
-    await send_message_of_interest(message.chat.id)
+    await send_message_of_interest(message.chat.id, order_id)
