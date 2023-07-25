@@ -11,12 +11,3 @@ VERBOSE_ORDER_TYPE = (
     (OrderStatus.DONE, "Done."),
     (OrderStatus.CANCELED, 'Canceled.')
 )
-
-
-VERBOSE_RAITING_TYPE = (
-    (1, 1),
-    (2, 2),
-    (3, 3),
-    (4, 4),
-    (5, 5),
-)

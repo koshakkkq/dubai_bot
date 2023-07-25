@@ -22,3 +22,7 @@ class ResponseStates(StatesGroup):
 	PRICE_STATE = State()
 	ADDRESS_STATE = State()
 	STRIPE_STATE = State()
+
+
+class OrderState(StatesGroup):
+	MAIN_STATE = State()
