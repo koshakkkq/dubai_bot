@@ -14,7 +14,7 @@ async def text_for_order(order_id):
 	shop = order['offer']['shop']
 	text = f"""id: {order_id}
 status: {VERBOSE_ORDER_TYPE[order['status']][1]}
-Additional: {order['additional']}
+{order['additional']}
 Shop name: {shop['name']}
 Shop location: {shop['location']}
 Shop phone: {shop['phone']}

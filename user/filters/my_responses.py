@@ -10,6 +10,7 @@ from user.utils import send_message_of_interest
 import config
 from aiogram import types
 from aiogram.types.message import ContentType
+from user.utils import text_for_order
 
 
 @dp.callback_query_handler(lambda call: IterCallback.unpack(call.data).filter(action="back"), state=ResponseStates.PRICE_STATE)
@@ -84,20 +85,26 @@ async def price_of(call: CallbackQuery, state: FSMContext):
 
 @dp.message_handler(state=ResponseStates.ADDRESS_STATE)
 async def text_msg(message: Message, state: FSMContext):
+    state_data = await state.get_data()
+    order_id = state_data['order_id']
+    name = state_data["name"]
+    location = state_data["location"]
+    phone = state_data["phone"]
+    price = state_data["price"]
+    description = text=f"Name: {name}, Location: {location} Phone: {phone}\n"
     async with state.proxy() as data:
         data["address"] = message.text
     state_data = await state.get_data()
     price = int(state_data["price"])
-    price = types.LabeledPrice(label="Test", amount=price*100)
-
+    price = types.LabeledPrice(label="Car detail", amount=price*100)
     await bot.send_invoice(
         message.chat.id,
-        title="TEST",
-        description="Test payment",
+        title="Car detail",
+        description=description,
         provider_token=config.PAYMENT_TOKEN,
         prices=[price],
         currency="AED",
-        payload="test-invoce-payload"
+        payload="invoce-payload"
     )
     await ResponseStates.STRIPE_STATE.set()
 
