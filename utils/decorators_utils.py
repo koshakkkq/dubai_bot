@@ -19,8 +19,10 @@ async def set_language(user_id, language):
 		'tg_id': user_id,
 		'language': language,
 	}
-	await make_post_request(url, post_data)
-
+	try:
+		await make_post_request(url, post_data)
+	except Exception as e:
+		logging.error(e)
 
 async def get_shop_id(tg_id):
 	url = f'{SERVER_URL}/shop_member?user__telegram_id={tg_id}'
