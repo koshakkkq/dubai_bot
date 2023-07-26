@@ -43,7 +43,7 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
     delta = await api.get_orders(call.message.chat.id, 3)
     if not delta is None:
         orders += delta
-    if orders is None:
+    if orders:
         await call.message.edit_text(text="No orders", reply_markup=inline.to_menu())
     else:
         text = await text_for_order(orders[0]['id'])
