@@ -32,7 +32,7 @@ class CourierFeedback(models.Model):
 
 
 class TelegramUser(models.Model):
-	telegram_id = models.IntegerField(db_index=True)
+	telegram_id = models.BigIntegerField(db_index=True)
 	language = models.CharField(max_length=40)
 	courier = models.OneToOneField(Courier, on_delete = models.CASCADE, related_name="telegram_user", null=True, blank=True,
 								   )
@@ -200,7 +200,7 @@ class CourierOrdersBlacklist(models.Model):
 class CourierRegistrationCode(models.Model):
 	code = models.TextField()
 	used = models.BooleanField(default=False)
-	user = models.IntegerField(null=True)
+	user = models.BigIntegerField(null=True)
 	creation_time = models.DateTimeField(auto_now_add=True)
 
 
