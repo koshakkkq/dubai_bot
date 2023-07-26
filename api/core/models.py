@@ -176,7 +176,7 @@ class Order(models.Model):
 class ShopRegistrationCode(models.Model):
 	code = models.TextField()
 	used = models.BooleanField(default=False)
-	user = models.IntegerField(null=True)
+	user = models.BigIntegerField(null=True)
 	creation_time = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
