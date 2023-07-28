@@ -78,9 +78,7 @@ class ShopAvailableModels(models.Model):
 	shop_id = models.ForeignKey
 
 
-
 class Shop(models.Model):
-
 
 	name = models.CharField(max_length=30)
 	location = models.CharField(max_length=50)
