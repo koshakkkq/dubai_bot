@@ -84,7 +84,8 @@ class Shop(models.Model):
 	location = models.CharField(max_length=400)
 	phone = models.CharField(max_length=100)
 	available_models = models.ManyToManyField(CarModel, related_name="shops", )
-
+	lat = models.FloatField(default=0)
+	lon = models.FloatField(default=0)
 
 	def __str__(self):
 		return f'Id: {self.id}, name: {self.name}'
