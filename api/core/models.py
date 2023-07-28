@@ -6,8 +6,8 @@ from django.db.models.signals import pre_delete
 from .constants import VERBOSE_ORDER_TYPE, VERBOSE_RAITING_TYPE
 from django.dispatch.dispatcher import receiver
 class Courier(models.Model):
-	name = models.CharField(max_length=50)
-	phone = models.CharField(max_length=15)
+	name = models.CharField(max_length=100)
+	phone = models.CharField(max_length=100)
 
 	def __str__(self):
 		return f'Name: {self.name}, Phone: {self.phone}'
@@ -49,7 +49,7 @@ class TelegramUser(models.Model):
 
 
 class CarBrand(models.Model):
-	name = models.CharField(max_length=20, unique=True)
+	name = models.CharField(max_length=50, unique=True)
 
 	def __str__(self):
 		return self.name
@@ -61,8 +61,8 @@ class CarBrand(models.Model):
 
 class CarModel(models.Model):
 	brand = models.ForeignKey(CarBrand, on_delete = models.CASCADE, related_name="models")
-	name = models.CharField(max_length=30)
-	internal_name = models.CharField(max_length=30)
+	name = models.CharField(max_length=50)
+	internal_name = models.CharField(max_length=50)
 	production_start = models.PositiveIntegerField(default=0)
 	production_end = models.PositiveIntegerField(default=0)
 	#years = models.CharField(max_length=30)
@@ -78,13 +78,11 @@ class ShopAvailableModels(models.Model):
 	shop_id = models.ForeignKey
 
 
-
 class Shop(models.Model):
 
-
-	name = models.CharField(max_length=30)
-	location = models.CharField(max_length=50)
-	phone = models.CharField(max_length=15)
+	name = models.CharField(max_length=50)
+	location = models.CharField(max_length=400)
+	phone = models.CharField(max_length=100)
 	available_models = models.ManyToManyField(CarModel, related_name="shops", )
 
 
@@ -122,10 +120,10 @@ class ShopMember(models.Model):
 
 
 class OrderCredential(models.Model):
-	address = models.CharField(max_length=30, blank=True, null=True)
+	address = models.CharField(max_length=400, blank=True, null=True)
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
 	is_delivery = models.BooleanField()
-	phone = models.CharField(max_length=30, blank=True, null=True)
+	phone = models.CharField(max_length=100, blank=True, null=True)
 
 	def __str__(self):
 		s = f'Address: {self.address}, '
@@ -204,6 +202,16 @@ class CourierRegistrationCode(models.Model):
 	creation_time = models.DateTimeField(auto_now_add=True)
 
 
+
+class ShopNotification(models.Model):
+	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+	new_available_orders = models.BigIntegerField(default=0)
+	new_active_orders = models.BigIntegerField(default=0)
+
+class UserNotification(models.Model):
+	user = models.ForeignKey(TelegramUser, on_delete=models.constraints)
+	new_offers = models.BigIntegerField(default=0)
+	new_couriers = models.BigIntegerField(default=0)
 
 @receiver(pre_delete, sender=TelegramUser)
 def wrapper(sender, instance: TelegramUser, *args, **kwargs):
