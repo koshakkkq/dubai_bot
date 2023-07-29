@@ -15,6 +15,7 @@ class ShopCreationStates(StatesGroup):
 	get_location = State()
 	get_name = State()
 	get_phone = State()
+	get_coords = State()
 @dp.callback_query_handler(
 	filters.Text(equals="register_store"),
 	state="*",
@@ -89,9 +90,32 @@ async def shop_registration_get_name(message: types.Message, state: FSMContext, 
 async def shop_registration_get_phone(message: types.Message, state: FSMContext, language='eng'):
 	phone = message.text
 	await state.update_data(shop_phone=phone)
-	await state.set_state(ShopCreationStates.get_location.state)
+	await state.set_state(ShopCreationStates.get_coords.state)
 
-	msg = shop.messages.messages[language]['get_shop_location']
+	msg = shop.messages.messages[language]['shop_change_coords']
+	keyboard = shop.keyboards.keyboards[language]['shop_get_coords_register']
+
+	await message.answer(text=msg, reply_markup=keyboard)
+
+
+
+
+@dp.message_handler(
+	state=ShopCreationStates.get_coords,
+	content_types=['location'],
+)
+async def shop_registration_get_coords(message: types.Message, state: FSMContext, language='eng'):
+	lat = message.location.latitude
+	lon = message.location.longitude
+	await state.update_data(coords=location)
+
+	data = await state.get_data()
+	await state.reset_state()
+
+
+	await create_shop(user_id=message.from_user.id, data=data)
+
+	msg = shop.messages.messages[language]['shop_change_location']
 	keyboard = shop.keyboards.keyboards[language]['to_client_menu']
 
 	await message.answer(text=msg, reply_markup=keyboard)

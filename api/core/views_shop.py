@@ -162,6 +162,8 @@ class CreateShop(APIView):
             name=request.POST['name'],
             location=request.POST['location'],
             phone=request.POST['phone'],
+            lat=request.POST['lat'],
+            lon=request.POST['lon'],
         )
         create_shop_member(obj.id, tg_id)
         return JsonResponse({'status':'success'}, status=200)

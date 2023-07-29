@@ -80,3 +80,11 @@ shop_back_from_change = [
     [InlineKeyboardButton(text='↩️ Back', callback_data='shop_info')]
 ]
 eng_keyboards['shop_back_from_change'] = InlineKeyboardMarkup(inline_keyboard=shop_back_from_change)
+
+
+
+shop_get_coords_register = [
+    [KeyboardButton(text='📍 Send geolocation', request_location=True)],
+    [KeyboardButton(text='↩️ Back', callback_data='shop_info')]
+]
+eng_keyboards['shop_get_coords_register'] = ReplyKeyboardMarkup(keyboard=shop_get_coords_register)

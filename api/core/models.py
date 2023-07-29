@@ -210,7 +210,7 @@ class ShopNotification(models.Model):
 	new_active_orders = models.BigIntegerField(default=0)
 
 class UserNotification(models.Model):
-	user = models.ForeignKey(TelegramUser, on_delete=models.constraints)
+	user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
 	new_offers = models.BigIntegerField(default=0)
 	new_couriers = models.BigIntegerField(default=0)
 
