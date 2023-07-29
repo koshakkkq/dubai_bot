@@ -33,6 +33,7 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: "my_orders" == call.data, state="*")
 async def become_courier(call: CallbackQuery, state: FSMContext):
+    await api.reset_user_notifications(call.from_user.id, {'new_couriers':0})
     await state.finish()
     orders = []
     delta = await api.get_orders(call.message.chat.id, 1)
@@ -53,6 +54,8 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: "feedback" == call.data, state="*")
 async def feedback(call: CallbackQuery, state: FSMContext):
+    await api.reset_user_notifications(call.from_user.id, {'new_offers':0})
+
     await delete_msg(call.message.chat.id)
     await state.finish()
     orders = await api.get_orders(call.message.chat.id, 0)

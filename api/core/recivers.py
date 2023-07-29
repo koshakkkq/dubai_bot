@@ -1,13 +1,14 @@
+from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from .models import *
 
-@receiver(pre_delete, sender=TelegramUser)
+@receiver(post_delete, sender=TelegramUser)
 def wrapper(sender, instance: TelegramUser, *args, **kwargs):
 	tg_id = instance.telegram_id
 	CourierRegistrationCode.objects.filter(user=tg_id).delete()
 	ShopRegistrationCode.objects.filter(user=tg_id).delete()
 
-@receiver(pre_delete, sender=ShopMember)
+@receiver(post_delete, sender=ShopMember)
 def wrapper(sender, instance: ShopMember, *args, **kwargs):
 	tg_id = instance.user.telegram_id
 	ShopRegistrationCode.objects.filter(user=tg_id).delete()
@@ -36,14 +37,30 @@ def wrapper(sender, instance: Order, raw, update_fields, *args, **kwargs):
 		instance_in_db = Order.objects.get(id=instance.pk)
 		if instance_in_db.status == OrderStatus.PENDING and instance.status == OrderStatus.ACTIVE:
 			if instance.offer is not None:
-				ShopNotification.objects.update_or_create(
+				ShopNotification.objects.filter(
 					shop=instance.offer.shop,
-					defaults={
-						'new_active_orders': F('new_active_orders') + 1
-					}
-				)
+				).update(new_active_orders=F('new_active_orders') + 1)
 	except Order.DoesNotExist:
 		model = instance.model
 		shops_with_order_model = Shop.objects.filter(available_models=model)
 		notifications = ShopNotification.objects.filter(shop__in=shops_with_order_model)
 		notifications.update(new_available_orders=F('new_available_orders') + 1)
+	except Exception as e:
+		pass
+
+
+@receiver(pre_save, sender=OrderCredential)
+def wrapper(sender, instance: OrderCredential, raw, update_fields, *args, **kwargs):
+	try:
+		instance_in_db = OrderCredential.objects.get(id=instance.pk)
+		if instance_in_db.courier is None and instance.courier is not None:
+			order = instance.order
+			user = order.customer
+			UserNotification.objects.filter(user=user).update(
+				new_couriers=F('new_couriers') + 1
+			)
+	except OrderCredential.DoesNotExist:
+		pass
+	except Exception as e:
+		print(e)
+		pass

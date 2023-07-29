@@ -134,7 +134,6 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
 async def user_no_filter(call: CallbackQuery, state: FSMContext):
     callback = IterCallback.unpack(call.data)
     model = callback.action
-    print(model)
     async with state.proxy() as data:
         data["model"] = model
     await CarDetailStates.YEAR_STATE.set()

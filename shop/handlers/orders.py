@@ -5,7 +5,7 @@ from aiogram.dispatcher import filters
 from loader import dp
 import shop.logic
 from .shop_menu import ShopMenuStates, shop_menu_callback
-
+from utils.api import reset_shop_notifications
 
 import utils.decorators as decorators
 import shop.messages
@@ -25,6 +25,8 @@ class AvailableOrdersStates(StatesGroup):
 @decorators.picked_language
 @decorators.is_member
 async def available_orders_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id = -1):
+    await reset_shop_notifications(shop_id, {'new_available_orders': 0})
+
     data = await state.get_data()
     if 'shop_available_orders_page' not in data:
         await state.update_data(shop_available_orders_page=1)
@@ -168,6 +170,8 @@ async def shop_order_decline(callback: types.CallbackQuery, state: FSMContext, l
 @decorators.picked_language
 @decorators.is_member
 async def show_active_orders_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
+    await reset_shop_notifications(shop_id, {'new_active_orders': 0})
+
     data = await state.get_data()
     if "shop_active_orders_page" not in data:
         data['shop_active_orders_page'] = 1

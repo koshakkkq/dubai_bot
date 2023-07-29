@@ -190,12 +190,15 @@ class NotificationsView(APIView):
         all_notifications = []
         shop_notifications = ShopNotification.objects.filter(Q(new_available_orders__gt=0) | Q(new_active_orders__gt=0))
 
-        shop_notifications = shop_notifications[:min(len(shop_notifications), 10)]
+
+        shop_notifications = shop_notifications[:min(len(shop_notifications) + 1, 10)]
+
 
         for notification in shop_notifications:
             if len(all_notifications) >= 10:
                 break
             shop_members = ShopMember.objects.filter(shop=notification.shop)
+
             for member in shop_members:
                 all_notifications.append(
                     {
@@ -209,9 +212,11 @@ class NotificationsView(APIView):
             notification.new_active_orders = F('new_active_orders') - notification.new_active_orders
             notification.save()
 
+        print(all_notifications)
+
         user_notifications = UserNotification.objects.filter(Q(new_offers__gt=0) | Q(new_couriers__gt=0))
 
-        user_notifications = user_notifications[:min(len(user_notifications), 10)]
+        user_notifications = user_notifications[:min(len(user_notifications) + 1, 10)]
 
         for notification in user_notifications:
             if len(all_notifications) >= 10:
@@ -229,6 +234,36 @@ class NotificationsView(APIView):
             notification.save()
         res['data'] = all_notifications
         return JsonResponse(res)
+
+
+
+class ResetUserNotifications(APIView):
+    def post(self, request):
+        try:
+            tg_id = request.POST('tg_id')
+            user = TelegramUser.objects.get(telegram_id=tg_id)
+            user_notification = UserNotification.objects.get(user = user)
+            if 'new_offers' in request.POST:
+                user_notification.new_offers = 0
+            if 'new_couriers' in request.POST:
+                user_notification.new_couriers = 0
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False})
+
+class ResetShopNotifications(APIView):
+    def post(self, request):
+        try:
+            shop_id = request.POST('shop_id')
+            shop_notification = ShopNotification.objects.get(shop_id=shop_id)
+            if 'new_available_orders' in request.POST:
+                shop_notification.new_available_orders = 0
+            if 'new_active_orders' in request.POST:
+                shop_notification.new_active_orders = 0
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False})
+
 
 def order_increase(request, order_id):
     order = Order.objects.get(id=order_id)

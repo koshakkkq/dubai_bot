@@ -22,13 +22,19 @@ import user
 
 async def shop_notify(wait):
     while True:
-        notify = await api.get_notifications()
-        for user_id, text in notify.items():
-            await bot.send_message(user_id, text)
-        await asyncio.sleep(wait)
+        while True:
+            notify = await api.get_notifications()
+
+            for user_id, text in notify.items():
+                try:
+                    await bot.send_message(user_id, text)
+                except Exception as e:
+                    logging.error(e)
+            if len(notify) == 0:
+                await asyncio.sleep(wait)
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.create_task(shop_notify(60*60)) # every hour
+    loop.create_task(shop_notify(5*60)) # every 5 min
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

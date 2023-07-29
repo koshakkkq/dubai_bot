@@ -1,3 +1,5 @@
+import logging
+
 from .requests import make_get_request, make_post_request
 from config import SERVER_URL
 
@@ -61,6 +63,24 @@ async def get_orders(user_id, status=0): # status 0, 1, 2
     else:
         return data
 
+async def reset_user_notifications(tg_id, data):
+    data['tg_id'] = tg_id
+    url = f'{SERVER_URL}/reset_user_notifications/'
+    try:
+        await make_post_request(url, data)
+    except Exception as e:
+        logging.error(e)
+        return
+
+
+async def reset_shop_notifications(shop_id, data):
+    data['shop_id'] = shop_id
+    url = f'{SERVER_URL}/reset_user_notifications/'
+    try:
+       await make_post_request(url, data)
+    except Exception as e:
+        logging.error(e)
+        pass
 
 async def order_create(user_id, model_id, additional):
     url = f"{SERVER_URL}/order/create/"
