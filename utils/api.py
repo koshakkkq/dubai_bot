@@ -110,3 +110,20 @@ async def get_order(order_id):
 async def order_status_increase(order_id): # rec
     url = f"{SERVER_URL}/order/increase/{order_id}/"
     data = await make_get_request(url)
+
+
+async def get_brand(id):
+    id = int(id)
+    brands = {item["name"]: item["id"] for item in await get_brands()}
+    for key, val in brands.items():
+        print(key, val, id)
+        if val == id:
+            return key
+    return None
+
+
+async def get_year(id, brand_id):
+    for i in await get_models(brand_id):
+        if i["id"] == id:
+            return f"{i['production_start']} - {i['production_end']}"
+    return None

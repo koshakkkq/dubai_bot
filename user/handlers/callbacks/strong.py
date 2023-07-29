@@ -43,7 +43,7 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
     delta = await api.get_orders(call.message.chat.id, 3)
     if not delta is None:
         orders += delta
-    if orders:
+    if not orders:
         await call.message.edit_text(text="No orders", reply_markup=inline.to_menu())
     else:
         text = await text_for_order(orders[0]['id'])
@@ -70,5 +70,5 @@ async def feedback(call: CallbackQuery, state: FSMContext):
     await state.finish()
     brands =  {item["name"]: item["id"] for item in await api.get_brands()}
     await call.message.edit_text(text="✅ Great, now I will help you.\n\n1. Write a brand\n*important to write everything in one message", 
-                              reply_markup=inline.iter_btns(brands))
+                              reply_markup=None)
     await CarDetailStates.BRAND_STATE.set()
