@@ -3,7 +3,8 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.storage import FSMContext
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import filters
-from loader import dp
+from loader import dp, bot
+from utils.api import set_msg_to_delete
 from .shop_menu import ShopMenuStates, shop_menu_callback
 
 import utils.decorators as decorators
@@ -30,11 +31,20 @@ async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, l
 	await state.reset_data()
 	await state.set_state(ShopInfoStates.info.state)
 
-	msg = await shop.messages.get_shop_info_message(shop_id)
+	location, info = await shop.messages.get_shop_info_message(shop_id)
 
 	keyboard = shop.keyboards.keyboards[language]['shop_info']
 
-	await callback.message.edit_text(text=msg, reply_markup=keyboard)
+	user_id = callback.from_user.id
+
+	await callback.message.delete()
+
+	msg = await bot.send_location(user_id, **location)
+	await set_msg_to_delete(user_id, msg.message_id)
+
+	await bot.send_message(user_id, text=info, reply_markup=keyboard)
+
+
 	await callback.answer()
 
 @dp.callback_query_handler(
@@ -43,6 +53,7 @@ async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, l
 )
 @decorators.picked_language
 @decorators.is_member
+@decorators.delete_msg_decorator
 async def show_brands_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
 	data = await state.get_data()
 	if "shop_info_brands_page" not in data:
@@ -206,6 +217,7 @@ async def pick_models_on_page(callback: types.CallbackQuery, state: FSMContext, 
 
 class ChangeShopInfoStates(StatesGroup):
 	pending_value = State()
+	pending_coords = State()
 	empty = State()
 @dp.callback_query_handler(
 	filters.Text(startswith="shop_change_"),
@@ -213,9 +225,13 @@ class ChangeShopInfoStates(StatesGroup):
 )
 @decorators.picked_language
 @decorators.is_member
+@decorators.delete_msg_decorator
 async def change_shop_information(callback:types.CallbackQuery, state:FSMContext, language='eng', shop_id = -1):
 	to_change = callback.data.split('_')[-1]
-	await state.set_state(ChangeShopInfoStates.pending_value.state)
+	if to_change != 'coords':
+		await state.set_state(ChangeShopInfoStates.pending_value.state)
+	else:
+		await state.set_state(ChangeShopInfoStates.pending_coords.state)
 	await state.update_data(shop_filed_to_change = to_change)
 
 	msg = shop.messages.messages[language][f'shop_change_{to_change}']
@@ -241,12 +257,26 @@ async def get_value_to_change(message: types.Message, state: FSMContext, languag
 	msg = shop.messages.messages[language]['ok']
 	await message.answer(text=msg, reply_markup=keyboard)
 
+
+@dp.message_handler(
+	state=ChangeShopInfoStates.pending_coords,
+	content_types=['location'],
+)
+@decorators.picked_language
+@decorators.is_member
+async def get_coords_to_change(message: types.Message, state: FSMContext, language='eng', shop_id = -1):
+	lat = message.location.latitude
+	lon = message.location.longitude
+
+	data = await state.get_data()
+	await state.reset_state()
 @dp.callback_query_handler(
 	filters.Text(equals='shop_info_create_invite'),
 	state="*",
 )
 @decorators.picked_language
 @decorators.is_member
+@decorators.delete_msg_decorator
 async def create_invite_code(callback:types.CallbackQuery, state:FSMContext, language='eng', shop_id = -1):
 	code = await shop.logic.create_code(shop_id)
 
