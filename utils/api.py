@@ -39,6 +39,7 @@ async def set_msg_to_delete(tg_id, msg_id):
     try:
         res = await make_post_request(url, data)
     except Exception as e:
+        print(e)
         return
 
 async def get_years(brand_id, model): #cars
@@ -127,3 +128,15 @@ async def get_year(id, brand_id):
         if i["id"] == id:
             return f"{i['production_start']} - {i['production_end']}"
     return None
+
+
+async def get_notifications():
+    url = f"{SERVER_URL}/notifications/"
+    data = await make_get_request(url)
+    result = {}
+    for i in data["data"]:
+        if i["type"] == "shop":
+            result[i["user_id"]] = f"New available orders: {i['new_available_orders']}\nNew active orders: {i['new_active_orders']}"
+        elif i["type"] == "user":
+            result[i["user_id"]] = f"New offers: {i['new_offers']}\nNew couriers: {i['new_couriers']}"
+    return result

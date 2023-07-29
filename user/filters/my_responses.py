@@ -11,10 +11,13 @@ import config
 from aiogram import types
 from aiogram.types.message import ContentType
 from user.utils import text_for_order
+from shop.messages import get_shop_info_message
+from utils.decorators_utils import delete_msg
 
 
 @dp.callback_query_handler(lambda call: IterCallback.unpack(call.data).filter(action="back"), state=ResponseStates.PRICE_STATE)
 async def user_no_filter(call: CallbackQuery, state: FSMContext):
+    await delete_msg(call.message.chat.id)
     callback = IterCallback.unpack(call.data)
     current_page = callback.current_page - 1
 
@@ -50,12 +53,21 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
         data["price"] = offer['price']
         data["order_id"] = order["id"]
         data["shop_id"] = offer["shop"]["id"]
-    await call.message.edit_text(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\n{offer['price']}\n\n" + "Choose your next action ⤵️",
+        location, info = await get_shop_info_message(offer["shop"]["id"])
+        try:
+            await bot.delete_message(call.message.chat.id, call.message.message_id)
+        except:
+            pass
+        msg = await bot.send_location(call.message.chat.id, **location)
+        await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
+    await call.message.answer(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\n{offer['price']}\n\n" + "Choose your next action ⤵️",
         reply_markup=inline.choice_company())
+
 
 
 @dp.callback_query_handler(lambda call: "to_delivery_method" == call.data, state=ResponseStates.PRICE_STATE)
 async def to_delivery_method(call: CallbackQuery, state: FSMContext):
+    await delete_msg(call.message.chat.id)
     state_data = await state.get_data()
     name = state_data["name"]
     location = state_data["location"]
@@ -65,8 +77,10 @@ async def to_delivery_method(call: CallbackQuery, state: FSMContext):
         reply_markup=inline.delivery_method())
 
 
+
 @dp.callback_query_handler(lambda call: "pickup" == call.data, state=ResponseStates.PRICE_STATE)
 async def find_spare_part(call: CallbackQuery, state: FSMContext):
+    await delete_msg(call.message.chat.id)
     state_data = await state.get_data()
     order_id = state_data['order_id']
     offer_id = state_data["offer_id"]
@@ -77,8 +91,10 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
     await send_message_of_interest(call.message.chat.id, shop_id, order_id)
 
 
+
 @dp.callback_query_handler(lambda call: "delivery" == call.data, state=ResponseStates.PRICE_STATE)
 async def price_of(call: CallbackQuery, state: FSMContext):
+    await delete_msg(call.message.chat.id)
     await call.message.edit_text("Write your shipping address", reply_markup=None)
     await ResponseStates.ADDRESS_STATE.set()
 

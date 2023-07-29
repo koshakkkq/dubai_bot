@@ -146,7 +146,6 @@ class OrderUpdateApiView(APIView):
             return JsonResponse({"status": "error"})
 
 
-
 class MsgToDeleteView(APIView):
     def get(self, request, tg_id):
         try:
@@ -166,6 +165,8 @@ class MsgToDeleteView(APIView):
         msg[0].msg_id = msg_id
         msg[0].save()
         return JsonResponse({'msg':None}, status=200)
+
+
 class ShopFeedbackCreateApiView(APIView):
     def post(self, request):
         try:
@@ -178,7 +179,6 @@ class ShopFeedbackCreateApiView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({"status": "error"})
-
 
 
 class NotificationsView(APIView):

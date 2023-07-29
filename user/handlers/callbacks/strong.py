@@ -6,6 +6,7 @@ from aiogram.dispatcher import FSMContext
 from user.filters.states import CarDetailStates, ResponseStates
 from utils import api
 from user.utils import text_for_order
+from utils.decorators_utils import delete_msg
 
 
 @dp.callback_query_handler(
@@ -52,6 +53,7 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: "feedback" == call.data, state="*")
 async def feedback(call: CallbackQuery, state: FSMContext):
+    await delete_msg(call.message.chat.id)
     await state.finish()
     orders = await api.get_orders(call.message.chat.id, 0)
     if orders is None:
@@ -68,7 +70,7 @@ async def feedback(call: CallbackQuery, state: FSMContext):
 @dp.callback_query_handler(lambda call: "find_spare_part" == call.data, state="*")
 async def feedback(call: CallbackQuery, state: FSMContext):
     await state.finish()
-    brands = {item["name"]: item["id"] for item in await api.get_brands()}
+    brands =  {item["name"]: item["id"] for item in await api.get_brands()}
     await call.message.edit_text(text="✅ Great, now I will help you.\n\n1. Write a brand\n*important to write everything in one message", 
                               reply_markup=None)
     await CarDetailStates.BRAND_STATE.set()

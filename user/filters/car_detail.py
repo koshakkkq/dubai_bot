@@ -9,6 +9,7 @@ import logging
 from utils import api
 from utils.constants import PART_TYPES
 from user.keyboards.inline.callbacks import IterCallback
+import utils.decorators as decorators
 
 
 @dp.message_handler(state=CarDetailStates.BRAND_STATE)
@@ -24,7 +25,7 @@ async def text_msg(message: Message, state: FSMContext):
 
             models = await api.get_models(brands[brand])
             models = {model["name"]: model["name"] for model in models}
-            await message.answer(text=f"1. {brand}\n2. Select a car model", reply_markup=inline.iter_btns(models))
+            await message.answer(text=f"1. {brand}\n\n2. Select a car model", reply_markup=inline.iter_btns(models))
             zaebalo = False
     if zaebalo:
         await message.answer(text="1. Select a brand\n*important to write everything in one message", 
@@ -81,15 +82,15 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     elif current_state == CarDetailStates.MODEL_STATE.state:
         models = await api.get_models(state_data["brand_id"])
         models = {model["name"]: model["name"] for model in models}
-        await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. Select a car model", reply_markup=inline.iter_btns(models))
+        await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n\n2. Select a car model", reply_markup=inline.iter_btns(models))
     elif current_state == CarDetailStates.YEAR_STATE.state:
         state_data = await state.get_data()
         years = await api.get_years(state_data["brand_id"], state_data["model"])
         years = {f'{car["production_start"]} - {car["production_end"]}': car["id"] for car in years}
         await CarDetailStates.YEAR_STATE.set()
-        await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. Select the year of your model", reply_markup=inline.iter_btns(years))
+        await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n\n3. Select the year of your model", reply_markup=inline.iter_btns(years))
     elif current_state == CarDetailStates.DETAIL_TYPE_STATE.state:
-        msg = f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. {await api.get_year(state_data['model_id'], state_data['brand_id'])}\n4. Select the part type"
+        msg = f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. {await api.get_year(state_data['model_id'], state_data['brand_id'])}\n\n4. Select the part type"
         await call.message.edit_text(text=msg, reply_markup=inline.tuple_btns(PART_TYPES))
 
 
@@ -115,7 +116,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     models = await api.get_models(brand_id)
     models = {model["name"]: model["name"] for model in models}
     state_data = await state.get_data()
-    await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. Select a car model", reply_markup=inline.iter_btns(models))
+    await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n\n2. Select a car model", reply_markup=inline.iter_btns(models))
 
 
 @dp.callback_query_handler(lambda call: IterCallback.unpack(call.data).filter(action="back"), state=CarDetailStates.MODEL_STATE)
@@ -126,7 +127,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
 
     models = await api.get_models(state_data["brand_id"])
     models = {model["name"]: model["name"] for model in models} 
-    await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. Select a car model", reply_markup=inline.iter_btns(models, current_page))
+    await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n\n2. Select a car model", reply_markup=inline.iter_btns(models, current_page))
 
 
 @dp.callback_query_handler(lambda call: IterCallback.unpack(call.data).filter(), state=CarDetailStates.MODEL_STATE)
@@ -142,7 +143,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     years = await api.get_years(state_data["brand_id"], state_data["model"])
     years = {f'{car["production_start"]} - {car["production_end"]}': car["id"] for car in years}
     await CarDetailStates.YEAR_STATE.set()
-    await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. Select the year of your model", reply_markup=inline.iter_btns(years))
+    await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n\n3. Select the year of your model", reply_markup=inline.iter_btns(years))
 
 
 @dp.callback_query_handler(lambda call: IterCallback.unpack(call.data).filter(action="back"), state=CarDetailStates.YEAR_STATE)
@@ -155,7 +156,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     years = await api.get_years(state_data["brand_id"], state_data["model"])
     years = {f'{car["production_start"]} - {car["production_end"]}': car["id"] for car in years}
     await CarDetailStates.YEAR_STATE.set()
-    await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. Select the year of your model", reply_markup=inline.iter_btns(years, current_page))
+    await call.message.edit_text(text=f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n\n3. Select the year of your model", reply_markup=inline.iter_btns(years, current_page))
 
 
 @dp.callback_query_handler(lambda call: IterCallback.unpack(call.data).filter(), state=CarDetailStates.YEAR_STATE)
@@ -166,7 +167,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         data["model_id"] = model_id
     await CarDetailStates.DETAIL_TYPE_STATE.set()
-    msg = f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. {await api.get_year(model_id, state_data['brand_id'])}\n4. Select the part type"
+    msg = f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. {await api.get_year(model_id, state_data['brand_id'])}\n\n4. Select the part type"
     await call.message.edit_text(text=msg, reply_markup=inline.tuple_btns(PART_TYPES))
 
 
@@ -177,6 +178,6 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         data["detail_type"] = callback.action
     state_data = await state.get_data()
-    msg = f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. {await api.get_year(state_data['model_id'], state_data['brand_id'])}\n4. {state_data['detail_type']}\n5. Write spare part information"
+    msg = f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. {await api.get_year(state_data['model_id'], state_data['brand_id'])}\n4. {state_data['detail_type']}\n\n5. Write your information"
     await call.message.edit_text(text=msg, reply_markup=inline.tuple_btns([]))
     await CarDetailStates.DETAIL_NAME_STATE.set()

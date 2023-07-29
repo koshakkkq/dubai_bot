@@ -16,6 +16,7 @@ from user.utils import send_message_of_interest
 @decorators.picked_language
 async def bot_menu(message: Message, state, language):
     await message.answer("Main menu", reply_markup=menu())
+    
     await state.finish()
 
 
