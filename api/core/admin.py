@@ -130,6 +130,15 @@ class CourierOrdersBlacklistAdmin(admin.ModelAdmin):
 class MessageToDeleteAdmin(admin.ModelAdmin):
     list_display = ('id', 'tg_id', 'msg_id')
 
+@admin.register(UserNotification)  # todo удалить для клиента
+class UserNotificationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'new_offers', 'new_couriers')
+
+
+@admin.register(ShopNotification)  # todo удалить для клиента
+class ShopNotificationAdmin(admin.ModelAdmin):
+    list_display = ('shop', 'new_available_orders', 'new_active_orders')
+
 
 @admin.register(OrderCredential)
 class OrderCredential( admin.ModelAdmin):

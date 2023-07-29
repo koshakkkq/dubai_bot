@@ -252,6 +252,11 @@ class ShopInfo(APIView):
 
         if 'phone' in request.POST:
             shop.phone = request.POST['phone']
+        if 'lat' in request.POST:
+            shop.lat = request.POST['lat']
+
+        if 'lon' in request.POST:
+            shop.lon = request.POST['lon']
 
         shop.save()
         return JsonResponse({'status': 'success'})
