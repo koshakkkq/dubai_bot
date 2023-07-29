@@ -252,7 +252,9 @@ async def get_value_to_change(message: types.Message, state: FSMContext, languag
 	data = await state.get_data()
 	await state.reset_state()
 	field = data['shop_filed_to_change']
-	await shop.logic.change_shop_information(shop_id, field=field, value=value)
+
+	data = {field:value}
+	await shop.logic.change_shop_information(shop_id, data)
 	keyboard = shop.keyboards.keyboards[language]['shop_back_from_change']
 	msg = shop.messages.messages[language]['ok']
 	await message.answer(text=msg, reply_markup=keyboard)
@@ -268,8 +270,14 @@ async def get_coords_to_change(message: types.Message, state: FSMContext, langua
 	lat = message.location.latitude
 	lon = message.location.longitude
 
-	data = await state.get_data()
 	await state.reset_state()
+
+	data = {'lon': lon, 'lat': lat}
+	await shop.logic.change_shop_information(shop_id, data)
+	keyboard = shop.keyboards.keyboards[language]['shop_back_from_change']
+	msg = shop.messages.messages[language]['ok']
+	await message.answer(text=msg, reply_markup=keyboard)
+
 @dp.callback_query_handler(
 	filters.Text(equals='shop_info_create_invite'),
 	state="*",

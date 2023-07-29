@@ -35,6 +35,7 @@ async def menu_msg_handler(message: types.Message, state: FSMContext, language='
 )
 @decorators.picked_language
 @decorators.is_member
+@decorators.delete_msg_decorator
 async def shop_menu_callback(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id = -1):
     await state.reset_data()
     await state.set_state(ShopMenuStates.in_menu.state)

@@ -7,7 +7,7 @@ buttons['eng']['shop_menu'] = InlineKeyboardButton(text=f"↩️ Back", callback
 
 buttons['eng']['shop_info_back'] = InlineKeyboardButton(text=f"↩️ Back", callback_data="shop_info")
 
-buttons['eng']['shop_get_brands'] = InlineKeyboardButton(text=f"↩️ Back", callback_data="shop_get_brands")
+buttons['eng']['shop_get_brands'] = InlineKeyboardButton(text=f'✅ OK', callback_data="shop_get_brands")
 
 
 buttons['eng']['pick_all_models'] = InlineKeyboardButton(text=f"Select all models", callback_data="shop_info_pick_all_models_1")

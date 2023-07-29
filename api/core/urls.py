@@ -51,4 +51,8 @@ urlpatterns = [
     path('courier_order/<int:order_id>/', views_courier.OrderInfo.as_view()),
     path('courier_add_to_blacklist/<int:order_id>/<int:courier_id>/', views_courier.AddOrderToCourierBlacklist.as_view()),
     path('courier_available_orders/<int:courier_id>/<int:status>/<int:skip>/<int:limit>/', views_courier.CouriersOrders.as_view()),
+
+
+
+    path('notifications/', views.NotificationsView.as_view()),
 ]

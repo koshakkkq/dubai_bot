@@ -1,4 +1,5 @@
 from django.core.handlers.wsgi import WSGIRequest
+from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import generics
@@ -178,6 +179,56 @@ class ShopFeedbackCreateApiView(APIView):
             print(e)
             return JsonResponse({"status": "error"})
 
+
+
+class NotificationsView(APIView):
+    def get(self, request):
+        res = {
+            'status': 'Success',
+            'data': []
+        }
+        all_notifications = []
+        shop_notifications = ShopNotification.objects.filter(Q(new_available_orders__gt=0) | Q(new_active_orders__gt=0))
+
+        shop_notifications = shop_notifications[:min(len(shop_notifications), 10)]
+
+        for notification in shop_notifications:
+            if len(all_notifications) >= 10:
+                break
+            shop_members = ShopMember.objects.filter(shop=notification.shop)
+            for member in shop_members:
+                all_notifications.append(
+                    {
+                        'type': 'shop',
+                        'user_id': member.user.telegram_id,
+                        'new_available_orders': notification.new_available_orders,
+                        'new_active_orders': notification.new_active_orders,
+                    }
+                )
+            notification.new_available_orders = F('new_available_orders') - notification.new_available_orders
+            notification.new_active_orders = F('new_active_orders') - notification.new_active_orders
+            notification.save()
+
+        user_notifications = UserNotification.objects.filter(Q(new_offers__gt=0) | Q(new_couriers__gt=0))
+
+        user_notifications = user_notifications[:min(len(user_notifications), 10)]
+
+        for notification in user_notifications:
+            if len(all_notifications) >= 10:
+                break
+            all_notifications.append(
+                {
+                    'type': 'user',
+                    'user_id': notification.user.telegram_id,
+                    'new_offers': notification.new_offers,
+                    'new_couriers': notification.new_couriers,
+                }
+            )
+            notification.new_offers = F('new_offers') - notification.new_offers
+            notification.new_couriers = F('new_couriers') - notification.new_couriers
+            notification.save()
+        res['data'] = all_notifications
+        return JsonResponse(res)
 
 def order_increase(request, order_id):
     order = Order.objects.get(id=order_id)

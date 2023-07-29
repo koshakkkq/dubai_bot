@@ -101,7 +101,7 @@ def delete_msg_decorator(func):
 		except Exception as e:
 			logging.error(e)
 			return
-		await func(*real_args,event,state, language, kwargs)
+		await func(*real_args,event,state, language, **kwargs)
 
 	return wrapper
 

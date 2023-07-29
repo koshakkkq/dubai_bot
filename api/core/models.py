@@ -1,10 +1,10 @@
 import datetime
 
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models import F
+from django.db.models.signals import pre_delete, pre_save, post_save
 
-from .constants import VERBOSE_ORDER_TYPE, VERBOSE_RAITING_TYPE
-from django.dispatch.dispatcher import receiver
+from .constants import VERBOSE_ORDER_TYPE, VERBOSE_RAITING_TYPE, OrderStatus
 class Courier(models.Model):
 	name = models.CharField(max_length=100)
 	phone = models.CharField(max_length=100)
@@ -39,7 +39,6 @@ class TelegramUser(models.Model):
 
 	def __str__(self):
 		return f"Tg id: {self.telegram_id}"
-
 
 	class Meta:
 		verbose_name = "Telegram user"
@@ -219,13 +218,6 @@ class MessageToDelete(models.Model):
 	tg_id = models.BigIntegerField()
 	msg_id = models.BigIntegerField(default=None, null=True)
 
-@receiver(pre_delete, sender=TelegramUser)
-def wrapper(sender, instance: TelegramUser, *args, **kwargs):
-	tg_id = instance.telegram_id
-	CourierRegistrationCode.objects.filter(user=tg_id).delete()
-	ShopRegistrationCode.objects.filter(user=tg_id).delete()
 
-@receiver(pre_delete, sender=ShopMember)
-def wrapper(sender, instance: ShopMember, *args, **kwargs):
-	tg_id = instance.user.telegram_id
-	ShopRegistrationCode.objects.filter(user=tg_id).delete()
+
+
