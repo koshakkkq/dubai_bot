@@ -236,6 +236,8 @@ class ShopInfo(APIView):
             'name': shop.name,
             'location': shop.location,
             'phone': shop.phone,
+            'lon': shop.lon,
+            'lat': shop.lat,
         })
 
 

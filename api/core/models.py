@@ -214,6 +214,11 @@ class UserNotification(models.Model):
 	new_offers = models.BigIntegerField(default=0)
 	new_couriers = models.BigIntegerField(default=0)
 
+
+class MessageToDelete(models.Model):
+	tg_id = models.BigIntegerField()
+	msg_id = models.BigIntegerField(default=None, null=True)
+
 @receiver(pre_delete, sender=TelegramUser)
 def wrapper(sender, instance: TelegramUser, *args, **kwargs):
 	tg_id = instance.telegram_id

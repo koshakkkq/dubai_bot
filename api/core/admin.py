@@ -126,6 +126,11 @@ class ShopOrdersBlacklistAdmin(admin.ModelAdmin):
 class CourierOrdersBlacklistAdmin(admin.ModelAdmin):
     list_display = ('user', 'order')
 
+@admin.register(MessageToDelete)  # todo удалить для клиента
+class MessageToDeleteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'tg_id', 'msg_id')
+
+
 @admin.register(OrderCredential)
 class OrderCredential( admin.ModelAdmin):
     list_display = ('address', 'get_courier', 'is_delivery', 'phone')

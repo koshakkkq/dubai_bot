@@ -93,7 +93,7 @@ async def shop_registration_get_phone(message: types.Message, state: FSMContext,
 	await state.set_state(ShopCreationStates.get_coords.state)
 
 	msg = shop.messages.messages[language]['shop_change_coords']
-	keyboard = shop.keyboards.keyboards[language]['shop_get_coords_register']
+	keyboard = shop.keyboards.keyboards[language]['shop_back_from_change']
 
 	await message.answer(text=msg, reply_markup=keyboard)
 
@@ -107,16 +107,13 @@ async def shop_registration_get_phone(message: types.Message, state: FSMContext,
 async def shop_registration_get_coords(message: types.Message, state: FSMContext, language='eng'):
 	lat = message.location.latitude
 	lon = message.location.longitude
-	await state.update_data(coords=location)
-
-	data = await state.get_data()
-	await state.reset_state()
-
-
-	await create_shop(user_id=message.from_user.id, data=data)
+	await state.update_data(shop_lat=lat)
+	await state.update_data(shop_lon=lon)
 
 	msg = shop.messages.messages[language]['shop_change_location']
-	keyboard = shop.keyboards.keyboards[language]['to_client_menu']
+	keyboard = shop.keyboards.keyboards[language]['shop_back_from_change']
+
+	await state.set_state(ShopCreationStates.get_location.state)
 
 	await message.answer(text=msg, reply_markup=keyboard)
 
@@ -133,7 +130,7 @@ async def shop_registration_get_location(message: types.Message, state: FSMConte
 
 	await create_shop(user_id=message.from_user.id, data=data)
 
-	msg = shop.messages.messages[language]['get_shop_name']
+	msg = shop.messages.messages[language]['creation_success']
 	keyboard = shop.keyboards.keyboards[language]['code_correct']
 
 	await message.answer(text=msg, reply_markup=keyboard)

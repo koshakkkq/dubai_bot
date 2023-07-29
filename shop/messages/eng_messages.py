@@ -20,6 +20,6 @@ eng_messages = {
 
     'shop_change_name': 'Enter new name.',
     'shop_change_coords': 'Send geolocation (available only on mobile Telegram).',
-    'shop_change_location': 'Enter additional info.',
+    'shop_change_location': 'Enter additional info about location (if there is nothing to add enter -).',
     'shop_change_phone': 'Enter new phone.'
 }
