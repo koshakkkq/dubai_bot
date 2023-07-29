@@ -54,7 +54,7 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
 async def feedback(call: CallbackQuery, state: FSMContext):
     await state.finish()
     orders = await api.get_orders(call.message.chat.id, 0)
-    if not orders is None:
+    if orders is None:
         await call.message.edit_text(text="No active orders", reply_markup=inline.to_menu())
     else:
         pages = len(orders)
@@ -68,7 +68,7 @@ async def feedback(call: CallbackQuery, state: FSMContext):
 @dp.callback_query_handler(lambda call: "find_spare_part" == call.data, state="*")
 async def feedback(call: CallbackQuery, state: FSMContext):
     await state.finish()
-    brands =  {item["name"]: item["id"] for item in await api.get_brands()}
+    brands = {item["name"]: item["id"] for item in await api.get_brands()}
     await call.message.edit_text(text="✅ Great, now I will help you.\n\n1. Write a brand\n*important to write everything in one message", 
                               reply_markup=None)
     await CarDetailStates.BRAND_STATE.set()
