@@ -31,6 +31,7 @@ urlpatterns = [
 
     path('create_shop/', views_shop.CreateShop.as_view()),
     path('brands/<int:skip>/<int:limit>/', views_shop.AvailableBrands.as_view()),
+    path('msg_to_delete/<int:tg_id>/', views.MsgToDeleteView.as_view()),
     path('models/<int:shop_id>/<int:brand_id>/<int:skip>/<int:limit>/', views_shop.Models.as_view()),
     path('pick_models/<int:shop_id>/', views_shop.PickModels.as_view()),
     path('shop_info/<int:shop_id>/', views_shop.ShopInfo.as_view()),

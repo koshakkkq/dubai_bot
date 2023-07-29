@@ -30,7 +30,9 @@ async def create_shop(user_id, data, ):
 		'tg_id':user_id,
 		'name': data['shop_name'],
 		'location': data['shop_location'],
-		'phone': data['shop_phone']
+		'phone': data['shop_phone'],
+		'lon': data['shop_lon'],
+		'lat': data['shop_lat'],
 	}
 
 

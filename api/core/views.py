@@ -145,6 +145,26 @@ class OrderUpdateApiView(APIView):
             return JsonResponse({"status": "error"})
 
 
+
+class MsgToDeleteView(APIView):
+    def get(self, request, tg_id):
+        try:
+            msg = MessageToDelete.objects.get(tg_id=tg_id)
+            msg_id = msg.msg_id
+            msg.msg_id = None
+            msg.save()
+            return JsonResponse({'msg': msg_id})
+        except Exception :
+            return JsonResponse({'msg': None})
+
+    def post(self, request,tg_id):
+        msg_id = request.POST['msg_id']
+        msg = MessageToDelete.objects.get_or_create(
+            tg_id=tg_id,
+        )
+        msg[0].msg_id = msg_id
+        msg[0].save()
+        return JsonResponse({'msg':None}, status=200)
 class ShopFeedbackCreateApiView(APIView):
     def post(self, request):
         try:

@@ -54,7 +54,7 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
 async def feedback(call: CallbackQuery, state: FSMContext):
     await state.finish()
     orders = await api.get_orders(call.message.chat.id, 0)
-    if orders is None:
+    if not orders is None:
         await call.message.edit_text(text="No active orders", reply_markup=inline.to_menu())
     else:
         pages = len(orders)

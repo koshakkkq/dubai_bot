@@ -5,6 +5,7 @@ from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from utils.requests import make_get_request, make_post_request
 from config import SERVER_URL
+from loader import bot
 async def get_current_language(user_id: int):
 	url = f'{SERVER_URL}/telegram_user?telegram_id={user_id}'
 	data = await make_get_request(url)
@@ -19,8 +20,10 @@ async def set_language(user_id, language):
 		'tg_id': user_id,
 		'language': language,
 	}
-	await make_post_request(url, post_data)
-
+	try:
+		await make_post_request(url, post_data)
+	except Exception as e:
+		logging.error(e)
 
 async def get_shop_id(tg_id):
 	url = f'{SERVER_URL}/shop_member?user__telegram_id={tg_id}'
@@ -38,6 +41,20 @@ async def get_courier_id(tg_id):
 	try:
 		res = await make_get_request(url)
 		return res.get('courier_id', None)
+	except Exception as e:
+		logging.error(e)
+		return None
+
+
+
+async def delete_msg(tg_id):
+	url = f'{SERVER_URL}/msg_to_delete/{tg_id}/'
+	try:
+		res = await make_get_request(url)
+		msg_id = res['msg']
+		if msg_id == 'None':
+			return
+		await bot.delete_message(tg_id, msg_id)
 	except Exception as e:
 		logging.error(e)
 		return None
