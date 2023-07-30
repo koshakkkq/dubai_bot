@@ -35,10 +35,17 @@ async def order_info(order_id, language):
     data = await get_order_information(order_id)
     data = data['data']
 
+    location = {
+        'latitude': data['lat'],
+        'longitude': data['lon'],
+    }
+
     if language == 'eng':
-        msg = f"Shop address: {data['shop_address']}\n" \
+
+        msg = f'↑ Shop Geolocation ↑\n\n'\
+              f"Shop address info: {data['shop_address']}\n" \
               f'Client address: {data["client_address"]}\n'
-        return msg
+        return location, msg
 
 
 async def set_order_courier_msg(courier_id,order_id ,language, prefix='courier_pick_order_prefix'):
@@ -47,6 +54,11 @@ async def set_order_courier_msg(courier_id,order_id ,language, prefix='courier_p
 
     data = data['data']
 
+    location = {
+        'latitude': data['lat'],
+        'longitude': data['lon'],
+    }
+
     client_id = data['tg_id']
 
     prefix_msg = courier.messages.messages[language][prefix]
@@ -54,20 +66,24 @@ async def set_order_courier_msg(courier_id,order_id ,language, prefix='courier_p
         prefix_msg += data['status']
 
     if language == 'eng':
-        msg = f"{prefix_msg}" \
+
+        msg = f'↑ Shop Geolocation ↑\n\n'\
+              f"{prefix_msg}" \
               f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
               f'User phone: {data["phone"]}\n' \
               f"Shop address: {data['shop_address']}\n" \
               f'Client address: {data["client_address"]}'
 
-
-        return msg
+        return location, msg
 
 async def get_couriers_order_info_msg(order_id, language, prefix):
     data = await get_order_information(order_id)
     data = data['data']
 
-    print(data)
+    location = {
+        'latitude': data['lat'],
+        'longitude': data['lon'],
+    }
 
     client_id = data['tg_id']
 
@@ -83,12 +99,12 @@ async def get_couriers_order_info_msg(order_id, language, prefix):
 
     if language == 'eng':
 
-        msg = f"{prefix_msg}" \
+        msg = f'↑ Shop Geolocation ↑\n\n'\
+              f"{prefix_msg}" \
               f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
               f'User phone: {data["phone"]}\n' \
               f"Shop address: {data['shop_address']}\n" \
               f'Client address: {data["client_address"]}\n'\
               f'Order id: {data["id"]}'
 
-
-        return msg
+        return location, msg

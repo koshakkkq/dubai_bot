@@ -6,8 +6,9 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import filters
 
 import shop.logic
+from utils.api import set_msg_to_delete
 from .courier_menu import menu_callback
-from loader import dp
+from loader import dp, bot
 
 import courier.keyboards
 import courier.messages
@@ -30,6 +31,7 @@ class OrderPaginator:
 
     @decorators.picked_language
     @decorators.is_courier
+    @decorators.delete_msg_decorator
     async def begin_pagination(self, callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1):
 
         await state.reset_state(with_data=False)
@@ -137,12 +139,18 @@ class PickOrderStates(StatesGroup):
 async def available_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1,):
     order_id = callback.data.split('_')[-1]
 
-    msg = await courier.messages.order_info(order_id, language)
+    location, msg = await courier.messages.order_info(order_id, language)
+
+    await callback.message.delete()
+    user_id = callback.from_user.id
+
+    msg_to_delete = await bot.send_location(user_id, **location)
+    msg_to_delete = msg_to_delete.message_id
+    await set_msg_to_delete(user_id, msg_to_delete)
 
     keyboard = courier.keyboards.keyboards[language]['available_order_info']
 
-    await callback.message.edit_text(text=msg, reply_markup=keyboard)
-    await callback.answer()
+    await bot.send_message(chat_id=user_id,text=msg, reply_markup=keyboard)
 
     await state.update_data(courier_available_order=order_id)
     await state.set_state(PickOrderStates.in_order.state)
@@ -153,6 +161,7 @@ async def available_order_info(callback: types.CallbackQuery, state: FSMContext,
 )
 @decorators.picked_language
 @decorators.is_courier
+@decorators.delete_msg_decorator
 async def pick_available_order(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1,):
     await state.reset_state(with_data=False)
 
@@ -160,16 +169,23 @@ async def pick_available_order(callback: types.CallbackQuery, state: FSMContext,
 
     order_id = data['courier_available_order']
     msg = ''
+    location = {}
+
     try:
-        msg = await courier.messages.set_order_courier_msg(order_id=order_id, courier_id=courier_id, language=language)
+        location, msg = await courier.messages.set_order_courier_msg(order_id=order_id, courier_id=courier_id, language=language)
     except Exception as e:
         msg = 'Sorry, error on server.'
 
+    user_id = callback.from_user.id
+    await callback.message.delete()
+    msg_to_delete = await bot.send_location(user_id, **location)
+    msg_to_delete = msg_to_delete.message_id
+    await set_msg_to_delete(user_id, msg_to_delete)
+
     keyboard = courier.keyboards.keyboards[language]['available_order_finish']
 
-    await callback.message.edit_text(text=msg, reply_markup=keyboard, parse_mode="HTML")
+    await bot.send_message(chat_id=user_id, text=msg, reply_markup=keyboard, parse_mode="HTML")
 
-    await callback.answer()
 
 
 @dp.callback_query_handler(
@@ -178,6 +194,7 @@ async def pick_available_order(callback: types.CallbackQuery, state: FSMContext,
 )
 @decorators.picked_language
 @decorators.is_courier
+@decorators.delete_msg_decorator
 async def reject_available_order(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1,):
     await state.reset_state(with_data=False)
 
@@ -199,12 +216,18 @@ async def reject_available_order(callback: types.CallbackQuery, state: FSMContex
 async def active_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1,):
     order_id = callback.data.split('_')[-1]
 
-    msg = await courier.messages.get_couriers_order_info_msg(order_id, language, 'courier_active_order_prefix')
+    location, msg = await courier.messages.get_couriers_order_info_msg(order_id, language, 'courier_active_order_prefix')
 
     keyboard = courier.keyboards.keyboards[language]['active_orders_finish']
 
-    await callback.message.edit_text(text=msg, reply_markup=keyboard, parse_mode="HTML")
-    await callback.answer()
+    user_id = callback.from_user.id
+    await callback.message.delete()
+    msg_to_delete = await bot.send_location(user_id, **location)
+    msg_to_delete = msg_to_delete.message_id
+    await set_msg_to_delete(user_id, msg_to_delete)
+
+
+    await bot.send_message(chat_id=user_id,text=msg, reply_markup=keyboard, parse_mode="HTML")
 
     await state.reset_state(with_data=False)
 
@@ -218,12 +241,17 @@ async def active_order_info(callback: types.CallbackQuery, state: FSMContext, la
 async def active_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1,):
     order_id = callback.data.split('_')[-1]
 
-    msg = await courier.messages.get_couriers_order_info_msg(order_id, language, 'courier_done_order_prefix')
+    location, msg = await courier.messages.get_couriers_order_info_msg(order_id, language, 'courier_done_order_prefix')
 
     keyboard = courier.keyboards.keyboards[language]['done_orders_finish']
 
-    await callback.message.edit_text(text=msg, reply_markup=keyboard, parse_mode="HTML")
-    await callback.answer()
+    user_id = callback.from_user.id
+    await callback.message.delete()
+    msg_to_delete = await bot.send_location(user_id, **location)
+    msg_to_delete = msg_to_delete.message_id
+    await set_msg_to_delete(user_id, msg_to_delete)
+
+    await bot.send_message(text=msg, reply_markup=keyboard, parse_mode="HTML")
 
     await state.reset_state(with_data=False)
 

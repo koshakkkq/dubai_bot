@@ -115,8 +115,21 @@ class ExtendedOrderApiView(OrderApiView):
                         raiting = sum(feedback.values_list("raiting", flat=True)) / len(feedback.all())
                     lst.append({"raiting": raiting, "id": offer.id, "price": offer.price, "shop":
                         {"id": shop.id, "name": shop.name, "location": shop.location, "phone": shop.phone}})
-                delta = {"id": order.id, "status": {"id": order.status, "name": VERBOSE_ORDER_TYPE[order.status]}, 
-                         "offers": lst, "model": str(order.model), "additional": order.additional}
+
+
+                is_delivery = None
+                courier = None
+                if order.credential is not None:
+                    is_delivery = order.credential.is_delivery
+                    courier = {
+                        'tg_id': order.credential.courier.telegram_user.telegram_id,
+                        'phone': order.credential.courier.phone,
+                    }
+
+                delta = {"id": order.id, "status": {"id": order.status, "name": VERBOSE_ORDER_TYPE[order.status]},
+                         "offers": lst, "model": str(order.model), "additional": order.additional,
+                         'is_delivery': is_delivery, 'courier': courier,
+                         }
                 if int(status) > 0:
                     delta["offer"] = OrderOfferSerializer(order.offer).data
                 data.append(delta)
@@ -212,7 +225,6 @@ class NotificationsView(APIView):
             notification.new_active_orders = F('new_active_orders') - notification.new_active_orders
             notification.save()
 
-        print(all_notifications)
 
         user_notifications = UserNotification.objects.filter(Q(new_offers__gt=0) | Q(new_couriers__gt=0))
 

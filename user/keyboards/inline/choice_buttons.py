@@ -161,9 +161,9 @@ def my_order_btns(orders, current_page=0):
 	order = orders[current_page]
 	shop_id = order['offer']["shop"]
 	keyboard = InlineKeyboardMarkup()
-	print(order['status'])
 	if order['status']['id'] == 1:
 		keyboard.row(InlineKeyboardButton("✅ received", callback_data=f"was_deliveried:{shop_id}:{order['id']}"))
+
 	btns = []
 	if current_page > 0:
 		btns.append(InlineKeyboardButton("⬅️", callback_data=f"myorder_back:{current_page}"))
