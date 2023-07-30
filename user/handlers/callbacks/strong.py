@@ -1,5 +1,5 @@
 import utils.decorators as decorators
-from loader import dp
+from loader import dp, bot
 from aiogram.types import CallbackQuery
 from user.keyboards import inline
 from aiogram.dispatcher import FSMContext
@@ -7,6 +7,7 @@ from user.filters.states import CarDetailStates, ResponseStates
 from utils import api
 from user.utils import text_for_order
 from utils.decorators_utils import delete_msg
+from shop.messages import get_shop_info_message
 
 
 @dp.callback_query_handler(
@@ -16,6 +17,7 @@ from utils.decorators_utils import delete_msg
 @decorators.picked_language
 async def to_menu_callback(call: CallbackQuery, state: FSMContext, language='eng'):
     await state.finish()
+    await delete_msg(call.message.chat.id)
     await call.message.edit_text("Main menu", reply_markup=inline.menu())
 
 
@@ -49,7 +51,16 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text(text="No orders", reply_markup=inline.to_menu())
     else:
         text = await text_for_order(orders[0]['id'])
-        await call.message.edit_text(text=text, reply_markup=inline.my_order_btns(orders), parse_mode="HTML")
+        if not orders[0]["offer"] is None:
+            try:
+                await bot.delete_message(call.message.chat.id, call.message.message_id)
+            except:
+                pass
+            location, info = await get_shop_info_message(orders[0]["offer"]["shop"])
+            msg = await bot.send_location(call.message.chat.id, **location)
+            await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
+        await call.message.answer(text=text, reply_markup=inline.my_order_btns(orders))
+
 
 
 @dp.callback_query_handler(lambda call: "feedback" == call.data, state="*")
