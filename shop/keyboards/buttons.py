@@ -25,10 +25,10 @@ buttons['eng']['unpick_page_models'] = InlineKeyboardButton(
 
 
 
-buttons['eng']['notification_to_menu'] = [InlineKeyboardButton(
+buttons['eng']['notification_to_menu'] = [
 	InlineKeyboardButton(text=f"💬 Main menu", callback_data="to_menu"),
 	InlineKeyboardButton(text=f"🔐 Store menu.", callback_data="shop_menu"),
-)]
+]
 
 buttons['eng']['notification_to_active_orders'] = [InlineKeyboardButton(text=f"🚗 Active orders", callback_data="shop_active_orders")]
 
