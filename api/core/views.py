@@ -117,18 +117,9 @@ class ExtendedOrderApiView(OrderApiView):
                         {"id": shop.id, "name": shop.name, "location": shop.location, "phone": shop.phone}})
 
 
-                is_delivery = None
-                courier = None
-                if order.credential is not None:
-                    is_delivery = order.credential.is_delivery
-                    courier = {
-                        'tg_id': order.credential.courier.telegram_user.telegram_id,
-                        'phone': order.credential.courier.phone,
-                    }
 
                 delta = {"id": order.id, "status": {"id": order.status, "name": VERBOSE_ORDER_TYPE[order.status]},
                          "offers": lst, "model": str(order.model), "additional": order.additional,
-                         'is_delivery': is_delivery, 'courier': courier,
                          }
                 if int(status) > 0:
                     delta["offer"] = OrderOfferSerializer(order.offer).data
