@@ -59,7 +59,7 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
             location, info = await get_shop_info_message(orders[0]["offer"]["shop"])
             msg = await bot.send_location(call.message.chat.id, **location)
             await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
-        await call.message.answer(text=text, reply_markup=inline.my_order_btns(orders))
+        await call.message.answer(text=text, reply_markup=inline.my_order_btns(orders), parse_mode='HTML')
 
 
 

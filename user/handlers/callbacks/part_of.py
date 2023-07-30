@@ -63,7 +63,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
         await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
 
     text = await text_for_order(orders[current_page]["id"])
-    await call.message.answer(text=text, reply_markup=inline.my_order_btns(orders, current_page))
+    await call.message.answer(text=text, reply_markup=inline.my_order_btns(orders, current_page), parse_mode='HTML')
 
 
 @dp.callback_query_handler(lambda call: "mark" in call.data)
