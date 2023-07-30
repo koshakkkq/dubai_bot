@@ -2,8 +2,8 @@ import logging
 
 from .requests import make_get_request, make_post_request
 from config import SERVER_URL
-
-
+import shop
+import user
 def get_payed_orders(user_id):
     pass
 
@@ -148,13 +148,18 @@ async def get_year(id, brand_id):
     return None
 
 
+
 async def get_notifications():
     url = f"{SERVER_URL}/notifications/"
     data = await make_get_request(url)
     result = {}
     for i in data["data"]:
         if i["type"] == "shop":
-            result[i["user_id"]] = f"New available orders: {i['new_available_orders']}\nNew active orders: {i['new_active_orders']}"
+            msg, keyboard = shop.get_notification_msg(i)
+            result[i["user_id"]] = (msg, keyboard)
         elif i["type"] == "user":
-            result[i["user_id"]] = f"New offers: {i['new_offers']}\nNew couriers: {i['new_couriers']}"
+            msg, keyboard = user.get_notification_msg(i)
+            result[i["user_id"]] = (msg, keyboard)
     return result
+
+

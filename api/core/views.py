@@ -252,26 +252,29 @@ class NotificationsView(APIView):
 class ResetUserNotifications(APIView):
     def post(self, request):
         try:
-            tg_id = request.POST('tg_id')
+            tg_id = request.POST['tg_id']
             user = TelegramUser.objects.get(telegram_id=tg_id)
             user_notification = UserNotification.objects.get(user = user)
             if 'new_offers' in request.POST:
                 user_notification.new_offers = 0
             if 'new_couriers' in request.POST:
                 user_notification.new_couriers = 0
+            user_notification.save()
             return JsonResponse({'success': True})
         except Exception as e:
+            print(e)
             return JsonResponse({'success': False})
 
 class ResetShopNotifications(APIView):
     def post(self, request):
         try:
-            shop_id = request.POST('shop_id')
+            shop_id = request.POST['shop_id']
             shop_notification = ShopNotification.objects.get(shop_id=shop_id)
             if 'new_available_orders' in request.POST:
                 shop_notification.new_available_orders = 0
             if 'new_active_orders' in request.POST:
                 shop_notification.new_active_orders = 0
+            shop_notification.save()
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False})

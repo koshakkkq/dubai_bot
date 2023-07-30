@@ -25,9 +25,9 @@ async def shop_notify(wait):
         while True:
             notify = await api.get_notifications()
 
-            for user_id, text in notify.items():
+            for user_id, (text, keyboard) in notify.items():
                 try:
-                    await bot.send_message(user_id, text)
+                    await bot.send_message(user_id, text, reply_markup=keyboard)
                 except Exception as e:
                     logging.error(e)
             if len(notify) == 0:
