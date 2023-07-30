@@ -4,7 +4,7 @@ from user.keyboards import inline
 from user.keyboards import reply
 from aiogram.dispatcher import FSMContext
 from user.filters.states import ApplicationStates
-from user.utils import send_message_of_interest, text_for_order
+from user.utils import text_for_order
 from utils import api
 from utils.decorators_utils import delete_msg
 from shop.messages import get_shop_info_message

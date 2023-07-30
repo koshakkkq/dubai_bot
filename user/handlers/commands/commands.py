@@ -6,7 +6,7 @@ from loader import dp
 from user.keyboards.inline import *
 from user.keyboards.reply import *
 from user.filters.states import LanguageStates
-from user.utils import send_message_of_interest
+#from user.utils import send_message_of_interest
 
 
 @dp.message_handler(
@@ -26,4 +26,5 @@ async def bot_menu(message: Message, state, language):
 )
 @decorators.picked_language
 async def bot_menu(message: Message, state, language):
-    await send_message_of_interest(message.chat.id, 1)
+    pass
+    #await send_message_of_interest(message.chat.id, 1)
