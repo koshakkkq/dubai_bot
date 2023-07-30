@@ -53,12 +53,12 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
         data["price"] = offer['price']
         data["order_id"] = order["id"]
         data["shop_id"] = offer["shop"]["id"]
-        location, info = await get_shop_info_message(offer["shop"]["id"])
+        geo, info = await get_shop_info_message(offer["shop"]["id"])
         try:
             await bot.delete_message(call.message.chat.id, call.message.message_id)
         except:
             pass
-        msg = await bot.send_location(call.message.chat.id, **location)
+        msg = await bot.send_location(call.message.chat.id, **geo)
         await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
     await call.message.answer(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\n{offer['price']}\n\n" + "Choose your next action ⤵️",
         reply_markup=inline.choice_company())
