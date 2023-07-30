@@ -243,7 +243,6 @@ class ShopInfo(APIView):
 
     def post(self, request, shop_id):
         shop = Shop.objects.get(id=shop_id)
-        print(request.POST)
         if 'name' in request.POST:
             shop.name = request.POST['name']
 

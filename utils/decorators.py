@@ -136,6 +136,6 @@ def is_courier(func):
 		except Exception as e:
 			logging.error(e)
 			return
-		await func(*real_args,event,state, language, courier_id=courier_id)
+		await func(*real_args,event,state, language=language, courier_id=courier_id)
 
 	return wrapper

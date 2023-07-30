@@ -4,11 +4,23 @@ from rest_framework.exceptions import ValidationError
 from core.models import *
 
 
-class CourierSerializer(serializers.ModelSerializer):
 
+
+
+class TelegramUserSerializer(serializers.ModelSerializer):
+    #courier = CourierSerializer(read_only=True)
+    #courier_id = serializers.PrimaryKeyRelatedField(queryset=Courier.objects.all(), source="courier", required=False, default=None, write_only=True)
+
+    class Meta:
+        model = TelegramUser
+        fields = ('__all__')
+
+class CourierSerializer(serializers.ModelSerializer):
+    telegram_user = TelegramUserSerializer(read_only=True)
     class Meta:
         model = Courier
         fields = ('__all__')
+
 
 
 class CourierFeedbackSerializer(serializers.ModelSerializer):
@@ -21,13 +33,7 @@ class CourierFeedbackSerializer(serializers.ModelSerializer):
 
 
 
-class TelegramUserSerializer(serializers.ModelSerializer):
-    courier = CourierSerializer(read_only=True)
-    courier_id = serializers.PrimaryKeyRelatedField(queryset=Courier.objects.all(), source="courier", required=False, default=None, write_only=True)
 
-    class Meta:
-        model = TelegramUser
-        fields = ('__all__')
 
 
 class CarBrandSerializer(serializers.ModelSerializer):
@@ -82,6 +88,9 @@ class ShopMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model =  ShopMember
         fields = ('__all__')
+
+
+
 
 
 class OrderCredentialSerializer(serializers.ModelSerializer):
