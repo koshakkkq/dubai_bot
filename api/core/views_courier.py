@@ -149,6 +149,8 @@ class OrderInfo(APIView):
             'tg_id': order.customer.telegram_id,
             'status': status,
             'phone': phone,
+            'lat': order.offer.shop.lat,
+            'lon': order.offer.shop.lon,
         }
 
     def post(self,request, order_id):

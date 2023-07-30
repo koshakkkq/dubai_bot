@@ -41,7 +41,6 @@ async def set_msg_to_delete(tg_id, msg_id):
     try:
         res = await make_post_request(url, data)
     except Exception as e:
-        print(e)
         return
 
 async def get_years(brand_id, model): #cars
@@ -137,7 +136,6 @@ async def get_brand(id):
     id = int(id)
     brands = {item["name"]: item["id"] for item in await get_brands()}
     for key, val in brands.items():
-        print(key, val, id)
         if val == id:
             return key
     return None

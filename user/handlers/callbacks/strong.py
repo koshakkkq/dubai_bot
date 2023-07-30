@@ -49,7 +49,7 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text(text="No orders", reply_markup=inline.to_menu())
     else:
         text = await text_for_order(orders[0]['id'])
-        await call.message.edit_text(text=text, reply_markup=inline.my_order_btns(orders))
+        await call.message.edit_text(text=text, reply_markup=inline.my_order_btns(orders), parse_mode="HTML")
 
 
 @dp.callback_query_handler(lambda call: "feedback" == call.data, state="*")
