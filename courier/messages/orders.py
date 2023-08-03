@@ -41,6 +41,8 @@ async def set_order_courier_msg(courier_id, order_id, language, prefix='courier_
 
     data = data['data']
 
+    print(data)
+
     client_id = data['tg_id']
 
     prefix_msg = courier.messages.messages[language][prefix]
@@ -67,9 +69,9 @@ async def get_couriers_order_info_msg(order_id, language, prefix):
     client_id = data['tg_id']
 
     prefix_msg = ''
-
+    print(data)
     if prefix == 'courier_done_order_prefix':
-        if data['status'] == 'done':
+        if data['status'] == 'DONE':
             prefix_msg = courier.messages.messages[language]['courier_done_order_prefix']
         else:
             prefix_msg = courier.messages.messages[language]['courier_cancel_order_prefix']
