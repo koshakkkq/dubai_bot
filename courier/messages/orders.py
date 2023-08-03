@@ -4,14 +4,7 @@ import courier.messages
 
 
 async def get_chosen_order_info(user_id, order_id, language):
-    info = await courier.orders.get_order_info(order_id, user_id)
-    if language == "eng":
-        msg = f"Order from <a href='tg://user?id=5501657490'>CLIENT</a>\n\n" \
-              f"Adress: {info['address']}\n\n" \
-              f"Client comment: {info['comment']}\n\n" \
-              f"Shop address: {info['shop_address']}\n\n" \
-              f"Product:{info['product']}"
-    return msg
+    pass
 
 
 async def get_picked_courier_msg(courier_id, language):
@@ -30,34 +23,23 @@ async def get_courier_info_msg(tg_id, language):
         return msg
 
 
-
 async def order_info(order_id, language):
     data = await get_order_information(order_id)
     data = data['data']
 
-    location = {
-        'latitude': data['lat'],
-        'longitude': data['lon'],
-    }
+    route_url = get_google_maps_link(data)
 
     if language == 'eng':
+        msg = f"Shop address info: {data['shop_address']}\n" \
+              f'Client address: {data["client_address"]}\n' \
+              f"<a href='{route_url}'>Route from shop to client</a>"
+        return msg
 
-        msg = f'↑ Shop Geolocation ↑\n\n'\
-              f"Shop address info: {data['shop_address']}\n" \
-              f'Client address: {data["client_address"]}\n'
-        return location, msg
 
-
-async def set_order_courier_msg(courier_id,order_id ,language, prefix='courier_pick_order_prefix'):
-
+async def set_order_courier_msg(courier_id, order_id, language, prefix='courier_pick_order_prefix'):
     data = await set_courier_to_order(order_id=order_id, courier_id=courier_id)
 
     data = data['data']
-
-    location = {
-        'latitude': data['lat'],
-        'longitude': data['lon'],
-    }
 
     client_id = data['tg_id']
 
@@ -65,25 +47,22 @@ async def set_order_courier_msg(courier_id,order_id ,language, prefix='courier_p
     if prefix == 'courier_done_order_prefix':
         prefix_msg += data['status']
 
-    if language == 'eng':
+    route_url = get_google_maps_link(data)
 
-        msg = f'↑ Shop Geolocation ↑\n\n'\
-              f"{prefix_msg}" \
+    if language == 'eng':
+        msg = f"{prefix_msg}" \
               f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
               f'User phone: {data["phone"]}\n' \
               f"Shop address: {data['shop_address']}\n" \
-              f'Client address: {data["client_address"]}'
+              f'Client address: {data["client_address"]}\n' \
+              f"<a href='{route_url}'>Route from shop to client</a>"
 
-        return location, msg
+        return msg
+
 
 async def get_couriers_order_info_msg(order_id, language, prefix):
     data = await get_order_information(order_id)
     data = data['data']
-
-    location = {
-        'latitude': data['lat'],
-        'longitude': data['lon'],
-    }
 
     client_id = data['tg_id']
 
@@ -97,14 +76,19 @@ async def get_couriers_order_info_msg(order_id, language, prefix):
     else:
         prefix_msg = courier.messages.messages[language][prefix]
 
-    if language == 'eng':
+    route_url = get_google_maps_link(data)
 
-        msg = f'↑ Shop Geolocation ↑\n\n'\
-              f"{prefix_msg}" \
+    if language == 'eng':
+        msg = f"{prefix_msg}" \
               f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
               f'User phone: {data["phone"]}\n' \
-              f"Shop address: {data['shop_address']}\n" \
-              f'Client address: {data["client_address"]}\n'\
-              f'Order id: {data["id"]}'
+              f"Shop address information: {data['shop_address']}\n" \
+              f'Client address information: {data["client_address"]}\n' \
+              f'Order id: {data["id"]}\n' \
+              f"<a href='{route_url}'>Route from shop to client</a>"
 
-        return location, msg
+        return msg
+
+
+def get_google_maps_link(data):
+    return f'https://www.google.com/maps/dir/?api=1&origin={data["shop_lat"]},{data["shop_lon"]}&destination={data["cred_lat"]},{data["cred_lon"]}'
