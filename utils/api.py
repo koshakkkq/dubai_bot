@@ -93,7 +93,7 @@ async def order_create(user_id, model_id, additional, detail_type):
     return data
 
 
-async def order_update(order_id, offer_id, status, is_delivery=False, address=None):
+async def order_update(order_id, offer_id, status, is_delivery=False, address=None, lat=0, lon=0):
     url = f"{SERVER_URL}/order/update/"
     post_data = {
         'order_id': order_id,
@@ -101,6 +101,8 @@ async def order_update(order_id, offer_id, status, is_delivery=False, address=No
         "address": address,
         "status": status,
         "is_delivery": is_delivery,
+        "lat": lat,
+        "lon": lon,
     }
     data = await make_post_request(url, post_data)
     return data

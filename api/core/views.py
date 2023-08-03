@@ -141,11 +141,13 @@ class OrderUpdateApiView(APIView):
             is_delivery = request.POST.get("is_delivery")
             address = request.POST.get("address")
             status = request.POST.get("status")
+            lat = request.POST.get("lat")
+            lon = request.POST.get("lon")
 
             order = Order.objects.get(id=order_id)
             order.offer_id = offer_id
             order.status = status
-            order.credential = OrderCredential.objects.create(address=address, is_delivery=is_delivery)
+            order.credential = OrderCredential.objects.create(address=address, is_delivery=is_delivery, lat=lat, lon=lon)
             order.datetime = now()
             order.save()
             return JsonResponse({'status':'success'}, status=200)

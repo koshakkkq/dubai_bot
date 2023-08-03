@@ -12,6 +12,7 @@ from user.constants import VERBOSE_ORDER_TYPE
 async def text_for_order(order_id):
 
 	order = await api.get_order(order_id)
+	print(order_id)
 	shop = order['offer']['shop']
 	additional = '\n\nYou need to pick up order from shop.'
 	if order['status'] == 1:
