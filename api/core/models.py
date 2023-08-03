@@ -130,7 +130,8 @@ class OrderCredential(models.Model):
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
 	is_delivery = models.BooleanField()
 	phone = models.CharField(max_length=100, blank=True, null=True)
-
+	lat = models.FloatField(default=0)
+	lon = models.FloatField(default=0)
 	def __str__(self):
 		s = f'Address: {self.address}, '
 		if self.courier is not None:
