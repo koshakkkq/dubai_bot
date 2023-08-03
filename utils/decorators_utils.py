@@ -57,7 +57,7 @@ async def delete_msg(tg_id):
 		await bot.delete_message(tg_id, msg_id)
 	except Exception as e:
 		logging.error(e)
-		return None
+		return
 
 async def bot_start(message: Message, state):
 
