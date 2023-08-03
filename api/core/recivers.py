@@ -1,7 +1,7 @@
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_migrate
 from django.dispatch import receiver
 from .models import *
-
+from .constants import part_types
 @receiver(post_delete, sender=TelegramUser)
 def wrapper(sender, instance: TelegramUser, *args, **kwargs):
 	tg_id = instance.telegram_id
@@ -42,7 +42,8 @@ def wrapper(sender, instance: Order, raw, update_fields, *args, **kwargs):
 				).update(new_active_orders=F('new_active_orders') + 1)
 	except Order.DoesNotExist:
 		model = instance.model
-		shops_with_order_model = Shop.objects.filter(available_models=model)
+		part = instance.part
+		shops_with_order_model = Shop.objects.filter(available_models=model, parts=part)
 		notifications = ShopNotification.objects.filter(shop__in=shops_with_order_model)
 		notifications.update(new_available_orders=F('new_available_orders') + 1)
 	except Exception as e:
@@ -64,3 +65,9 @@ def wrapper(sender, instance: OrderCredential, raw, update_fields, *args, **kwar
 	except Exception as e:
 		print(e)
 		pass
+
+
+def run_post_migrate(sender, **kwargs):
+	PartType.objects.all().delete()
+	for id, name in enumerate(part_types):
+		PartType.objects.create(pk=id+1, name=name)

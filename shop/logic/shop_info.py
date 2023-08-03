@@ -64,3 +64,24 @@ async def create_code(shop_id):
 	except Exception as e:
 		logging.error(e)
 		return 'Error'
+
+
+async def get_parts(shop_id):
+	url = f'{SERVER_URL}/shop_part_types/{shop_id}/'
+	try:
+		data = await make_get_request(url)
+		return data
+	except Exception as e:
+		logging.error(e)
+
+async def set_part_status(shop_id, part_id, status):
+	url = f'{SERVER_URL}/shop_part_types/{shop_id}/'
+
+	data = {
+		'part_id': part_id,
+		'status': status,
+	}
+	try:
+		await make_post_request(url, data)
+	except Exception as e:
+		logging.error(e)

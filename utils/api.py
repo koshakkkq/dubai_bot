@@ -74,19 +74,20 @@ async def reset_user_notifications(tg_id, data):
 
 async def reset_shop_notifications(shop_id, data):
     data['shop_id'] = shop_id
-    url = f'{SERVER_URL}/reset_user_notifications/'
+    url = f'{SERVER_URL}/reset_shop_notifications/'
     try:
        await make_post_request(url, data)
     except Exception as e:
         logging.error(e)
         pass
 
-async def order_create(user_id, model_id, additional):
+async def order_create(user_id, model_id, additional, detail_type):
     url = f"{SERVER_URL}/order/create/"
     post_data = {
         'telegram_user_id': user_id,
         'model_id': model_id,
         'additional': additional,
+        'part_name': detail_type,
     }
     data = await make_post_request(url, post_data)
     return data

@@ -7,6 +7,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.db import reset_queries, connection
 from django.db.models import Subquery
 from django.http import JsonResponse, HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from .models import *
 from .constants import OrderStatus
@@ -66,7 +68,7 @@ class AvailableOrders(APIView):
         shop = Shop.objects.get(id=shop_id)
 
         available_models = shop.available_models.values('id')
-
+        parts = shop.parts.values('id')
 
 
         black_list = ShopOrdersBlacklist.objects.filter(shop_id=shop_id)
@@ -74,11 +76,14 @@ class AvailableOrders(APIView):
 
         orders = Order.objects.filter(
             status=OrderStatus.PENDING,
-            model_id__in=available_models).exclude(id__in=black_list.values('order'))
+            model_id__in=available_models,
+            part_id__in=parts,
+        ).exclude(id__in=black_list.values('order'))
 
         black_list = OrderOffer.objects.filter(shop_id=shop_id)
 
         orders = orders.exclude(id__in=black_list.values('order'))
+
 
         available_orders_cnt = len(orders)
         if available_orders_cnt <= skip:
@@ -261,8 +266,11 @@ class ShopInfo(APIView):
         return JsonResponse({'status': 'success'})
 
 class AvailableBrands(APIView):
-    def get(self, request, skip, limit):
+    def get(self, request, shop_id,skip, limit):
+        shop = Shop.objects.get(id=shop_id)
+
         brands = CarBrand.objects.all().order_by('name')
+
         cnt = len(brands)
 
         if cnt <= skip:
@@ -274,11 +282,13 @@ class AvailableBrands(APIView):
         data = []
 
         for i in brands:
+            prefix = '❌'
+            if shop.available_models.filter(brand=i).exists():
+                prefix = '✅'
             data.append({
                 'id': i.id,
-                'title': i.name,
+                'title': f'{prefix} {i.name}',
             })
-
         return JsonResponse({'cnt': cnt, 'data': data})
 
 
@@ -351,8 +361,60 @@ class ShopMemberCodeCreation(APIView):
         new_code = ShopMemberRegistrationCode(code=code, shop_id=shop_id)
         new_code.save()
         return JsonResponse({'code': new_code.code})
+
+class PartTypeView(APIView):
+    def get(self, request, shop_id):
+
+
+        shop = Shop.objects.get(id=shop_id)
+
+        available_part_types = PartType.objects.all()
+
+
+        res = []
+        for part in available_part_types:
+
+
+
+
+            if shop.parts.filter(id=part.id).exists():
+                callback_data = f'shop_info_pick_part_{part.id}_0'
+                title = f'✅ {part.name}'
+            else:
+                callback_data = f'shop_info_pick_part_{part.id}_1'
+                title = f'❌ {part.name}'
+            res.append(
+                {
+                    'title': title,
+                    'callback_data': callback_data,
+                }
+            )
+
+        return JsonResponse({'status': 'OK', 'data': res})
+
+
+
+    def post(self, request, shop_id):
+        part_id = request.POST['part_id']
+        part_status = request.POST['status']
+
+        shop = Shop.objects.get(id=shop_id)
+        part = PartType.objects.get(id=part_id)
+
+
+        if part_status == '1':
+            shop.parts.add(part)
+        else:
+            shop.parts.remove(part)
+        shop.save()
+
+        shop = Shop.objects.get(id=shop_id)
+
+        return JsonResponse({'status': 'success'})
+
 def create_test_brands(self):
     for i in range(45, 0, -1):
         brand = CarBrand(name=f'Brand name {i}testing')
         brand.save()
+
 

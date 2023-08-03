@@ -140,6 +140,10 @@ class ShopNotificationAdmin(admin.ModelAdmin):
     list_display = ('shop', 'new_available_orders', 'new_active_orders')
 
 
+@admin.register(PartType)  # todo удалить для клиента
+class PartTypeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name',)
+
 @admin.register(OrderCredential)
 class OrderCredential( admin.ModelAdmin):
     list_display = ('address', 'get_courier', 'is_delivery', 'phone')

@@ -77,6 +77,12 @@ class ShopAvailableModels(models.Model):
 	shop_id = models.ForeignKey
 
 
+class PartType(models.Model):
+	name = models.CharField(max_length=150)
+
+	def __str__(self):
+		return f'Id: {self.id}, name: {self.name}'
+
 class Shop(models.Model):
 
 	name = models.CharField(max_length=50)
@@ -85,7 +91,7 @@ class Shop(models.Model):
 	available_models = models.ManyToManyField(CarModel, related_name="shops", )
 	lat = models.FloatField(default=0)
 	lon = models.FloatField(default=0)
-
+	parts = models.ManyToManyField(PartType)
 	def __str__(self):
 		return f'Id: {self.id}, name: {self.name}'
 
@@ -162,6 +168,7 @@ class Order(models.Model):
 	additional = models.TextField()
 	offer = models.OneToOneField(OrderOffer, on_delete=models.CASCADE, null=True, related_name='+', blank=True)
 	datetime = models.DateTimeField(auto_now=True)
+	part = models.ForeignKey(PartType, on_delete=models.CASCADE, null=True)
 
 	def __str__(self):
 		return f"Id:{self.id}, order from: {self.customer}| Order status: {self.status}"

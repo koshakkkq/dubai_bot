@@ -61,14 +61,14 @@ async def show_brands_begin(callback: types.CallbackQuery, state: FSMContext, la
 
 	page = data['shop_info_brands_page']
 
-	page = await shop.logic.get_brands_page(page)
+	page = await shop.logic.get_brands_page(page, shop_id)
 
 	await state.update_data(shop_info_brands_page=page)
 
 	await show_brands(callback, state, language, shop_id, page, edit_msg=True)
 
 async def show_brands(callback: types.CallbackQuery, state: FSMContext, language, shop_id, page, edit_msg = False):
-	keyboard = await shop.keyboards.get_brands_keyboard(language,page)
+	keyboard = await shop.keyboards.get_brands_keyboard(shop_id, language,page)
 
 	if edit_msg == True:
 		msg = shop.messages.messages[language]['shop_info_brands']
@@ -91,7 +91,7 @@ async def change_brand_page(callback: types.CallbackQuery, state: FSMContext, la
 	cur_page = data.get('shop_info_brands_page', 0)
 	cur_page += command
 
-	cur_page = await shop.logic.get_brands_page(cur_page)
+	cur_page = await shop.logic.get_brands_page(cur_page, shop_id)
 
 	await state.update_data(shop_info_brands_page=cur_page)
 	await show_brands(callback, state, language, shop_id, cur_page, edit_msg=False)
@@ -294,3 +294,36 @@ async def create_invite_code(callback:types.CallbackQuery, state:FSMContext, lan
 
 	await callback.answer()
 
+@dp.callback_query_handler(
+	filters.Text(equals='shop_get_auto_parts'),
+	state="*",
+)
+@decorators.picked_language
+@decorators.is_member
+@decorators.delete_msg_decorator
+async def get_parts(callback:types.CallbackQuery, state:FSMContext, language='eng', shop_id = -1):
+
+	msg = shop.messages.messages[language]['get_shop_parts']
+
+	keyboard = await shop.keyboards.get_parts_keyboard(shop_id, language)
+
+	await callback.message.edit_text(text=msg, reply_markup=keyboard)
+
+	await callback.answer()
+
+
+@dp.callback_query_handler(
+	filters.Text(startswith='shop_info_pick_part_'),
+	state='*',
+)
+@decorators.picked_language
+@decorators.is_member
+@decorators.delete_msg_decorator
+async def pick_part(callback:types.CallbackQuery, state:FSMContext, language='eng', shop_id = -1):
+	part_id = callback.data.split('_')[-2]
+
+	status = callback.data.split('_')[-1]
+
+	await shop.logic.set_part_status(shop_id, part_id, status)
+
+	await get_parts(callback, state)

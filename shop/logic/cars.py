@@ -4,8 +4,8 @@ from config import SERVER_URL
 from utils.requests import make_get_request
 from .utils import get_real_page
 from shop.constants import car_brands_buttons_on_page, car_models_buttons_on_page
-async def get_brands(skip, limit):
-	url = f'{SERVER_URL}/brands/{skip}/{limit}'
+async def get_brands(shop_id, skip, limit):
+	url = f'{SERVER_URL}/brands/{shop_id}/{skip}/{limit}'
 
 	try:
 		data = await make_get_request(url)
@@ -14,9 +14,9 @@ async def get_brands(skip, limit):
 		return {}
 
 
-async def get_brands_page(page):
+async def get_brands_page(page, shop_id):
 	try:
-		data = await get_brands(0,0)
+		data = await get_brands(shop_id,0,0)
 		cnt = data['cnt']
 		return get_real_page(page, car_brands_buttons_on_page, cnt)
 	except Exception as e:
