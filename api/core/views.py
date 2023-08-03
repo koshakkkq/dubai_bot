@@ -89,10 +89,13 @@ class OrderCreateApiView(APIView):
         telegram_user_id = request.POST.get("telegram_user_id")
         additional = request.POST.get("additional")
         model_id = request.POST.get("model_id")
+        part_name = request.POST.get('part_name')
+        part = PartType.objects.get(name=part_name)
+
 
         telegram_user = TelegramUser.objects.get(telegram_id=telegram_user_id)
         model = CarModel.objects.get(id=model_id)
-        order = Order.objects.create(customer=telegram_user, model=model, additional=additional)
+        order = Order.objects.create(customer=telegram_user, model=model, additional=additional, part=part)
         return JsonResponse({'status':'success'}, status=200)
 
 
@@ -268,6 +271,7 @@ class ResetShopNotifications(APIView):
             shop_notification.save()
             return JsonResponse({'success': True})
         except Exception as e:
+            print(e)
             return JsonResponse({'success': False})
 
 

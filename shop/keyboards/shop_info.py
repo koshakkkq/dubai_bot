@@ -3,12 +3,12 @@ from .buttons import buttons
 import shop.logic.cars
 from shop.constants import car_brands_buttons_on_page, car_models_buttons_on_page
 
-async def get_brands_keyboard( language: str, page = 1):
+async def get_brands_keyboard(shop_id, language: str, page = 1):
 
 
 	#page = await shop.logic.get_brands_page(page)
 
-	brands = await shop.logic.get_brands((page - 1) * car_brands_buttons_on_page,
+	brands = await shop.logic.get_brands(shop_id, (page - 1) * car_brands_buttons_on_page,
 													   car_brands_buttons_on_page)
 
 	cnt = brands['cnt']
@@ -101,5 +101,19 @@ async def get_models_keyboard(shop_id, brand_id, language: str, page = 1):
 	orders_buttons.append([buttons[language]['unpick_page_models']])
 
 	orders_buttons.append([buttons[language]['shop_get_brands']])
+
+	return InlineKeyboardMarkup(inline_keyboard=orders_buttons)
+
+async def get_parts_keyboard(shop_id, language):
+	orders_buttons = []
+
+	vals = await shop.logic.get_parts(shop_id)
+	vals = vals['data']
+
+	for index, i in enumerate(vals):
+		orders_buttons.append(
+			[InlineKeyboardButton(text=i['title'], callback_data=i['callback_data'])])
+
+	orders_buttons.append([buttons[language]['shop_info_back']])
 
 	return InlineKeyboardMarkup(inline_keyboard=orders_buttons)

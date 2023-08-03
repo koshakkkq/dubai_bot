@@ -20,6 +20,7 @@ info_keyboard = [
         InlineKeyboardButton(text='🏢 Name', callback_data='shop_change_name'),
     ],
     [InlineKeyboardButton(text='🚗 Brands and models', callback_data='shop_get_brands')],
+    [InlineKeyboardButton(text='🔧 Auto parts', callback_data='shop_get_auto_parts')],
     [InlineKeyboardButton(text='➕ Get invite code for employee', callback_data='shop_info_create_invite')],
     [InlineKeyboardButton(text='↩️ Back', callback_data='shop_menu')],
 ]

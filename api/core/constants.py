@@ -20,3 +20,6 @@ VERBOSE_RAITING_TYPE = (
     (4, 4),
     (5, 5),
 )
+
+
+part_types = ('Body Parts', 'Electric', 'Engine and gearbox', 'Chassis and steering', 'Interior', 'Climate', 'Audio and entertainment')
