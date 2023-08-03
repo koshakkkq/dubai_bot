@@ -145,7 +145,7 @@ async def available_order_info(callback: types.CallbackQuery, state: FSMContext,
 
     keyboard = courier.keyboards.keyboards[language]['available_order_info']
 
-    await callback.message.edit_text(text=msg, reply_markup=keyboard)
+    await callback.message.edit_text(text=msg, reply_markup=keyboard, parse_mode="HTML")
 
     await state.update_data(courier_available_order=order_id)
     await state.set_state(PickOrderStates.in_order.state)
