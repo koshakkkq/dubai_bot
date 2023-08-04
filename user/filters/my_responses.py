@@ -86,7 +86,13 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
     offer_id = state_data["offer_id"]
     shop_id = state_data["shop_id"]
     status = await api.order_update(order_id, offer_id, status=1, is_delivery=False)
-    await call.message.edit_text("Congratulations!\n\nYour order number: " + str(state_data["order_id"]), 
+    geo, info = await get_shop_info_message(shop_id)
+    try:
+        await bot.delete_message(call.message.chat.id, call.message.message_id)
+    except:
+        pass
+    await bot.send_location(call.message.chat.id, **geo)
+    await call.message.answer("Congratulations!\n\nYour order number: " + str(state_data["order_id"]), 
         reply_markup=None)
     #await send_message_of_interest(call.message.chat.id, shop_id, order_id)
 
@@ -94,24 +100,41 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: "delivery" == call.data, state=ResponseStates.PRICE_STATE)
 async def price_of(call: CallbackQuery, state: FSMContext):
-    await delete_msg(call.message.chat.id)
-    await call.message.edit_text("Send your geolocation, please", reply_markup=None)
+    msg = await call.message.edit_text("Send your geolocation, please", reply_markup=inline.back_to_pickup_selecton())
+    await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
     await ResponseStates.ADDRESS_STATE.set()
+
+
+@dp.callback_query_handler(lambda call: "to_delivery_method_addres_state" == call.data, state=[ResponseStates.STRIPE_STATE, ResponseStates.ADDRESS_STATE])
+async def find_spare_part(call: CallbackQuery, state: FSMContext):
+    await delete_msg(call.message.chat.id)
+    await ResponseStates.PRICE_STATE.set()
+    state_data = await state.get_data()
+    name = state_data["name"]
+    location = state_data["location"]
+    phone = state_data["phone"]
+    price = state_data["price"]
+    await call.message.answer(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\n{price}\n\n" + "Choose your next action ⤵️", 
+        reply_markup=inline.delivery_method())
 
 
 @dp.message_handler(content_types=['location'], state=ResponseStates.ADDRESS_STATE)
 async def text_msg(message: Message, state: FSMContext):
+    await delete_msg(message.chat.id)
+
     lat = message.location.latitude
     lon = message.location.longitude
     async with state.proxy() as data:
         data["lat"] = lat
         data["lon"] = lon
     await ResponseStates.STRIPE_STATE.set()
-    await message.answer("Write the easiest way to get to you", reply_markup=None)
+    msg = await message.answer("Write the easiest way to get to you", reply_markup=inline.back_to_pickup_selecton())
+    await api.set_msg_to_delete(message.chat.id, msg.message_id)
 
 
 @dp.message_handler(state=ResponseStates.STRIPE_STATE)
 async def successful(message: types.Message, state: FSMContext):
+    await delete_msg(message.chat.id)
     state_data = await state.get_data()
     order_id = state_data['order_id']
     offer_id = state_data["offer_id"]

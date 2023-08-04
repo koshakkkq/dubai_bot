@@ -44,7 +44,7 @@ async def text_msg(message: Message, state: FSMContext):
 @dp.message_handler(state=CarDetailStates.ARTICLE_STATE)
 async def text_msg(message: Message, state: FSMContext):
     state_data = await state.get_data()
-    await message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
+    await message.answer(f"⚡️Great, your request has been received⚡️\n\nAs soon as there are offers for your request, we will send you to the chatbot.\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=inline.to_menu())
     async with state.proxy() as data:
         data["article"] = message.text
         additional = f"Detail info: {data['detail_name']}\nDetail type: {data['detail_type']}\nArticle: {data['article']}"
@@ -94,6 +94,10 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     elif current_state == CarDetailStates.DETAIL_TYPE_STATE.state:
         msg = f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. {await api.get_year(state_data['model_id'], state_data['brand_id'])}\n\n4. Select the part type"
         await call.message.edit_text(text=msg, reply_markup=inline.tuple_btns(PART_TYPES))
+    elif current_state == CarDetailStates.DETAIL_NAME_STATE.state:
+        state_data = await state.get_data()
+        msg = f"1. {await api.get_brand(state_data['brand_id'])}\n2. {state_data['model']}\n3. {await api.get_year(state_data['model_id'], state_data['brand_id'])}\n4. {state_data['detail_type']}\n\n5. Write your information"
+        await call.message.edit_text(text=msg, reply_markup=inline.tuple_btns([]))
 
 
 @dp.callback_query_handler(lambda call: IterCallback.unpack(call.data).filter(action="back"), state=CarDetailStates.BRAND_STATE)

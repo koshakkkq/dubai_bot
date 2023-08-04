@@ -86,5 +86,5 @@ async def feedback(call: CallbackQuery, state: FSMContext):
     await state.finish()
     brands =  {item["name"]: item["id"] for item in await api.get_brands()}
     await call.message.edit_text(text="✅ Great, now I will help you.\n\n1. Write a brand\n*important to write everything in one message", 
-                              reply_markup=None)
+                              reply_markup=inline.to_menu())
     await CarDetailStates.BRAND_STATE.set()
