@@ -182,3 +182,10 @@ def back_to_pickup_selecton():
 	keyboard = InlineKeyboardMarkup()
 	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"to_delivery_method_addres_state"))
 	return keyboard
+
+
+def my_orders():
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('💼 My orders', callback_data=f"my_orders")) # strong
+	keyboard.row(InlineKeyboardButton('↩️ Back to menu', callback_data=f"to_menu"))
+	return keyboard

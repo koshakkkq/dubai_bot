@@ -227,5 +227,6 @@ class MessageToDelete(models.Model):
 	msg_id = models.BigIntegerField(default=None, null=True)
 
 
-
-
+class MessageToEdit(models.Model):	
+	tg_id = models.BigIntegerField()
+	msg_id = models.BigIntegerField(default=None, null=True)

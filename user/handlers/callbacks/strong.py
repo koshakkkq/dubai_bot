@@ -8,6 +8,7 @@ from utils import api
 from user.utils import text_for_order
 from utils.decorators_utils import delete_msg
 from shop.messages import get_shop_info_message
+from utils.decorators_utils import delete_msg, edit_msg
 
 
 @dp.callback_query_handler(
@@ -85,6 +86,7 @@ async def feedback(call: CallbackQuery, state: FSMContext):
 async def feedback(call: CallbackQuery, state: FSMContext):
     await state.finish()
     brands =  {item["name"]: item["id"] for item in await api.get_brands()}
-    await call.message.edit_text(text="✅ Great, now I will help you.\n\n1. Write a brand\n*important to write everything in one message", 
+    msg = await call.message.edit_text(text="✅ Great, now I will help you.\n\n1. Write a brand\n*important to write everything in one message", 
                               reply_markup=inline.to_menu())
+    await api.set_msg_to_edit(call.message.chat.id, msg.message_id)
     await CarDetailStates.BRAND_STATE.set()

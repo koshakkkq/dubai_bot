@@ -45,6 +45,17 @@ async def get_courier_id(tg_id):
 		logging.error(e)
 		return None
 
+async def edit_msg(tg_id):
+	url = f'{SERVER_URL}/msg_to_edit/{tg_id}/'
+	try:
+		res = await make_get_request(url)
+		msg_id = res['msg']
+		if msg_id == 'None':
+			return
+		await bot.edit_message_reply_markup(chat_id=tg_id, message_id=msg_id, reply_markup=None)
+	except Exception as e:
+		logging.error(e)
+		return
 
 
 async def delete_msg(tg_id):
