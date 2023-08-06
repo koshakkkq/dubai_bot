@@ -44,6 +44,10 @@ urlpatterns = [
     path('shop_add_order_blacklist/', views_shop.AddShopOrderToBlackList.as_view()),
     path('set_order_status/', views_shop.SetOrderStatus.as_view()),
     path('shop_part_types/<int:shop_id>/', views_shop.PartTypeView.as_view()),
+    path('shop_my_responses/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.MyOffers.as_view()),
+    path('shop_order_info/<int:shop_id>/<int:order_id>/', views_shop.OfferInfo.as_view()),
+    path('shop_cancel_offer/<int:shop_id>/<int:order_id>/', views_shop.CancelOffer.as_view()),
+    path('change_offer_price/<int:shop_id>/<int:order_id>/', views_shop.ChangeOfferPrice.as_view()),
 
     path('courier_status/<int:user_id>/', views_courier.CourierStatus.as_view()),
     path('courier_code/<int:user_id>/<str:code>/', views_courier.CheckCourierCode.as_view()),
@@ -53,7 +57,6 @@ urlpatterns = [
     path('courier_order/<int:order_id>/', views_courier.OrderInfo.as_view()),
     path('courier_add_to_blacklist/<int:order_id>/<int:courier_id>/', views_courier.AddOrderToCourierBlacklist.as_view()),
     path('courier_available_orders/<int:courier_id>/<int:status>/<int:skip>/<int:limit>/', views_courier.CouriersOrders.as_view()),
-
 
 
     path('notifications/', views.NotificationsView.as_view()),

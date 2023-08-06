@@ -68,6 +68,8 @@ def wrapper(sender, instance: OrderCredential, raw, update_fields, *args, **kwar
 
 
 def run_post_migrate(sender, **kwargs):
-	PartType.objects.all().delete()
 	for id, name in enumerate(part_types):
-		PartType.objects.create(pk=id+1, name=name)
+		try:
+			PartType.objects.get(name=name)
+		except Exception:
+			PartType.objects.create(pk=id+1, name=name)

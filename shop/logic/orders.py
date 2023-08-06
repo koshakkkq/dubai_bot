@@ -46,6 +46,28 @@ async def get_available_orders_enabled_page(shop_id, page):
         return 1
 
 
+async def get_my_responses(shop_id, skip, limit):
+    url = f'{SERVER_URL}/shop_my_responses/{shop_id}/{skip}/{limit}/'
+
+    try:
+        data = await make_get_request(url)
+        return data
+    except Exception as e:
+        logging.error(e)
+        return []
+
+async def get_my_responses_enabled_page(shop_id, page):
+    if page < 1:
+        return 1
+
+    try:
+        data = await get_my_responses(shop_id, 0, 0)
+        cnt = data.get('cnt', 0)
+        return get_real_page(page, order_buttons_on_page, cnt)
+    except Exception as e:
+        logging.error(e)
+        return 1
+
 
 async def get_done_orders_enabled_page(shop_id, page):
     if page < 1:
@@ -73,13 +95,49 @@ async def get_active_orders_enabled_page(shop_id, page):
 
 
 async def get_available_order_info(order_id:int):
-    url = f'{SERVER_URL}/shop_order_info/{order_id}'
+    url = f'{SERVER_URL}/shop_order_info/{order_id}/'
     try:
         data = await make_get_request(url)
     except Exception as e:
         logging.error(e)
         return {''}
     return data
+
+
+
+async def get_offer(order_id, shop_id):
+    url = f'{SERVER_URL}/shop_order_info/{shop_id}/{order_id}/'
+    try:
+        data = await make_get_request(url)
+    except Exception as e:
+        logging.error(e)
+        return {''}
+    return data
+
+async def cancel_offer(order_id, shop_id):
+    url = f'{SERVER_URL}/shop_cancel_offer/{shop_id}/{order_id}/'
+    data = {}
+    try:
+        data = await make_post_request(url,data)
+    except Exception as e:
+        logging.error(e)
+        return {''}
+    return data
+
+
+async def change_offer_price(order_id, shop_id, price):
+    url = f'{SERVER_URL}/change_offer_price/{shop_id}/{order_id}/'
+    data = {
+        'price': price,
+    }
+
+    try:
+        data = await make_post_request(url,data)
+    except Exception as e:
+        logging.error(e)
+        return {''}
+    return data
+
 
 async def create_order_blacklist(order_id, shop_id):
     url = f'{SERVER_URL}/shop_add_order_blacklist/'

@@ -149,6 +149,7 @@ class OrderInfo(APIView):
             'tg_id': order.customer.telegram_id,
             'status': status,
             'phone': phone,
+            'additional': order.additional,
             'shop_lat': order.offer.shop.lat,
             'shop_lon': order.offer.shop.lon,
             'cred_lat': order.credential.lat,
