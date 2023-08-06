@@ -19,7 +19,7 @@ eng_messages = {
     'err_on_server': 'Sorry, there was an error on the server, please contact administration.',
     'err_in_price': "Your price is invalid, price must be number,it must be greater than 3,67 and less than 36728,98\nValid price examples:\n 127\n 127.0\n 127,0\n\n",
     'ok': 'Ok.',
-
+    'shop_my_offers': 'Your offers.',
     'shop_change_name': 'Enter new name.',
     'shop_change_coords': 'Send geolocation (available only on mobile Telegram).',
     'shop_change_location': 'Enter additional info about location (if there is nothing to add enter -).',

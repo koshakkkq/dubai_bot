@@ -3,6 +3,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardBu
 eng_keyboards = {}
 menu_buttons = [[InlineKeyboardButton(text='🚚 Customer requests', callback_data='shop_customer_requests')],
 				[InlineKeyboardButton(text='🚗 Active orders', callback_data='shop_active_orders')],
+                [InlineKeyboardButton(text='📤 My offers', callback_data='shop_my_responses')],
                 [InlineKeyboardButton(text='✅ Done orders', callback_data='shop_done_orders')],
                 [InlineKeyboardButton(text='📍 Shop information', callback_data='shop_info')],
                 [InlineKeyboardButton(text='↩️ To main menu', callback_data='to_menu')],
@@ -86,3 +87,8 @@ shop_back_from_change = [
 eng_keyboards['shop_back_from_change'] = InlineKeyboardMarkup(inline_keyboard=shop_back_from_change)
 
 
+my_responses_info = [
+    [InlineKeyboardButton(text='❌ Cancel offer', callback_data='cancel_my_offer')],
+    [InlineKeyboardButton(text='↩️ Back', callback_data='shop_my_responses')]
+]
+eng_keyboards['my_responses_info'] = InlineKeyboardMarkup(inline_keyboard=my_responses_info)

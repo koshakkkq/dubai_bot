@@ -31,7 +31,8 @@ async def order_info(order_id, language):
 
     if language == 'eng':
         msg = f"Shop address info: {data['shop_address']}\n" \
-              f'Client address: {data["client_address"]}\n' \
+              f'Client address info: {data["client_address"]}\n' \
+              f'{data["additional"]}\n'\
               f"<a href='{route_url}'>Route from shop to client</a>"
         return msg
 
@@ -41,7 +42,6 @@ async def set_order_courier_msg(courier_id, order_id, language, prefix='courier_
 
     data = data['data']
 
-    print(data)
 
     client_id = data['tg_id']
 
@@ -57,6 +57,8 @@ async def set_order_courier_msg(courier_id, order_id, language, prefix='courier_
               f'User phone: {data["phone"]}\n' \
               f"Shop address: {data['shop_address']}\n" \
               f'Client address: {data["client_address"]}\n' \
+              f'{data["additional"]}\n' \
+              f'Order id: {data["id"]}\n'\
               f"<a href='{route_url}'>Route from shop to client</a>"
 
         return msg
@@ -69,7 +71,6 @@ async def get_couriers_order_info_msg(order_id, language, prefix):
     client_id = data['tg_id']
 
     prefix_msg = ''
-    print(data)
     if prefix == 'courier_done_order_prefix':
         if data['status'] == 'DONE':
             prefix_msg = courier.messages.messages[language]['courier_done_order_prefix']
@@ -83,10 +84,10 @@ async def get_couriers_order_info_msg(order_id, language, prefix):
     if language == 'eng':
         msg = f"{prefix_msg}" \
               f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
-              f'User phone: {data["phone"]}\n' \
               f"Shop address information: {data['shop_address']}\n" \
               f'Client address information: {data["client_address"]}\n' \
               f'Order id: {data["id"]}\n' \
+              f'{data["additional"]}\n' \
               f"<a href='{route_url}'>Route from shop to client</a>"
 
         return msg

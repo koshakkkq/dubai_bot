@@ -73,7 +73,7 @@ async def to_delivery_method(call: CallbackQuery, state: FSMContext):
     location = state_data["location"]
     phone = state_data["phone"]
     price = state_data["price"]
-    await call.message.edit_text(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\n{price}\n\n" + "Choose your next action ⤵️", 
+    await call.message.edit_text(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\nPrice: {price}\n\n" + "Choose your next action ⤵️",
         reply_markup=inline.delivery_method())
 
 
@@ -122,7 +122,7 @@ async def text_msg(message: Message, state: FSMContext):
         data["lat"] = lat
         data["lon"] = lon
     await ResponseStates.STRIPE_STATE.set()
-    msg = await message.answer("Write the easiest way to get to you", reply_markup=inline.back_to_pickup_selecton())
+    msg = await message.answer("Write additional address info for courier, if there is noting write '-' ", reply_markup=inline.back_to_pickup_selecton())
     await api.set_msg_to_edit(message.chat.id, msg.message_id)
 
 
@@ -137,6 +137,6 @@ async def successful(message: types.Message, state: FSMContext):
     lat = state_data["lat"]
     lon = state_data["lon"]
     status = await api.order_update(order_id, offer_id, status=1, address=address, is_delivery=True, lat=lat, lon=lon)
-    await message.answer("Congratulations!\nTomorrow your goods will be delivered to you\nyou can get information about the order in \n\"💼 My orders\"", reply_markup=inine.my_orders())
+    await message.answer("Congratulations!\nSoon your goods will be delivered to you\nyou can get information about the order in \n\"💼 My orders\"", reply_markup=inline.my_orders())
     await state.finish()
     #await send_message_of_interest(message.chat.id, order_id, order_id)

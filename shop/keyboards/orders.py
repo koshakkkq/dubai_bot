@@ -22,6 +22,24 @@ async def get_available_orders(shop_id, language, page):
 	)#available
 
 
+async def get_my_response_orders(shop_id, language, page):
+	page = await shop.logic.get_my_responses_enabled_page(shop_id, page)
+
+	available_orders = await shop.logic.get_my_responses(shop_id, (page - 1) * order_buttons_on_page, order_buttons_on_page)
+
+
+	orders_cnt = available_orders['cnt']
+	available_orders = available_orders['data']
+
+	return get_keyboard_from_orders(
+		orders=available_orders,
+		orders_cnt=orders_cnt,
+		language=language,
+		page=page,
+		command='my_response',
+	)#available
+
+
 
 async def get_active_orders(shop_id, language, page):
 

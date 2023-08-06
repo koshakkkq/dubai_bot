@@ -292,6 +292,61 @@ class AvailableBrands(APIView):
         return JsonResponse({'cnt': cnt, 'data': data})
 
 
+
+class MyOffers(APIView):
+    def get(self, request, shop_id,skip, limit):
+        offers = OrderOffer.objects.filter(shop_id=shop_id, order__status=OrderStatus.PENDING)
+
+        cnt = len(offers)
+
+        if cnt <= skip:
+            return JsonResponse({'cnt': cnt, 'data': []})
+        limit = min(skip + limit, cnt)
+
+        brands = offers[skip:limit]
+
+        data = []
+
+        for i in brands:
+            order = i.order
+            data.append({
+                'id': order.id,
+                'title': f'Price:{i.price} Model: {order.model}',
+            })
+        return JsonResponse({'cnt': cnt, 'data': data})
+
+class OfferInfo(APIView):
+    def get(self, request,shop_id, order_id):
+        offer = OrderOffer.objects.get(shop_id=shop_id, order_id=order_id)
+
+        return JsonResponse(
+            {
+                'price': offer.price,
+            }
+        )
+
+class CancelOffer(APIView):
+    def post(self, request,shop_id, order_id):
+        OrderOffer.objects.filter(shop_id=shop_id, order_id=order_id).delete()
+        return JsonResponse(
+            {
+                'status': 'Ok.',
+            }
+        )
+
+
+class ChangeOfferPrice(APIView):
+    def post(self, request, shop_id, order_id):
+        price = request.POST['price']
+        offer = OrderOffer.objects.get(shop_id=shop_id, order_id=order_id)
+        offer.price = price
+        offer.save()
+        print(offer)
+        return JsonResponse(
+            {
+                'status': 'Ok.',
+            }
+        )
 class Models(APIView):
     def get(self, request, shop_id, brand_id,limit, skip, ):
         models = CarModel.objects.filter(brand__id = brand_id).order_by('name')
