@@ -12,7 +12,7 @@ from aiogram import types
 from aiogram.types.message import ContentType
 from user.utils import text_for_order
 from shop.messages import get_shop_info_message
-from utils.decorators_utils import delete_msg
+from utils.decorators_utils import delete_msg, edit_msg
 
 
 @dp.callback_query_handler(lambda call: IterCallback.unpack(call.data).filter(action="back"), state=ResponseStates.PRICE_STATE)
@@ -86,7 +86,13 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
     offer_id = state_data["offer_id"]
     shop_id = state_data["shop_id"]
     status = await api.order_update(order_id, offer_id, status=1, is_delivery=False)
-    await call.message.edit_text("Congratulations!\n\nAddress: ...\nYour order number: " + str(state_data["order_id"]), 
+    geo, info = await get_shop_info_message(shop_id)
+    try:
+        await bot.delete_message(call.message.chat.id, call.message.message_id)
+    except:
+        pass
+    await bot.send_location(call.message.chat.id, **geo)
+    await call.message.answer("Congratulations!\n\nYour order number: " + str(state_data["order_id"]), 
         reply_markup=None)
     #await send_message_of_interest(call.message.chat.id, shop_id, order_id)
 
@@ -94,50 +100,43 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: "delivery" == call.data, state=ResponseStates.PRICE_STATE)
 async def price_of(call: CallbackQuery, state: FSMContext):
-    await delete_msg(call.message.chat.id)
-    await call.message.edit_text("Write your shipping address", reply_markup=None)
+    msg = await call.message.edit_text("Send your geolocation, please", reply_markup=inline.back_to_pickup_selecton())
+    await api.set_msg_to_edit(call.message.chat.id, msg.message_id)
     await ResponseStates.ADDRESS_STATE.set()
 
 
-@dp.message_handler(state=ResponseStates.ADDRESS_STATE)
+@dp.callback_query_handler(lambda call: "to_delivery_method_addres_state" == call.data, state=[ResponseStates.STRIPE_STATE, ResponseStates.ADDRESS_STATE])
+async def find_spare_part(call: CallbackQuery, state: FSMContext):
+    await edit_msg(call.message.chat.id)
+    await to_delivery_method(call, state)
+    await ResponseStates.PRICE_STATE.set()
+
+
+@dp.message_handler(content_types=['location'], state=ResponseStates.ADDRESS_STATE)
 async def text_msg(message: Message, state: FSMContext):
-    state_data = await state.get_data()
-    order_id = state_data['order_id']
-    name = state_data["name"]
-    location = state_data["location"]
-    phone = state_data["phone"]
-    price = state_data["price"]
-    description = text=f"Name: {name}, Location: {location} Phone: {phone}\n"
+    await edit_msg(message.chat.id)
+
+    lat = message.location.latitude
+    lon = message.location.longitude
     async with state.proxy() as data:
-        data["address"] = message.text
-    state_data = await state.get_data()
-    price = int(state_data["price"])
-    price = types.LabeledPrice(label="Car detail", amount=price*100)
-    await bot.send_invoice(
-        message.chat.id,
-        title="Car detail",
-        description=description,
-        provider_token=config.PAYMENT_TOKEN,
-        prices=[price],
-        currency="AED",
-        payload="invoce-payload"
-    )
+        data["lat"] = lat
+        data["lon"] = lon
     await ResponseStates.STRIPE_STATE.set()
+    msg = await message.answer("Write the easiest way to get to you", reply_markup=inline.back_to_pickup_selecton())
+    await api.set_msg_to_edit(message.chat.id, msg.message_id)
 
 
-@dp.pre_checkout_query_handler(lambda query: True, state=ResponseStates.STRIPE_STATE)
-async def pre_pox(pre_query: types.PreCheckoutQuery):
-    await bot.answer_pre_checkout_query(pre_query.id, ok=True)
-
-
-@dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT, state=ResponseStates.STRIPE_STATE)
+@dp.message_handler(state=ResponseStates.STRIPE_STATE)
 async def successful(message: types.Message, state: FSMContext):
+    await edit_msg(message.chat.id)
     state_data = await state.get_data()
     order_id = state_data['order_id']
     offer_id = state_data["offer_id"]
-    address = state_data["address"]
+    address = message.text
     shop_id = state_data["shop_id"]
-    status = await api.order_update(order_id, offer_id, status=1, address=address, is_delivery=True)
-    await message.answer("Congratulations!\nTomorrow your goods will be delivered to you", reply_markup=None)
+    lat = state_data["lat"]
+    lon = state_data["lon"]
+    status = await api.order_update(order_id, offer_id, status=1, address=address, is_delivery=True, lat=lat, lon=lon)
+    await message.answer("Congratulations!\nTomorrow your goods will be delivered to you\nyou can get information about the order in \n\"💼 My orders\"", reply_markup=inine.my_orders())
     await state.finish()
     #await send_message_of_interest(message.chat.id, order_id, order_id)

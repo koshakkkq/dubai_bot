@@ -43,6 +43,16 @@ async def set_msg_to_delete(tg_id, msg_id):
     except Exception as e:
         return
 
+async def set_msg_to_edit(tg_id, msg_id):
+    data = {
+        'msg_id':msg_id
+    }
+    url = f'{SERVER_URL}/msg_to_edit/{tg_id}/'
+    try:
+        res = await make_post_request(url, data)
+    except Exception as e:
+        return
+
 async def get_years(brand_id, model): #cars
     data = await get_cars()
     data.sort(key=lambda x: x["production_start"])
@@ -93,7 +103,7 @@ async def order_create(user_id, model_id, additional, detail_type):
     return data
 
 
-async def order_update(order_id, offer_id, status, is_delivery=False, address=None):
+async def order_update(order_id, offer_id, status, is_delivery=False, address=None, lat=0, lon=0):
     url = f"{SERVER_URL}/order/update/"
     post_data = {
         'order_id': order_id,
@@ -101,6 +111,8 @@ async def order_update(order_id, offer_id, status, is_delivery=False, address=No
         "address": address,
         "status": status,
         "is_delivery": is_delivery,
+        "lat": lat,
+        "lon": lon,
     }
     data = await make_post_request(url, post_data)
     return data

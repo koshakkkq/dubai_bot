@@ -73,6 +73,8 @@ def was_deliveried(shop_id, order_id): # Were you able to pick up your order?
 def no_btn(): # Working in filter
 	keyboard = InlineKeyboardMarkup()
 	keyboard.row(InlineKeyboardButton('❌ NO', callback_data=f"user_no_filter"))
+	callback_data = IterCallback(current_page=0, action="previous_state").pack()
+	keyboard.row(InlineKeyboardButton("↩️ Back", callback_data=callback_data))
 	return keyboard
 
 
@@ -172,5 +174,18 @@ def my_order_btns(orders, current_page=0):
 	if current_page != pages - 1:
 		btns.append(InlineKeyboardButton("➡️", callback_data=f'myorder_back:{current_page+2}'))
 	keyboard.add(*btns)
+	keyboard.row(InlineKeyboardButton('↩️ Back to menu', callback_data=f"to_menu"))
+	return keyboard
+
+
+def back_to_pickup_selecton():
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"to_delivery_method_addres_state"))
+	return keyboard
+
+
+def my_orders():
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('💼 My orders', callback_data=f"my_orders")) # strong
 	keyboard.row(InlineKeyboardButton('↩️ Back to menu', callback_data=f"to_menu"))
 	return keyboard
