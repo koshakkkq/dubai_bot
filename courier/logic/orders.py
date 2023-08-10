@@ -51,6 +51,7 @@ async def get_order_information(order_id):
         logging.error(e)
         return None
 
+async def create_order_offer_
 
 async def set_courier_to_order(order_id, courier_id):
     url = f'{SERVER_URL}/courier_order/{order_id}/'

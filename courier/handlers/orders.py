@@ -130,6 +130,7 @@ done_orders_paginator.register_handlers(dp)
 
 class PickOrderStates(StatesGroup):
     in_order = State()
+    pending_price = State()
 @dp.callback_query_handler(
 	filters.Text(startswith="courier_available_orders_get_"),
 	state="*",
@@ -141,14 +142,40 @@ async def available_order_info(callback: types.CallbackQuery, state: FSMContext,
 
     msg = await courier.messages.order_info(order_id, language)
 
-
-
     keyboard = courier.keyboards.keyboards[language]['available_order_info']
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard, parse_mode="HTML")
 
     await state.update_data(courier_available_order=order_id)
     await state.set_state(PickOrderStates.in_order.state)
+
+
+
+@dp.message_handler(
+    state=PickOrderStates.in_order
+)
+@decorators.picked_language
+@decorators.is_courier
+@decorators.delete_msg_decorator
+async def set_order_offer_price(message: types.Message, state: FSMContext, language='eng', courier_id=-1):
+    price = message.text
+
+    data = await state.get_data()
+    order_id = data['courier_available_order']
+
+
+    try:
+        price = price.replace(',', '.')
+        price = float(price)
+    except Exception:
+        msg = await courier.messages.order_info(order_id, language)
+        keyboard = courier.keyboards.keyboards[language]['available_order_info']
+
+        await message.answer(msg, keyboard)
+        return
+
+
+
 
 @dp.callback_query_handler(
     filters.Text(startswith='courier_available_order_pick'),
@@ -158,6 +185,7 @@ async def available_order_info(callback: types.CallbackQuery, state: FSMContext,
 @decorators.is_courier
 @decorators.delete_msg_decorator
 async def pick_available_order(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id=-1,):
+
     await state.reset_state(with_data=False)
 
     data = await state.get_data()
@@ -174,8 +202,6 @@ async def pick_available_order(callback: types.CallbackQuery, state: FSMContext,
     keyboard = courier.keyboards.keyboards[language]['available_order_finish']
 
     await callback.message.edit_text(text=msg, reply_markup=keyboard, parse_mode="HTML")
-
-
 
 @dp.callback_query_handler(
     filters.Text(startswith='courier_available_order_reject'),

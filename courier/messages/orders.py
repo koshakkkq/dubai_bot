@@ -34,7 +34,8 @@ async def order_info(order_id, language):
               f'Client address info: {data["client_address"]}\n' \
               f'Price: {data["price"]}\n'\
               f'{data["additional"]}\n'\
-              f"<a href='{route_url}'>Route from shop to client</a>"
+              f"<a href='{route_url}'>Route from shop to client</a>\n\n"\
+              f'Write your price, if you want to take this order.'
         return msg
 
 

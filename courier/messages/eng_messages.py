@@ -16,5 +16,6 @@ eng_messages = {
 	'courier_cancel_order_prefix':"This order is cancel!\n\n",
 	'active_orders': 'You must deliver this orders.',
 	'done_orders': 'This orders are cancelled or done.',
+	'invalid_price': 'Your price is invalid',
 }
 
