@@ -148,6 +148,10 @@ class ShopNotificationAdmin(admin.ModelAdmin):
 class PartTypeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
 
+@admin.register(CourierOffer)
+class CourierOfferAdmin(admin.ModelAdmin):
+    list_display = ('courier', 'price',)
+
 @admin.register(OrderCredential)
 class OrderCredential( admin.ModelAdmin):
     list_display = ('address', 'get_courier', 'is_delivery', 'phone')

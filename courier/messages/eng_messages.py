@@ -17,5 +17,6 @@ eng_messages = {
 	'active_orders': 'You must deliver this orders.',
 	'done_orders': 'This orders are cancelled or done.',
 	'invalid_price': 'Your price is invalid',
+	'available_order_finish': 'Success! You can check your active orders in <⚡️ Active orders>.',
 }
 

@@ -174,7 +174,13 @@ async def set_order_offer_price(message: types.Message, state: FSMContext, langu
         await message.answer(msg, keyboard)
         return
 
+    await courier.logic.create_order_offer(courier_id, order_id, price)
 
+    msg = courier.messages.messages[language]['available_order_finish']
+
+    keyboard = courier.keyboards.keyboards[language]['available_order_finish']
+
+    await message.answer(text=msg, reply_markup=keyboard)
 
 
 @dp.callback_query_handler(

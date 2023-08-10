@@ -128,7 +128,7 @@ class ShopMember(models.Model):
 class OrderCredential(models.Model):
 	address = models.CharField(max_length=400, blank=True, null=True)
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
-	courier_offer = models.OneToOneField('CourierOffer', on_delete=models.CASCADE, related_name='credentials', null=True, default=None)
+	courier_offer = models.OneToOneField('CourierOffer', on_delete=models.CASCADE, related_name='credentials', null=True, default=None, blank=True)
 	is_delivery = models.BooleanField()
 	phone = models.CharField(max_length=100, blank=True, null=True)
 	lat = models.FloatField(default=0)
@@ -165,6 +165,10 @@ class CourierOffer(models.Model):
 	courier = models.ForeignKey(Courier, on_delete=models.CASCADE, related_name='offers')
 	price = models.FloatField()
 	order = models.ForeignKey('Order', on_delete=models.CASCADE)
+
+
+	def __str__(self):
+		return f'Id: {self.pk} | Courier: {self.courier} | Price: {self.price}'
 class Order(models.Model):
 	customer = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name="orders")
 	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True, db_index=True)
