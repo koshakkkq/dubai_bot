@@ -30,11 +30,16 @@ async def order_info(order_id, language):
     route_url = get_google_maps_link(data)
 
     if language == 'eng':
-        msg = f"Shop address info: {data['shop_address']}\n" \
-              f'Client address info: {data["client_address"]}\n' \
-              f'Price: {data["price"]}\n'\
+        msg = f"Shop:\n" \
+              f"    Address info: {data['shop_address']}\n" \
+              f"    Phone: {data['shop_phone']}\n\n"\
+              f'Client:\n'\
+              f'    Address info: {data["client_address"]}\n' \
+              f'    Phone: {data["client_phone"]}\n\n' \
+              f'Price: {data["price"]} You have to pay this value in the store. The customer has to pay you this price)\n'\
               f'{data["additional"]}\n'\
-              f"<a href='{route_url}'>Route from shop to client</a>"
+              f"<a href='{route_url}'>Route from shop to client</a>\n\n"\
+              f'Write your price, if you want to take this order.'
         return msg
 
 
@@ -63,6 +68,21 @@ async def set_order_courier_msg(courier_id, order_id, language, prefix='courier_
               f'Order id: {data["id"]}\n'\
               f"<a href='{route_url}'>Route from shop to client</a>"
 
+        msg = f"{prefix_msg}"\
+              f'Shop:\n'\
+              f"    Address info: {data['shop_address']}\n" \
+              f"    Phone: {data['shop_phone']}\n\n"\
+              f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>:\n" \
+              f'    Address info: {data["client_address"]}\n' \
+              f'    Phone: {data["client_phone"]}\n\n' \
+              f'Price: {data["price"]} You have to pay this value in the store. The customer has to pay you this price)\n' \
+              f'{data["additional"]}\n' \
+              f'Order id: {data["id"]}\n' \
+              f"<a href='{route_url}'>Route from shop to client</a>\n\n" \
+
+
+
+
         return msg
 
 
@@ -84,14 +104,17 @@ async def get_couriers_order_info_msg(order_id, language, prefix):
     route_url = get_google_maps_link(data)
 
     if language == 'eng':
+
         msg = f"{prefix_msg}" \
-              f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>\n" \
-              f"Shop address information: {data['shop_address']}\n" \
-              f'Client address information: {data["client_address"]}\n' \
-              f'Order id: {data["id"]}\n' \
-              f'Price: {data["price"]}\n'\
+              f'Shop:\n' \
+              f"    Address info: {data['shop_address']}\n" \
+              f"    Phone: {data['shop_phone']}\n\n" \
+              f"Order from <a href='tg://user?id={client_id}'>CLIENT</a>:\n" \
+              f'    Address info: {data["client_address"]}\n' \
+              f'    Phone: {data["client_phone"]}\n\n' \
+              f'Price: {data["price"]} You have to pay this value in the store. The customer has to pay you this price)\n' \
               f'{data["additional"]}\n' \
-              f"<a href='{route_url}'>Route from shop to client</a>"
+              f"<a href='{route_url}'>Route from shop to client</a>\n\n" \
 
         return msg
 

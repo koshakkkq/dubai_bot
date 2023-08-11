@@ -14,7 +14,6 @@ eng_keyboards['courier_menu'] = menu_keyboard
 
 
 order_info_buttons = [
-	[InlineKeyboardButton(text='✅ Take order', callback_data='courier_available_order_pick')],
 	[InlineKeyboardButton(text='❌ Reject order.', callback_data='courier_available_order_reject')],
 	[InlineKeyboardButton(text='↩️ Back', callback_data='courier_available_orders_begin')]]
 

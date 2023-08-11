@@ -51,6 +51,17 @@ async def get_order_information(order_id):
         logging.error(e)
         return None
 
+async def create_order_offer(courier_id, order_id, price):
+    url = f'{SERVER_URL}/courier_offer/{courier_id}/'
+    try:
+        data = {
+            'order_id': order_id,
+            'price': price,
+        }
+        await make_post_request(url, data)
+    except Exception as e:
+        logging.error(e)
+        return None
 
 async def set_courier_to_order(order_id, courier_id):
     url = f'{SERVER_URL}/courier_order/{order_id}/'
