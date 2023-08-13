@@ -12,28 +12,33 @@ from shop.messages import get_shop_info_message
 
 @dp.callback_query_handler(lambda call: "price_of" == call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
-	await call.message.edit_text("Company information:\n\n\nCompany name:\n\n📍 Location:\n\n📲 Phone:\n\n!PRICE!\n\nChoose your next action ⤵️", 
-		reply_markup=inline.choice_company())
+    await call.message.edit_text("Company information:\n\n\nCompany name:\n\n📍 Location:\n\n📲 Phone:\n\n!PRICE!\n\nChoose your next action ⤵️", 
+        reply_markup=inline.choice_company())
 
 
 @dp.callback_query_handler(lambda call: "to_delivery_method" == call.data)
 async def to_delivery_method(call: CallbackQuery, state: FSMContext):
-	await call.message.edit_text("Company information:\n\n\nCompany name:\n\n📍 Location:\n\n📲 Phone:\n\n!PRICE!\n\nChoose your next action ⤵️", 
-		reply_markup=inline.delivery_method())
+    await call.message.edit_text("Company information:\n\n\nCompany name:\n\n📍 Location:\n\n📲 Phone:\n\n!PRICE!\n\nChoose your next action ⤵️", 
+        reply_markup=inline.delivery_method())
 
 
 @dp.callback_query_handler(lambda call: "was_deliveried" in call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
-	await delete_msg(call.message.chat.id)
-	_, shop_id, order_id = call.data.split(":")
-	await api.order_status_increase(order_id)
-	await call.message.edit_text("We're glad you got it all!\nPlease rate the quality of service ❤️\nSEND NUMBERS FROM 1 TO 5 ⤵️", reply_markup=inline.mark_keyboard(shop_id))
+    await delete_msg(call.message.chat.id)
+    _, shop_id, order_id = call.data.split(":")
+    await api.order_status_increase(order_id)
+    order = await api.get_order(order_id)
+    if order["credential"]['is_delivery']:
+        await call.message.edit_text("We're glad you got it all!\nPlease rate the quality of your courier ❤️\nSEND NUMBERS FROM 1 TO 5 ⤵️", reply_markup=inline.mark_courier_keyboard(order["credential"]["courier_offer"]["courier"]))
+        await call.message.answer("We're glad you got it all!\nPlease rate the quality of this shop ❤️\nSEND NUMBERS FROM 1 TO 5 ⤵️", reply_markup=inline.mark_keyboard(shop_id))
+    else:
+        await call.message.edit_text("We're glad you got it all!\nPlease rate the quality of this shop ❤️\nSEND NUMBERS FROM 1 TO 5 ⤵️", reply_markup=inline.mark_keyboard(shop_id))
 
 
 @dp.callback_query_handler(lambda call: "wasnt_deliveried" in call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
-	await call.message.edit_text("Can you please tell me what is the problem?", reply_markup=None)
-	await ApplicationStates.MAIN_STATE.set()
+    await call.message.edit_text("Can you please tell me what is the problem?", reply_markup=None)
+    await ApplicationStates.MAIN_STATE.set()
 
 
 @dp.callback_query_handler(lambda call: "myorder_back" in call.data)
@@ -66,9 +71,16 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
     await call.message.answer(text=text, reply_markup=inline.my_order_btns(orders, current_page), parse_mode='HTML')
 
 
+@dp.callback_query_handler(lambda call: "courier_mark" in call.data)
+async def price_of(call: CallbackQuery, state: FSMContext):
+    _, mark, courier = call.data.split(":")
+    await api.courier_feedback_create(courier, mark)
+    await call.message.edit_text("Thank you", reply_markup=None)
+
+
 @dp.callback_query_handler(lambda call: "mark" in call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
-	_, mark, shop_id = call.data.split(":")
-	await api.shop_feedback_create(shop_id, mark)
-	await call.message.edit_text("Thank you", reply_markup=None)
-	await call.message.answer("Main menu", reply_markup=inline.menu())
+    _, mark, shop_id = call.data.split(":")
+    await api.shop_feedback_create(shop_id, mark)
+    await call.message.edit_text("Thank you", reply_markup=None)
+    await call.message.answer("Main menu", reply_markup=inline.menu())

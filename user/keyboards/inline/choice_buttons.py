@@ -88,6 +88,16 @@ def mark_keyboard(shop_id):
 	return keyboard
 
 
+def mark_courier_keyboard(courier_id):
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('5️⃣', callback_data=f"courier_mark:5:{courier_id}"))
+	keyboard.row(InlineKeyboardButton('4️⃣', callback_data=f"courier_mark:4:{courier_id}"))
+	keyboard.row(InlineKeyboardButton('3️⃣', callback_data=f"courier_mark:3:{courier_id}"))
+	keyboard.row(InlineKeyboardButton('2️⃣', callback_data=f"courier_mark:2:{courier_id}"))
+	keyboard.row(InlineKeyboardButton('1️⃣', callback_data=f"courier_mark:1:{courier_id}"))
+	return keyboard
+
+
 def language_choice():
 	keyboard = InlineKeyboardMarkup()
 	keyboard.row(InlineKeyboardButton('ENG', callback_data=f"pick_language_eng"))
@@ -180,7 +190,7 @@ def my_order_btns(orders, current_page=0):
 
 def back_to_pickup_selecton():
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"to_delivery_method_addres_state"))
+	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"delivery"))
 	return keyboard
 
 
@@ -188,4 +198,12 @@ def my_orders():
 	keyboard = InlineKeyboardMarkup()
 	keyboard.row(InlineKeyboardButton('💼 My orders', callback_data=f"my_orders")) # strong
 	keyboard.row(InlineKeyboardButton('↩️ Back to menu', callback_data=f"to_menu"))
+	return keyboard
+
+
+def courier_selection_btns(data):
+	keyboard = InlineKeyboardMarkup()
+	for key, val in data.items():
+		keyboard.row(InlineKeyboardButton(f'Price: {val}', callback_data=f"order_offer:{key}"))
+	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"to_delivery_method"))
 	return keyboard

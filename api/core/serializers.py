@@ -93,9 +93,16 @@ class ShopMemberSerializer(serializers.ModelSerializer):
 
 
 
+class CourierOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourierOffer
+        fields = ('id', 'courier', 'price', 'order', 'credentials')
+
+
 class OrderCredentialSerializer(serializers.ModelSerializer):
     courier = CourierSerializer(read_only=True)
     courier_id = serializers.PrimaryKeyRelatedField(queryset=Courier.objects.all(), source="courier")
+    courier_offer = CourierOfferSerializer(read_only=True)
 
     class Meta:
         model = OrderCredential
@@ -126,5 +133,3 @@ class OrderOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderOffer
         fields = ('shop', 'shop_id', 'price', 'order')
-
-

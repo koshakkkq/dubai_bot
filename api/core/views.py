@@ -143,11 +143,12 @@ class OrderUpdateApiView(APIView):
             status = request.POST.get("status")
             lat = request.POST.get("lat")
             lon = request.POST.get("lon")
+            couirer_offer_id = request.POST.get("couirer_offer_id")
 
             order = Order.objects.get(id=order_id)
             order.offer_id = offer_id
             order.status = status
-            order.credential = OrderCredential.objects.create(address=address, is_delivery=is_delivery, lat=lat, lon=lon)
+            order.credential = OrderCredential.objects.create(address=address, is_delivery=is_delivery, lat=lat, lon=lon, courier_offer_id=couirer_offer_id)
             order.datetime = now()
             order.save()
             return JsonResponse({'status':'success'}, status=200)
@@ -204,6 +205,20 @@ class ShopFeedbackCreateApiView(APIView):
             mark = request.POST.get("mark")
             comment = request.POST.get("comment")
             feedback = ShopFeedback.objects.create(shop_id=shop_id, raiting=int(mark), comment=comment)
+            feedback.save()
+            return JsonResponse({'status':'success'}, status=200)
+        except Exception as e:
+            print(e)
+            return JsonResponse({"status": "error"})
+
+
+class CourierFeedbackCreateApiView(APIView):
+    def post(self, request):
+        try:
+            courier_id = request.POST.get("courier_id")
+            mark = request.POST.get("mark")
+            comment = request.POST.get("comment")
+            feedback = CourierFeedback.objects.create(courier_id=courier_id, rating=int(mark), comment=comment)
             feedback.save()
             return JsonResponse({'status':'success'}, status=200)
         except Exception as e:
@@ -303,3 +318,17 @@ def order_increase(request, order_id):
     order.status = order.status + 1
     order.save()
     return JsonResponse({})
+
+
+class CourierOfferApiViewList(APIView):
+    def get(self, request, order_id):
+        offers = CourierOffer.objects.filter(order_id=order_id)
+        serializer = CourierOfferSerializer(offers, many=True).data
+        return Response(serializer, status=200)
+
+
+class CourierOfferApiDetail(APIView):
+    def get(self, request, offer_id):
+        offer = CourierOffer.objects.get(id=offer_id)
+        serializer = CourierOfferSerializer(offer).data
+        return Response(serializer, status=200)

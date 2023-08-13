@@ -103,7 +103,7 @@ async def order_create(user_id, model_id, additional, detail_type):
     return data
 
 
-async def order_update(order_id, offer_id, status, is_delivery=False, address=None, lat=0, lon=0):
+async def order_update(order_id, offer_id, status, is_delivery=False, address=None, lat=0, lon=0, couirer_offer_id=None):
     url = f"{SERVER_URL}/order/update/"
     post_data = {
         'order_id': order_id,
@@ -113,6 +113,7 @@ async def order_update(order_id, offer_id, status, is_delivery=False, address=No
         "is_delivery": is_delivery,
         "lat": lat,
         "lon": lon,
+        "couirer_offer_id": couirer_offer_id,
     }
     data = await make_post_request(url, post_data)
     return data
@@ -176,3 +177,26 @@ async def get_notifications():
     return result
 
 
+async def get_courier_offers(order_id):
+    url = f"{SERVER_URL}/courier_offer/by_order/{order_id}/"
+    data = await make_get_request(url)
+    return data
+
+
+async def get_courier_offer(id):
+    url = f"{SERVER_URL}/get_courier_offer/{id}/"
+    data = await make_get_request(url)
+    return data
+
+
+async def courier_feedback_create(courier_id, mark, comment=None):
+    if comment is None:
+        comment = f"Mark: {mark}"
+    url = f"{SERVER_URL}/courier/feedback/create/"
+    post_data = {
+        'courier_id': courier_id,
+        'mark': mark,
+        "comment": comment,
+    }
+    data = await make_post_request(url, post_data)
+    return data
