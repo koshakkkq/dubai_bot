@@ -35,7 +35,8 @@ async def become_courier(call: CallbackQuery, state: FSMContext):
 
 
 @dp.callback_query_handler(lambda call: "my_orders" == call.data, state="*")
-async def become_courier(call: CallbackQuery, state: FSMContext):
+async def my_orders_call(call: CallbackQuery, state: FSMContext):
+    await delete_msg(call.message.chat.id)
     await api.reset_user_notifications(call.from_user.id, {'new_couriers':0})
     await state.finish()
     orders = []

@@ -21,8 +21,6 @@ class CourierFeedback(models.Model):
 	comment = models.TextField()
 	rating = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=0)
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="feedbacks")
-
-
 	def __str__(self):
 		return f"{self.courier}|{self.rating}"
 
@@ -129,7 +127,7 @@ class OrderCredential(models.Model):
 	address = models.CharField(max_length=400, blank=True, null=True)
 	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
 	courier_offer = models.OneToOneField('CourierOffer', on_delete=models.CASCADE, related_name='credentials', null=True, default=None, blank=True)
-	is_delivery = models.BooleanField()
+	is_delivery = models.BooleanField(default=False)
 	phone = models.CharField(max_length=100, blank=True, null=True)
 	lat = models.FloatField(default=0)
 	lon = models.FloatField(default=0)
