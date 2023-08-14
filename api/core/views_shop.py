@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import random
 import time
 
@@ -12,6 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from .models import *
 from .constants import OrderStatus
+
+
+logger = logging.getLogger(__name__)
 def shop_member_status(request: WSGIRequest, id):
 
     shop_member = ShopMember.objects.filter(user__telegram_id=id)
