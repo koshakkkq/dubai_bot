@@ -50,22 +50,30 @@ def wrapper(sender, instance: Order, raw, update_fields, *args, **kwargs):
 		pass
 
 
-@receiver(pre_save, sender=OrderCredential)
-def wrapper(sender, instance: OrderCredential, raw, update_fields, *args, **kwargs):
-	try:
-		instance_in_db = OrderCredential.objects.get(id=instance.pk)
-		if instance_in_db.courier is None and instance.courier is not None:
-			order = instance.order
-			user = order.customer
-			UserNotification.objects.filter(user=user).update(
-				new_couriers=F('new_couriers') + 1
-			)
-	except OrderCredential.DoesNotExist:
-		pass
-	except Exception as e:
-		print(e)
-		pass
+# @receiver(pre_save, sender=OrderCredential)
+# def wrapper(sender, instance: OrderCredential, raw, update_fields, *args, **kwargs):
+# 	try:
+# 		instance_in_db = OrderCredential.objects.get(id=instance.pk)
+# 		if instance_in_db.courier is None and instance.courier is not None:
+# 			order = instance.order
+# 			user = order.customer
+# 			UserNotification.objects.filter(user=user).update(
+# 				new_couriers=F('new_couriers') + 1
+# 			)
+# 	except OrderCredential.DoesNotExist:
+# 		pass
+# 	except Exception as e:
+# 		print(e)
+# 		pass
 
+
+@receiver(pre_save, sender=CourierOffer)
+def wrapper(sender, instance: CourierOffer, raw, update_fields, *args, **kwargs):
+	user = instance.order.customer
+
+	UserNotification.objects.filter(user=user).update(
+	 				new_couriers=F('new_couriers') + 1
+				)
 
 def run_post_migrate(sender, **kwargs):
 	for id, name in enumerate(part_types):

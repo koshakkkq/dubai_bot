@@ -118,35 +118,35 @@ class CarModelAdmin(ImportExportModelAdmin, ImportExportMixin, admin.ModelAdmin)
 class ShopMemberAdmin( admin.ModelAdmin):
     list_display = ('user', 'shop')
 
-@admin.register(ShopOrdersBlacklist)#todo удалить для клиента
-class ShopOrdersBlacklistAdmin(admin.ModelAdmin):
-    list_display = ('shop', 'order')
-
-@admin.register(CourierOrdersBlacklist)  # todo удалить для клиента
-class CourierOrdersBlacklistAdmin(admin.ModelAdmin):
-    list_display = ('user', 'order')
-
-@admin.register(MessageToDelete)  # todo удалить для клиента
-class MessageToDeleteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'tg_id', 'msg_id')
-
-@admin.register(MessageToEdit)  # todo удалить для клиента
-class MessageToEditAdmin(admin.ModelAdmin):
-    list_display = ('id', 'tg_id', 'msg_id')
-
-@admin.register(UserNotification)  # todo удалить для клиента
-class UserNotificationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'new_offers', 'new_couriers')
-
-
-@admin.register(ShopNotification)  # todo удалить для клиента
-class ShopNotificationAdmin(admin.ModelAdmin):
-    list_display = ('shop', 'new_available_orders', 'new_active_orders')
-
-
-@admin.register(PartType)  # todo удалить для клиента
-class PartTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
+# @admin.register(ShopOrdersBlacklist)#todo удалить для клиента
+# class ShopOrdersBlacklistAdmin(admin.ModelAdmin):
+#     list_display = ('shop', 'order')
+#
+# @admin.register(CourierOrdersBlacklist)  # todo удалить для клиента
+# class CourierOrdersBlacklistAdmin(admin.ModelAdmin):
+#     list_display = ('user', 'order')
+#
+# @admin.register(MessageToDelete)  # todo удалить для клиента
+# class MessageToDeleteAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'tg_id', 'msg_id')
+#
+# @admin.register(MessageToEdit)  # todo удалить для клиента
+# class MessageToEditAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'tg_id', 'msg_id')
+#
+# @admin.register(UserNotification)  # todo удалить для клиента
+# class UserNotificationAdmin(admin.ModelAdmin):
+#     list_display = ('user', 'new_offers', 'new_couriers')
+#
+#
+# @admin.register(ShopNotification)  # todo удалить для клиента
+# class ShopNotificationAdmin(admin.ModelAdmin):
+#     list_display = ('shop', 'new_available_orders', 'new_active_orders')
+#
+#
+# @admin.register(PartType)  # todo удалить для клиента
+# class PartTypeAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'name',)
 
 @admin.register(CourierOffer)
 class CourierOfferAdmin(admin.ModelAdmin):
