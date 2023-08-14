@@ -330,10 +330,10 @@ class CourierOffersView(APIView):
         for i in offers:
             courier = i.courier
             courier_rating = CourierFeedback.objects.filter(courier=courier).aggregate(Avg('rating'))['rating__avg']
-            courier_rating = round(courier_rating, 1)
             if courier_rating is None:
                 courier_rating = '-'
-
+            else:
+                courier_rating = round(courier_rating, 1)
             res.append({'id': i.id, 'price': f'Delivery Price: {i.price}, Courier rating: {courier_rating}'})
 
         return JsonResponse(res, safe=False)
