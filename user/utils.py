@@ -12,7 +12,6 @@ from user.constants import VERBOSE_ORDER_TYPE
 async def text_for_order(order_id):
 
 	order = await api.get_order(order_id)
-	print(order_id)
 	shop = order['offer']['shop']
 	additional = '\n\nYou need to pick up order from shop.'
 	if order['status'] == 1:
@@ -27,6 +26,8 @@ async def text_for_order(order_id):
 							 f"TELEGRAM: <a href='tg://user?id={courier_tg_id}'>CLICK</a>\n"
 			else:
 				additional = 'Waiting for the courier to take care of your order'
+	shop_tg_id = order['shop_tg_id']
+
 
 	text = f"""id: {order_id}
 status: {VERBOSE_ORDER_TYPE[order['status']][1]}
@@ -34,7 +35,9 @@ status: {VERBOSE_ORDER_TYPE[order['status']][1]}
 Shop name: {shop['name']}
 Shop location: {shop['location']}
 Shop phone: {shop['phone']}
+<a href='tg://user?id={shop_tg_id}'>Shop telegram</a>
 Price: {order['offer']['price']}
+
 """
 	text += additional
 	return text

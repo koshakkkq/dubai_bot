@@ -72,6 +72,13 @@ async def get_orders(user_id, status=0): # status 0, 1, 2
     else:
         return data
 
+
+async def get_courier_offers(order_id): # status 0, 1, 2
+    url = f'{SERVER_URL}/courier_offers/{order_id}'
+    data = await make_get_request(url)
+    return data
+
+
 async def reset_user_notifications(tg_id, data):
     data['tg_id'] = tg_id
     url = f'{SERVER_URL}/reset_user_notifications/'
@@ -81,6 +88,17 @@ async def reset_user_notifications(tg_id, data):
         logging.error(e)
         return
 
+
+async def pick_courier_offer(offer_id):
+    data = {
+        'offer_id': offer_id
+    }
+    url = f'{SERVER_URL}/pick_offer/'
+    try:
+        await make_post_request(url, data)
+    except Exception as e:
+        logging.error(e)
+        return
 
 async def reset_shop_notifications(shop_id, data):
     data['shop_id'] = shop_id
@@ -103,7 +121,7 @@ async def order_create(user_id, model_id, additional, detail_type):
     return data
 
 
-async def order_update(order_id, offer_id, status, is_delivery=False, address=None, lat=0, lon=0):
+async def order_update(order_id, offer_id, status, is_delivery=False, address=None, lat=0, lon=0, phone=-1):
     url = f"{SERVER_URL}/order/update/"
     post_data = {
         'order_id': order_id,
@@ -113,6 +131,7 @@ async def order_update(order_id, offer_id, status, is_delivery=False, address=No
         "is_delivery": is_delivery,
         "lat": lat,
         "lon": lon,
+        'phone': phone,
     }
     data = await make_post_request(url, post_data)
     return data
@@ -130,6 +149,21 @@ async def shop_feedback_create(shop_id, mark, comment=None): # Кто убил �
     data = await make_post_request(url, post_data)
     return data
 
+
+async def courier_feedback_create(order_id, mark, comment=None): # Кто убил Марка???
+    if comment is None:
+        comment = f"Mark: {mark}"
+    url = f"{SERVER_URL}/courier/feedback/create/"
+    post_data = {
+        'order_id': order_id,
+        'mark': mark,
+        "comment": comment,
+    }
+    try:
+        data = await make_post_request(url, post_data)
+    except Exception as e:
+        logging.error(e)
+        return None
 
 async def get_order(order_id):
     url = f"{SERVER_URL}/order/{order_id}/"

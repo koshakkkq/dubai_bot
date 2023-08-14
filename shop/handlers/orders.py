@@ -410,7 +410,6 @@ class MyResponsesStates(StatesGroup):
 @decorators.is_member
 async def shop_my_responses_info(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
 
-
     order_id = callback.data.split('_')[-1]
     await state.update_data(shop_my_response_order_id=order_id)
     msg = await shop.messages.get_my_response_order_info_message(order_id, shop_id,language)

@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import random
 import time
 
@@ -96,9 +97,10 @@ class AvailableOrders(APIView):
 
 		courier_offer_blacklist = CourierOffer.objects.filter(courier_id=courier_id).values('order')
 
+
+
 		orders = Order.objects.filter(credential__courier_offer=None, status=OrderStatus.ACTIVE, credential__is_delivery=True,
 									  ).exclude(id__in=blacklist).exclude(id__in=courier_offer_blacklist)
-
 
 		orders_cnt = len(orders)
 		if orders_cnt <= skip:
@@ -174,7 +176,7 @@ class OrderInfo(APIView):
 
 			return JsonResponse({'status': True, 'data': order_data})
 		except Exception as e:
-			print(e)
+			logging.error(e)
 			return JsonResponse({'status': False})
 
 
@@ -227,3 +229,19 @@ class CourierOfferView(APIView):
 		)
 
 		return JsonResponse({'status': 'Success'})
+
+class CourierFeedbackView(APIView):
+	def post(self, request):
+
+		order_id = request.POST['order_id']
+		mark = request.POST['mark']
+		comment = request.POST['comment']
+
+		order = Order.objects.get(id=order_id)
+
+		courier = order.credential.courier
+
+		CourierFeedback.objects.create(comment=comment, rating=mark, courier=courier)
+
+
+		return JsonResponse({'status': 'Ok.'})
