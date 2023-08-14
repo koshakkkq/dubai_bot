@@ -341,7 +341,6 @@ class ChangeOfferPrice(APIView):
         offer = OrderOffer.objects.get(shop_id=shop_id, order_id=order_id)
         offer.price = price
         offer.save()
-        print(offer)
         return JsonResponse(
             {
                 'status': 'Ok.',
