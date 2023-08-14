@@ -1,3 +1,5 @@
+import logging
+
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Q, Sum, Avg
 from django.http import JsonResponse
@@ -14,7 +16,7 @@ from .mixins import *
 import json
 from .constants import VERBOSE_ORDER_TYPE
 
-
+logger = logging.getLogger(__name__)
 class CourierApiView(APIView, DataMixin):
     serializer_class = CourierSerializer
     model = Courier
