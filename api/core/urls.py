@@ -67,5 +67,4 @@ urlpatterns = [
     path('reset_user_notifications/', views.ResetUserNotifications.as_view()),
 
 
-    path('kek/', views_courier.ErrorView.as_view())
 ]
