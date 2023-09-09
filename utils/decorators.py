@@ -18,6 +18,7 @@ def subscribe_needed(func):
 				event = i
 				break
 
+
 		from_id = event['from']['id']
 		subscriber = await is_subscriber(from_id)
 		if subscriber == False:
@@ -34,6 +35,7 @@ def picked_language(func):
 	async def wrapper(
 			*args,
 			state=None,
+			**kwargs,
 	):
 		try:
 			event = None
