@@ -61,7 +61,7 @@ class ShopRegistrationCodeAdmin(admin.ModelAdmin):
 
 @admin.register(TelegramUser)
 class TelegramUserAdmin(admin.ModelAdmin):
-    list_display = ('id','telegram_id','get_courier')
+    list_display = ('id','telegram_id','get_courier', 'subscribe_till')
     sortable_by = (
         "id",
         "telegram_id",
@@ -238,3 +238,11 @@ class CourierRegistrationCodeAdmin(admin.ModelAdmin):
     ordering = ('-id', )
 
 
+@admin.register(SubscribeSettings)
+class SubscribeSettingsAdmin(admin.ModelAdmin):
+    list_display = ('price', 'days', 'active')
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

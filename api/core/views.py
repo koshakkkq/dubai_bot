@@ -1,4 +1,6 @@
+import datetime
 import logging
+import time
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Q, Sum, Avg
@@ -352,6 +354,50 @@ class PickOfferView(APIView):
         order.credential.save()
 
         return JsonResponse({'status': 'Ok'})
+
+
+class SubscriptionView(APIView):
+    def get(self, request, tg_id):
+        settings = SubscribeSettings.objects.all()[0]
+        if settings.active == False:
+            return JsonResponse({'subscriber': True})
+        try:
+            user = TelegramUser.objects.get(telegram_id=tg_id)
+        except TelegramUser.DoesNotExist as e:
+            return JsonResponse({'subscriber': False})
+
+        cur_time = now().timestamp()
+        user_time = user.subscribe_till.timestamp()
+        if cur_time > user_time:
+            return JsonResponse({'subscriber': False})
+        else:
+            return JsonResponse({'subscriber': True})
+
+    def post(self, request, tg_id):
+        settings = SubscribeSettings.objects.all()[0]
+
+        try:
+            user = TelegramUser.objects.get(telegram_id=tg_id)
+        except TelegramUser.DoesNotExist as e:
+            return JsonResponse({'success': False})
+
+        cur_time = now().timestamp()
+        user_time = user.subscribe_till.timestamp()
+        user_time = max(user_time,cur_time) + settings.days*24*60*60
+        user.subscribe_till = datetime.datetime.fromtimestamp(user_time)
+        user.save()
+        return JsonResponse({'success': True})
+
+
+
+class SubscriptionSettingsView(APIView):
+    def get(self, request):
+        settings = SubscribeSettings.objects.all()[0]
+        return JsonResponse({
+               'price': settings.price,
+               'days': settings.days,
+               'active': settings.active,
+        })
 
 
 def order_increase(request, order_id):

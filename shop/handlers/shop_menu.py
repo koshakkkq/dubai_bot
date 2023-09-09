@@ -15,6 +15,7 @@ class ShopMenuStates(StatesGroup):
     in_menu = State()
 
 
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def menu_msg_handler(message: types.Message, state: FSMContext, language='eng', shop_id = -1):
@@ -33,6 +34,7 @@ async def menu_msg_handler(message: types.Message, state: FSMContext, language='
     filters.Text(equals="shop_menu"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 @decorators.delete_msg_decorator

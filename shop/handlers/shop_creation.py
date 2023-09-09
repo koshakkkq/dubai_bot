@@ -22,6 +22,7 @@ class ShopCreationStates(StatesGroup):
 )
 
 @decorators.picked_language
+
 async def shop_begin_registration(callback: types.CallbackQuery, state: FSMContext, language='eng'):
 	await state.reset_data()
 	status = await get_shop_member_status(callback.from_user.id)

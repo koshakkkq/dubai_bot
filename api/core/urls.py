@@ -65,6 +65,6 @@ urlpatterns = [
     path('notifications/', views.NotificationsView.as_view()),
     path('reset_shop_notifications/', views.ResetShopNotifications.as_view()),
     path('reset_user_notifications/', views.ResetUserNotifications.as_view()),
-
-
+    path('subscription/<int:tg_id>/', views.SubscriptionView.as_view()),
+    path('subscription_settings/', views.SubscriptionSettingsView.as_view()),
 ]
