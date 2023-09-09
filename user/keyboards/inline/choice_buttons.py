@@ -5,11 +5,11 @@ from .callbacks import IterCallback
 def menu():
 	keyboard = InlineKeyboardMarkup()
 	keyboard.row(InlineKeyboardButton('🔍 Find a spare part', callback_data=f"find_spare_part")) # strong
-	keyboard.row(InlineKeyboardButton('🆘 How to use the bot', callback_data=f"help")) # strong
 	keyboard.row(InlineKeyboardButton('🎯 Your responses', callback_data=f"feedback")) # strong
 	keyboard.row(InlineKeyboardButton('💼 My orders', callback_data=f"my_orders")) # strong
 	keyboard.row(InlineKeyboardButton('🔐 Store menu.', callback_data=f"register_store"))
 	keyboard.row(InlineKeyboardButton('🚚 Courier menu.', callback_data=f"register_courier"))
+	keyboard.row(InlineKeyboardButton('🆘 How to use the bot', callback_data=f"help")) # strong
 	return keyboard
 
 
