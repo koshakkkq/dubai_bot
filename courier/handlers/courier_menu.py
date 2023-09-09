@@ -19,6 +19,8 @@ class CourierStates(StatesGroup):
 	delivered_orders = State()
 
 
+
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_courier
 async def menu_msg_handler(message: types.Message, state:FSMContext, language= 'eng', courier_id=-1):
@@ -36,6 +38,7 @@ async def menu_msg_handler(message: types.Message, state:FSMContext, language= '
 	filters.Text(equals="courier_menu"),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_courier
 async def menu_callback(callback: types.CallbackQuery, state: FSMContext, language= 'eng', courier_id=-1):
@@ -52,6 +55,7 @@ async def menu_callback(callback: types.CallbackQuery, state: FSMContext, langua
 	filters.Text(equals="courier_available_orders"),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 async def available_orders_callback(callback: types.CallbackQuery, state: FSMContext, language= 'eng'):
 	await state.set_state(CourierStates.available_orders.state)
@@ -67,6 +71,7 @@ async def available_orders_callback(callback: types.CallbackQuery, state: FSMCon
 	filters.Text(startswith="courier_pick_order"),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 async def available_order_info_callback(callback: types.CallbackQuery, state: FSMContext, language= 'eng'):
 	await state.set_state(CourierStates.available_order_info.state)
@@ -90,6 +95,7 @@ async def available_order_info_callback(callback: types.CallbackQuery, state: FS
 	filters.Text(equals="courier_choose_order"),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 async def pick_available_order(callback: types.CallbackQuery, state: FSMContext, language= 'eng'):
 
@@ -108,6 +114,7 @@ async def pick_available_order(callback: types.CallbackQuery, state: FSMContext,
 	filters.Text(equals="courier_delivered_orders"),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 async def delivered_orders_list(callback: types.CallbackQuery, state: FSMContext, language='eng'):
 
@@ -128,6 +135,7 @@ class CourierInfoStates(StatesGroup):
 	filters.Text(equals='courier_info'),
 	state='*',
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_courier
 async def get_courier_info(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id = -1):
@@ -141,6 +149,7 @@ async def get_courier_info(callback: types.CallbackQuery, state: FSMContext, lan
 	filters.Text(startswith='courier_change_'),
 	state='*',
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_courier
 async def change_courier_field(callback: types.CallbackQuery, state: FSMContext, language='eng', courier_id = -1):
@@ -159,6 +168,7 @@ async def change_courier_field(callback: types.CallbackQuery, state: FSMContext,
 @dp.message_handler(
 	state=CourierInfoStates.pending_value
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_courier
 async def get_new_value(message: types.Message, state: FSMContext, language='eng', courier_id = -1):
@@ -174,20 +184,3 @@ async def get_new_value(message: types.Message, state: FSMContext, language='eng
 	keyboard = courier.keyboards.keyboards[language]['back_to_courier_info']
 
 	await message.answer(msg, reply_markup=keyboard)
-
-#
-#
-# class Testing:
-# 	def __init__(self, dp: Dispatcher):
-# 		self.dp = dp
-# 		self.msg = 'ajsdfkl;j'
-#
-# 	@decorators.picked_language
-# 	@decorators.is_member
-# 	async def kek(self, msg: types.Message, state, language, shop_id):
-# 		await msg.answer(shop_id)
-#
-# 	def register_handlers(self):
-# 		self.dp.register_message_handler(self.kek,commands=['kek'])
-#
-# Testing(dp).register_handlers()

@@ -81,3 +81,7 @@ def run_post_migrate(sender, **kwargs):
 			PartType.objects.get(name=name)
 		except Exception:
 			PartType.objects.create(pk=id+1, name=name)
+
+	subscribe_settings = SubscribeSettings.objects.all()
+	if len(subscribe_settings) == 0:
+		SubscribeSettings.objects.create(price=367, days=30, active=False)
