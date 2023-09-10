@@ -13,14 +13,14 @@ from shop.messages import get_shop_info_message
 
 @dp.callback_query_handler(lambda call: "price_of" == call.data)
 async def price_of(call: CallbackQuery, state: FSMContext):
-	await call.message.edit_text("Company information:\n\n\nCompany name:\n\n📍 Location:\n\n📲 Phone:\n\n!PRICE!\n\nChoose your next action ⤵️", 
-		reply_markup=inline.choice_company())
+    await call.message.edit_text("Company information:\n\n\nCompany name:\n\n📍 Location:\n\n📲 Phone:\n\n!PRICE!\n\nChoose your next action ⤵️", 
+        reply_markup=inline.choice_company())
 
 
 @dp.callback_query_handler(lambda call: "to_delivery_method" == call.data)
 async def to_delivery_method(call: CallbackQuery, state: FSMContext):
-	await call.message.edit_text("Company information:\n\n\nCompany name:\n\n📍 Location:\n\n📲 Phone:\n\n!PRICE!\n\nChoose your next action ⤵️", 
-		reply_markup=inline.delivery_method())
+    await call.message.edit_text("Company information:\n\n\nCompany name:\n\n📍 Location:\n\n📲 Phone:\n\n!PRICE!\n\nChoose your next action ⤵️", 
+        reply_markup=inline.delivery_method())
 
 
 @dp.callback_query_handler(lambda call: "was_deliveried" in call.data)
@@ -88,6 +88,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
 
     text = await text_for_order(orders[current_page]["id"])
     await call.message.answer(text=text, reply_markup=inline.my_order_btns(orders, current_page), parse_mode='HTML')
+
 
 
 @dp.callback_query_handler(filters.Text(startswith="mark"))

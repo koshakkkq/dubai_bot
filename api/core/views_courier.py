@@ -246,4 +246,3 @@ class CourierFeedbackView(APIView):
         CourierFeedback.objects.create(comment=comment, rating=mark, courier=courier)
 
         return JsonResponse({'status': 'Ok.'})
-

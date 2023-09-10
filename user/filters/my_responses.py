@@ -65,7 +65,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
 
 
 
-@dp.callback_query_handler(lambda call: "to_delivery_method" == call.data, state=ResponseStates.PRICE_STATE)
+@dp.callback_query_handler(lambda call: "to_delivery_method" == call.data, state=[ResponseStates.PRICE_STATE, ResponseStates.SELECT_CORIER_STATE])
 async def to_delivery_method(call: CallbackQuery, state: FSMContext):
     await delete_msg(call.message.chat.id)
     state_data = await state.get_data()
@@ -73,6 +73,7 @@ async def to_delivery_method(call: CallbackQuery, state: FSMContext):
     location = state_data["location"]
     phone = state_data["phone"]
     price = state_data["price"]
+    await ResponseStates.PRICE_STATE.set()
     await call.message.edit_text(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\nPrice: {price}\n\n" + "Choose your next action ⤵️",
         reply_markup=inline.delivery_method())
 
@@ -93,6 +94,7 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
         pass
     await call.message.answer("Congratulations!\n\nYou can get information about the order in \n\"💼 My orders\"", reply_markup=inline.my_orders())
     #await send_message_of_interest(call.message.chat.id, shop_id, order_id)
+
 
 
 @dp.callback_query_handler(lambda call: 'delivery' == call.data, state=ResponseStates.PRICE_STATE)

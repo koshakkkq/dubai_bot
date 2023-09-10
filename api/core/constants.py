@@ -8,7 +8,7 @@ class OrderStatus:
 VERBOSE_ORDER_TYPE = (
     (OrderStatus.PENDING, "Pending."),
     (OrderStatus.ACTIVE, "Active."),
-    (OrderStatus.DONE, "Done."),
+    (OrderStatus.DONE, "Finished."),
     (OrderStatus.CANCELED, 'Canceled.')
 )
 

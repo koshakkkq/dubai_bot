@@ -30,6 +30,7 @@ urlpatterns = [
     path('set_language/', views_shop.SetUserLanguage.as_view()),
     path('create_invite_code/<int:shop_id>/', views_shop.ShopMemberCodeCreation.as_view()),
     path('shop/feedback/create/', views.ShopFeedbackCreateApiView.as_view()),
+    path('courier/feedback/create/', views.CourierFeedbackCreateApiView.as_view()),
 
     path('create_shop/', views_shop.CreateShop.as_view()),
     path('brands/<int:shop_id>/<int:skip>/<int:limit>/', views_shop.AvailableBrands.as_view()),
@@ -60,11 +61,15 @@ urlpatterns = [
     path('courier_add_to_blacklist/<int:order_id>/<int:courier_id>/', views_courier.AddOrderToCourierBlacklist.as_view()),
     path('courier_available_orders/<int:courier_id>/<int:status>/<int:skip>/<int:limit>/', views_courier.CouriersOrders.as_view()),
     path('courier_offer/<int:courier_id>/', views_courier.CourierOfferView.as_view()),
+    path('courier_offer/by_order/<int:order_id>/', views.CourierOfferApiViewList.as_view()),
+    path('get_courier_offer/<int:offer_id>/', views.CourierOfferApiDetail.as_view()),
+
     path('courier/feedback/create/', views_courier.CourierFeedbackView.as_view()),
 
     path('notifications/', views.NotificationsView.as_view()),
     path('reset_shop_notifications/', views.ResetShopNotifications.as_view()),
     path('reset_user_notifications/', views.ResetUserNotifications.as_view()),
+    path("get_shop_tg/<int:shop_id>/", views.GetShopTg.as_view()),
     path('subscription/<int:tg_id>/', views.SubscriptionView.as_view()),
     path('subscription_settings/', views.SubscriptionSettingsView.as_view()),
 ]

@@ -5,11 +5,11 @@ from .callbacks import IterCallback
 def menu():
 	keyboard = InlineKeyboardMarkup()
 	keyboard.row(InlineKeyboardButton('🔍 Find a spare part', callback_data=f"find_spare_part")) # strong
-	keyboard.row(InlineKeyboardButton('🆘 How to use the bot', callback_data=f"help")) # strong
 	keyboard.row(InlineKeyboardButton('🎯 Your responses', callback_data=f"feedback")) # strong
 	keyboard.row(InlineKeyboardButton('💼 My orders', callback_data=f"my_orders")) # strong
 	keyboard.row(InlineKeyboardButton('🔐 Store menu.', callback_data=f"register_store"))
 	keyboard.row(InlineKeyboardButton('🚚 Courier menu.', callback_data=f"register_courier"))
+	keyboard.row(InlineKeyboardButton('🆘 How to use the bot', callback_data=f"help")) # strong
 	return keyboard
 
 
@@ -98,6 +98,16 @@ def courier_mark_keyboard(shop_id, order_id):
 
 	return keyboard
 
+
+
+def mark_courier_keyboard(courier_id):
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('5️⃣', callback_data=f"courier_mark:5:{courier_id}"))
+	keyboard.row(InlineKeyboardButton('4️⃣', callback_data=f"courier_mark:4:{courier_id}"))
+	keyboard.row(InlineKeyboardButton('3️⃣', callback_data=f"courier_mark:3:{courier_id}"))
+	keyboard.row(InlineKeyboardButton('2️⃣', callback_data=f"courier_mark:2:{courier_id}"))
+	keyboard.row(InlineKeyboardButton('1️⃣', callback_data=f"courier_mark:1:{courier_id}"))
+	return keyboard
 
 
 def language_choice():
@@ -195,7 +205,7 @@ def my_order_btns(orders, current_page=0):
 
 def back_to_pickup_selecton():
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"to_delivery_method_addres_state"))
+	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"delivery"))
 	return keyboard
 
 
@@ -204,7 +214,6 @@ def my_orders():
 	keyboard.row(InlineKeyboardButton('💼 My orders', callback_data=f"my_orders")) # strong
 	keyboard.row(InlineKeyboardButton('↩️ Back to menu', callback_data=f"to_menu"))
 	return keyboard
-
 
 
 def courier_selection_btns(data):
