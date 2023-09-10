@@ -78,14 +78,26 @@ def no_btn(): # Working in filter
 	return keyboard
 
 
-def mark_keyboard(shop_id):
+def mark_keyboard(shop_id, order_id):
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('5️⃣', callback_data=f"mark:5:{shop_id}"))
-	keyboard.row(InlineKeyboardButton('4️⃣', callback_data=f"mark:4:{shop_id}"))
-	keyboard.row(InlineKeyboardButton('3️⃣', callback_data=f"mark:3:{shop_id}"))
-	keyboard.row(InlineKeyboardButton('2️⃣', callback_data=f"mark:2:{shop_id}"))
-	keyboard.row(InlineKeyboardButton('1️⃣', callback_data=f"mark:1:{shop_id}"))
+	keyboard.row(InlineKeyboardButton('5️⃣', callback_data=f"mark:5:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('4️⃣', callback_data=f"mark:4:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('3️⃣', callback_data=f"mark:3:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('2️⃣', callback_data=f"mark:2:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('1️⃣', callback_data=f"mark:1:{shop_id}:{order_id}"))
 	return keyboard
+
+def courier_mark_keyboard(shop_id, order_id):
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('5️⃣', callback_data=f"courier_mark:5:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('4️⃣', callback_data=f"courier_mark:4:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('3️⃣', callback_data=f"courier_mark:3:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('2️⃣', callback_data=f"courier_mark:2:{shop_id}:{order_id}"))
+	keyboard.row(InlineKeyboardButton('1️⃣', callback_data=f"courier_mark:1:{shop_id}:{order_id}"))
+
+
+	return keyboard
+
 
 
 def mark_courier_keyboard(courier_id):
@@ -174,7 +186,10 @@ def my_order_btns(orders, current_page=0):
 	shop_id = order['offer']["shop"]
 	keyboard = InlineKeyboardMarkup()
 	if order['status']['id'] == 1:
-		keyboard.row(InlineKeyboardButton("✅ received", callback_data=f"was_deliveried:{shop_id}:{order['id']}"))
+		if order['can_pick_courier'] == False:
+			keyboard.row(InlineKeyboardButton("✅ received", callback_data=f"was_deliveried:{shop_id}:{order['id']}"))
+		if order['can_pick_courier'] is True:
+			keyboard.row(InlineKeyboardButton('Offers from couriers', callback_data=f'courier_offers:{order["id"]}'))
 
 	btns = []
 	if current_page > 0:
@@ -204,6 +219,6 @@ def my_orders():
 def courier_selection_btns(data):
 	keyboard = InlineKeyboardMarkup()
 	for key, val in data.items():
-		keyboard.row(InlineKeyboardButton(f'Price: {val}', callback_data=f"order_offer:{key}"))
-	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"to_delivery_method"))
+		keyboard.row(InlineKeyboardButton(f'{val}', callback_data=f"order_offer_pick:{key}"))
+	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"my_orders"))
 	return keyboard

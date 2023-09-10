@@ -22,6 +22,7 @@ class AvailableOrdersStates(StatesGroup):
     filters.Text(equals="shop_customer_requests"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def available_orders_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id = -1):
@@ -42,6 +43,7 @@ async def available_orders_begin(callback: types.CallbackQuery, state: FSMContex
     filters.Text(startswith='shop_available_orders_page'),
     state = "*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def available_orders_next_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id = -1):
@@ -71,6 +73,7 @@ async def edit_reply_available_orders_with_page(callback: types.CallbackQuery, s
     filters.Text(startswith="shop_get_available_order_"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 
 async def get_available_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng'):
@@ -94,6 +97,7 @@ async def get_available_order_info(callback: types.CallbackQuery, state: FSMCont
 @dp.message_handler(
     state=AvailableOrdersStates.order_info,
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def set_order_price(message: types.Message, state:FSMContext, language='eng', shop_id = -1):
@@ -147,6 +151,7 @@ async def set_order_price(message: types.Message, state:FSMContext, language='en
     filters.Text(equals='shop_order_decline'),
     state=AvailableOrdersStates.order_info,
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def shop_order_decline(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -166,6 +171,7 @@ async def shop_order_decline(callback: types.CallbackQuery, state: FSMContext, l
     filters.Text(equals="shop_active_orders"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def show_active_orders_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -196,6 +202,7 @@ async def show_active_orders(callback: types.CallbackQuery, state: FSMContext, l
     filters.Text(startswith="shop_active_orders_page"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def change_active_orders_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -214,6 +221,7 @@ class ActiveOrdersStates(StatesGroup):
     filters.Text(startswith="shop_get_active_order_"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def get_active_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -242,6 +250,7 @@ async def get_active_order_info(callback: types.CallbackQuery, state: FSMContext
     filters.Text(startswith='shop_active_order_status_'),
     state=ActiveOrdersStates.order_info,
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def shop_active_order_set_status(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -263,6 +272,7 @@ async def shop_active_order_set_status(callback: types.CallbackQuery, state: FSM
     filters.Text(equals="shop_done_orders"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def show_done_orders_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -290,6 +300,7 @@ async def show_done_orders(callback: types.CallbackQuery, state: FSMContext, lan
     filters.Text(startswith="shop_done_orders_page"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def change_done_orders_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -306,6 +317,7 @@ async def change_done_orders_page(callback: types.CallbackQuery, state: FSMConte
     filters.Text(startswith="shop_get_done_order_"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def get_done_order_info(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -351,6 +363,7 @@ import shop.keyboards.orders
     filters.Text(equals="shop_my_responses"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def my_responses_begin(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id = -1):
@@ -371,6 +384,7 @@ async def my_responses_begin(callback: types.CallbackQuery, state: FSMContext, l
     filters.Text(startswith='shop_my_response_orders_page'),
     state = "*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def my_responses_next_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id = -1):
@@ -406,10 +420,10 @@ class MyResponsesStates(StatesGroup):
     filters.Text(startswith="shop_get_my_response_order_"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def shop_my_responses_info(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
-
 
     order_id = callback.data.split('_')[-1]
     await state.update_data(shop_my_response_order_id=order_id)
@@ -423,6 +437,7 @@ async def shop_my_responses_info(callback: types.CallbackQuery, state: FSMContex
     filters.Text(startswith="cancel_my_offer"),
     state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def shop_my_responses_info(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -435,6 +450,7 @@ async def shop_my_responses_info(callback: types.CallbackQuery, state: FSMContex
 @dp.message_handler(
     state=MyResponsesStates.offer_info,
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def shop_my_responses_info(message: types.Message, state: FSMContext, language='eng', shop_id=-1):

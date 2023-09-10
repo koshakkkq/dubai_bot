@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import random
 import time
 
@@ -12,6 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from .models import *
 from .constants import OrderStatus
+
+
+logger = logging.getLogger(__name__)
 def shop_member_status(request: WSGIRequest, id):
 
     shop_member = ShopMember.objects.filter(user__telegram_id=id)
@@ -341,7 +345,6 @@ class ChangeOfferPrice(APIView):
         offer = OrderOffer.objects.get(shop_id=shop_id, order_id=order_id)
         offer.price = price
         offer.save()
-        print(offer)
         return JsonResponse(
             {
                 'status': 'Ok.',

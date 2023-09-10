@@ -6,6 +6,7 @@ menu_buttons = [[InlineKeyboardButton(text='🚚 Customer requests', callback_da
                 [InlineKeyboardButton(text='📤 My offers', callback_data='shop_my_responses')],
                 [InlineKeyboardButton(text='✅ Done orders', callback_data='shop_done_orders')],
                 [InlineKeyboardButton(text='📍 Shop information', callback_data='shop_info')],
+                [InlineKeyboardButton(text='🆘 HELP', callback_data='shop_help')],
                 [InlineKeyboardButton(text='↩️ To main menu', callback_data='to_menu')],
                 ]
 menu_keyboard = InlineKeyboardMarkup(inline_keyboard=menu_buttons)
@@ -14,7 +15,7 @@ eng_keyboards['shop_menu'] = menu_keyboard
 info_keyboard = [
     [
         InlineKeyboardButton(text='📍 Location', callback_data='shop_change_location'),
-        InlineKeyboardButton(text='📱 Change geolocation', callback_data='shop_change_coords'),
+        InlineKeyboardButton(text='📱 Change Location', callback_data='shop_change_coords'),
     ],
     [
         InlineKeyboardButton(text='📲 Phone', callback_data='shop_change_phone'),
@@ -92,3 +93,10 @@ my_responses_info = [
     [InlineKeyboardButton(text='↩️ Back', callback_data='shop_my_responses')]
 ]
 eng_keyboards['my_responses_info'] = InlineKeyboardMarkup(inline_keyboard=my_responses_info)
+
+
+back_to_shop_menu = [
+    [InlineKeyboardButton(text='↩️ Back', callback_data='shop_menu')],
+]
+eng_keyboards['back_to_shop_menu'] = InlineKeyboardMarkup(inline_keyboard=back_to_shop_menu)
+

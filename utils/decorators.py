@@ -3,12 +3,39 @@ import typing
 
 import aiogram.types.message
 
-from .decorators_utils import get_current_language, bot_start, get_shop_id, get_courier_id, delete_msg
+from .decorators_utils import *
 
+
+
+def subscribe_needed(func):
+	async def wrapper(
+			*args,
+			**kwargs,
+	):
+		event = None
+		for i in args:
+			if isinstance(i, aiogram.types.CallbackQuery) or isinstance(i, aiogram.types.Message):
+				event = i
+				break
+
+
+		from_id = event['from']['id']
+		subscriber = await is_subscriber(from_id)
+		if subscriber == False:
+			if isinstance(event, aiogram.types.CallbackQuery):
+				await event.answer()
+				await buy_subscription_msg(event.message)
+			else:
+				await buy_subscription_msg(event)
+			return
+		else:
+			await func(*args, **kwargs)
+	return wrapper
 def picked_language(func):
 	async def wrapper(
 			*args,
 			state=None,
+			**kwargs,
 	):
 		try:
 			event = None
@@ -23,12 +50,9 @@ def picked_language(func):
 			user_id = int(event["from"]["id"])
 
 			language = await get_current_language(user_id)
+			language = 'eng'
 			if language is None:
-				if isinstance(event, aiogram.types.message.Message) is False:
-					await event.answer()
-					event = event.message
-				await bot_start(event, state)
-				return
+				await set_language(user_id, language)
 		except Exception as e:
 			logging.error(e)
 			return

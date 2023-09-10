@@ -92,34 +92,22 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
         await bot.delete_message(call.message.chat.id, call.message.message_id)
     except:
         pass
-    await bot.send_location(call.message.chat.id, **geo)
-    await call.message.answer("Congratulations!\n\nYour order number: " + str(state_data["order_id"]), 
-        reply_markup=None)
+    await call.message.answer("Congratulations!\n\nYou can get information about the order in \n\"💼 My orders\"", reply_markup=inline.my_orders())
     #await send_message_of_interest(call.message.chat.id, shop_id, order_id)
 
 
 
-@dp.callback_query_handler(lambda call: "delivery" == call.data, state=[ResponseStates.PRICE_STATE, ResponseStates.SELECT_CORIER_STATE, ResponseStates.ADDRESS_STATE])
-async def price_of(call: CallbackQuery, state: FSMContext):
-    state_data = await state.get_data()
-    order_id = state_data['order_id']
-    offers = await api.get_courier_offers(order_id)
-    data = {}
-    for offer in offers:
-        data[offer["id"]] = offer["price"]
-    await call.message.edit_text("Select your courier, please", reply_markup=inline.courier_selection_btns(data))
-    await ResponseStates.SELECT_CORIER_STATE.set()
-
-
-@dp.callback_query_handler(lambda call: "order_offer" in call.data, state=ResponseStates.SELECT_CORIER_STATE)
-async def price_of(call: CallbackQuery, state: FSMContext):
-    _, offer_id = call.data.split(":")
-    #offer = await api.get_courier_offer(offer_id)
-    async with state.proxy() as data:
-        data["courier_offer_id"] = offer_id
-
-    msg = await call.message.edit_text("Send your geolocation, please", reply_markup=inline.back_to_pickup_selecton())
+@dp.callback_query_handler(lambda call: 'delivery' == call.data, state=ResponseStates.PRICE_STATE)
+async def begin_credentials(call: CallbackQuery, state: FSMContext):
+    msg = await call.message.edit_text('Please, enter your phone.', reply_markup=inline.back_to_pickup_selecton())
     await api.set_msg_to_edit(call.message.chat.id, msg.message_id)
+    await ResponseStates.PHONE_STATE.set()
+
+@dp.message_handler(state=ResponseStates.PHONE_STATE)
+async def get_phone(msg: Message, state: FSMContext):
+    phone = msg.text
+    await state.update_data(users_phone=phone)
+    msg = await msg.answer("Send your geolocation, please", reply_markup=inline.back_to_pickup_selecton())
     await ResponseStates.ADDRESS_STATE.set()
 
 
@@ -155,8 +143,8 @@ async def successful(message: types.Message, state: FSMContext):
     shop_id = state_data["shop_id"]
     lat = state_data["lat"]
     lon = state_data["lon"]
-    courier_offer_id = state_data["courier_offer_id"]
-    status = await api.order_update(order_id, offer_id, status=1, address=address, is_delivery=True, lat=lat, lon=lon, couirer_offer_id=courier_offer_id)
+    phone = state_data['users_phone']
+    status = await api.order_update(order_id, offer_id, status=1, address=address, is_delivery=True, lat=lat, lon=lon, phone=phone)
     await message.answer("Congratulations!\nSoon your goods will be delivered to you\nyou can get information about the order in \n\"💼 My orders\"", reply_markup=inline.my_orders())
     await state.finish()
     #await send_message_of_interest(message.chat.id, order_id, order_id)

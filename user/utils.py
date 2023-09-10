@@ -26,15 +26,18 @@ async def text_for_order(order_id):
 							 f"TELEGRAM: <a href='tg://user?id={courier_tg_id}'>CLICK</a>\n"
 			else:
 				additional = 'Waiting for the courier to take care of your order'
-	shop_tg = await api.get_shop_tg(shop['id'])
+
+	shop_tg_id = order['shop_tg_id']
+
 	text = f"""id: {order_id}
 status: {VERBOSE_ORDER_TYPE[order['status']][1]}
 {order['additional']}
 Shop name: {shop['name']}
 Shop location: {shop['location']}
 Shop phone: {shop['phone']}
-Shop telegram: <a href='tg://user?id={shop_tg}'>CLICK</a>
+<a href='tg://user?id={shop_tg_id}'>Shop telegram</a>
 Price: {order['offer']['price']}
+
 """
 	text += additional
 	return text

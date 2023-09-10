@@ -22,8 +22,8 @@ class ResponseStates(StatesGroup):
 	PRICE_STATE = State()
 	SELECT_CORIER_STATE = State()
 	ADDRESS_STATE = State()
+	PHONE_STATE = State()
 	STRIPE_STATE = State()
-
 
 class OrderState(StatesGroup):
 	MAIN_STATE = State()

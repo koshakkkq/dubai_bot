@@ -5,6 +5,8 @@ from django.db.models import F
 from django.db.models.signals import pre_delete, pre_save, post_save
 
 from .constants import VERBOSE_ORDER_TYPE, VERBOSE_RAITING_TYPE, OrderStatus
+
+
 class Courier(models.Model):
 	name = models.CharField(max_length=100)
 	phone = models.CharField(max_length=100)
@@ -20,8 +22,7 @@ class Courier(models.Model):
 class CourierFeedback(models.Model):
 	comment = models.TextField()
 	rating = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=0)
-	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="feedbacks")
-
+	courier = models.ForeignKey(Courier, on_delete=models.CASCADE, related_name="feedbacks")
 
 	def __str__(self):
 		return f"{self.courier}|{self.rating}"
@@ -34,8 +35,14 @@ class CourierFeedback(models.Model):
 class TelegramUser(models.Model):
 	telegram_id = models.BigIntegerField(db_index=True)
 	language = models.CharField(max_length=40)
-	courier = models.OneToOneField(Courier, on_delete = models.CASCADE, related_name="telegram_user", null=True, blank=True,
-								   )
+	courier = models.OneToOneField(
+		Courier,
+		on_delete=models.CASCADE,
+		related_name="telegram_user",
+		null=True,
+		blank=True,
+	)
+	subscribe_till = models.DateTimeField(default=datetime.datetime(1970, 1, 1))
 
 	def __str__(self):
 		return f"Tg id: {self.telegram_id}"
@@ -43,8 +50,6 @@ class TelegramUser(models.Model):
 	class Meta:
 		verbose_name = "Telegram user"
 		verbose_name_plural = "Telegram users"
-
-
 
 
 class CarBrand(models.Model):
@@ -59,12 +64,13 @@ class CarBrand(models.Model):
 
 
 class CarModel(models.Model):
-	brand = models.ForeignKey(CarBrand, on_delete = models.CASCADE, related_name="models")
+	brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE, related_name="models")
 	name = models.CharField(max_length=50)
 	internal_name = models.CharField(max_length=50)
 	production_start = models.PositiveIntegerField(default=0)
 	production_end = models.PositiveIntegerField(default=0)
-	#years = models.CharField(max_length=30)
+
+	# years = models.CharField(max_length=30)
 
 	def __str__(self):
 		return f"{self.brand} {self.name} {self.production_start}-{self.production_end}"
@@ -72,6 +78,7 @@ class CarModel(models.Model):
 	class Meta:
 		verbose_name = "Car model"
 		verbose_name_plural = "Car models"
+
 
 class ShopAvailableModels(models.Model):
 	shop_id = models.ForeignKey
@@ -83,8 +90,8 @@ class PartType(models.Model):
 	def __str__(self):
 		return f'Id: {self.id}, name: {self.name}'
 
-class Shop(models.Model):
 
+class Shop(models.Model):
 	name = models.CharField(max_length=50)
 	location = models.CharField(max_length=400)
 	phone = models.CharField(max_length=100)
@@ -92,6 +99,7 @@ class Shop(models.Model):
 	lat = models.FloatField(default=0)
 	lon = models.FloatField(default=0)
 	parts = models.ManyToManyField(PartType)
+
 	def __str__(self):
 		return f'Id: {self.id}, name: {self.name}'
 
@@ -103,7 +111,7 @@ class Shop(models.Model):
 class ShopFeedback(models.Model):
 	comment = models.TextField()
 	raiting = models.PositiveIntegerField(choices=VERBOSE_RAITING_TYPE, default=1)
-	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="feedbacks")
+	shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="feedbacks")
 
 	def __str__(self):
 		return f"{self.shop}|{self.raiting}"
@@ -114,8 +122,8 @@ class ShopFeedback(models.Model):
 
 
 class ShopMember(models.Model):
-	user = models.OneToOneField(TelegramUser, on_delete = models.CASCADE, related_name="member")
-	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="members")
+	user = models.OneToOneField(TelegramUser, on_delete=models.CASCADE, related_name="member")
+	shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="members")
 
 	def __str__(self):
 		return f"{self.shop}|{self.user}"
@@ -127,12 +135,14 @@ class ShopMember(models.Model):
 
 class OrderCredential(models.Model):
 	address = models.CharField(max_length=400, blank=True, null=True)
-	courier = models.ForeignKey(Courier, on_delete = models.CASCADE, related_name="credentials", null=True, blank=True)
-	courier_offer = models.OneToOneField('CourierOffer', on_delete=models.CASCADE, related_name='credentials', null=True, default=None, blank=True)
-	is_delivery = models.BooleanField()
+	courier = models.ForeignKey(Courier, on_delete=models.CASCADE, related_name="credentials", null=True, blank=True)
+	courier_offer = models.OneToOneField('CourierOffer', on_delete=models.CASCADE, related_name='credentials',
+										 null=True, default=None, blank=True)
+	is_delivery = models.BooleanField(default=False)
 	phone = models.CharField(max_length=100, blank=True, null=True)
 	lat = models.FloatField(default=0)
 	lon = models.FloatField(default=0)
+
 	def __str__(self):
 		s = f'Address: {self.address}, '
 		if self.courier is not None:
@@ -144,13 +154,14 @@ class OrderCredential(models.Model):
 
 		s += f'Phone: {self.phone}'
 		return s
+
 	class Meta:
 		verbose_name = "Order credential"
 		verbose_name_plural = "Order credentials"
 
 
 class OrderOffer(models.Model):
-	shop = models.ForeignKey(Shop, on_delete = models.CASCADE, related_name="offers")
+	shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="offers")
 	price = models.FloatField()
 	order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='offers')
 
@@ -161,17 +172,20 @@ class OrderOffer(models.Model):
 		verbose_name = "Order offer"
 		verbose_name_plural = "Order offers"
 
+
 class CourierOffer(models.Model):
 	courier = models.ForeignKey(Courier, on_delete=models.CASCADE, related_name='offers')
 	price = models.FloatField()
 	order = models.ForeignKey('Order', on_delete=models.CASCADE)
 
-
 	def __str__(self):
 		return f'Id: {self.pk} | Courier: {self.courier} | Price: {self.price}'
+
+
 class Order(models.Model):
 	customer = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name="orders")
-	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True, blank=True, db_index=True)
+	credential = models.OneToOneField(OrderCredential, on_delete=models.CASCADE, related_name="order", null=True,
+									  blank=True, db_index=True)
 	model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="orders")
 	status = models.PositiveSmallIntegerField(choices=VERBOSE_ORDER_TYPE, default=0)
 	additional = models.TextField()
@@ -197,19 +211,23 @@ class ShopRegistrationCode(models.Model):
 		verbose_name = "Shop invite code."
 		verbose_name_plural = "Shop invite codes."
 
+
 class ShopMemberRegistrationCode(models.Model):
 	code = models.TextField()
 	used = models.BooleanField(default=False)
 	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 	creation_time = models.DateTimeField(auto_now_add=True)
 
+
 class ShopOrdersBlacklist(models.Model):
 	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 	order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
+
 class CourierOrdersBlacklist(models.Model):
 	user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
 	order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
 
 class CourierRegistrationCode(models.Model):
 	code = models.TextField()
@@ -218,11 +236,11 @@ class CourierRegistrationCode(models.Model):
 	creation_time = models.DateTimeField(auto_now_add=True)
 
 
-
 class ShopNotification(models.Model):
 	shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 	new_available_orders = models.BigIntegerField(default=0)
 	new_active_orders = models.BigIntegerField(default=0)
+
 
 class UserNotification(models.Model):
 	user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
@@ -235,6 +253,16 @@ class MessageToDelete(models.Model):
 	msg_id = models.BigIntegerField(default=None, null=True)
 
 
-class MessageToEdit(models.Model):	
+class MessageToEdit(models.Model):
 	tg_id = models.BigIntegerField()
 	msg_id = models.BigIntegerField(default=None, null=True)
+
+
+class SubscribeSettings(models.Model):
+	price = models.BigIntegerField(help_text='Price in 0.01 AED, min: 367, max: 3673085')
+	days = models.BigIntegerField(help_text='For how many days a subscription is given')
+	active = models.BooleanField(help_text='If checked subscribe check is active!')
+
+	class Meta:
+		verbose_name = "Subscribe settings"
+		verbose_name_plural = "Subscribe settings"

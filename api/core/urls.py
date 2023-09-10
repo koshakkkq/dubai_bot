@@ -21,7 +21,9 @@ urlpatterns = [
     path("order/update/", views.OrderUpdateApiView.as_view()),
     path("order_offer/", views.OrderOfferApiView.as_view()),
     path("extended/order/", views.ExtendedOrderApiView.as_view()),
+    path("courier_offers/<int:order_id>/", views.CourierOffersView.as_view()),
     path("order/increase/<int:order_id>/", views.order_increase),
+    path('pick_offer/', views.PickOfferView.as_view()),
 
     path("shop_member_status/<int:id>/", views_shop.shop_member_status),
     path('is_code_correct/<int:user_id>/<str:code>/', views_shop.is_code_correct),
@@ -62,9 +64,12 @@ urlpatterns = [
     path('courier_offer/by_order/<int:order_id>/', views.CourierOfferApiViewList.as_view()),
     path('get_courier_offer/<int:offer_id>/', views.CourierOfferApiDetail.as_view()),
 
+    path('courier/feedback/create/', views_courier.CourierFeedbackView.as_view()),
 
     path('notifications/', views.NotificationsView.as_view()),
     path('reset_shop_notifications/', views.ResetShopNotifications.as_view()),
     path('reset_user_notifications/', views.ResetUserNotifications.as_view()),
     path("get_shop_tg/<int:shop_id>/", views.GetShopTg.as_view()),
+    path('subscription/<int:tg_id>/', views.SubscriptionView.as_view()),
+    path('subscription_settings/', views.SubscriptionSettingsView.as_view()),
 ]

@@ -24,7 +24,7 @@ class ShopInfoStates(StatesGroup):
 	filters.Text(equals="shop_info"),
 	state="*",
 )
-
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -51,6 +51,7 @@ async def shop_info_callback(callback: types.CallbackQuery, state: FSMContext, l
 	filters.Text(equals="shop_get_brands"),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 @decorators.delete_msg_decorator
@@ -82,6 +83,7 @@ async def show_brands(callback: types.CallbackQuery, state: FSMContext, language
 	filters.Text(startswith="shop_info_brand_page_"),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def change_brand_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -100,6 +102,7 @@ async def change_brand_page(callback: types.CallbackQuery, state: FSMContext, la
 	filters.Text(startswith='shop_info_get_brand_'),
 	state='*',
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def pick_brand(callback:types.CallbackQuery, state:FSMContext, language='eng', shop_id=-1):
@@ -130,6 +133,7 @@ async def show_models_by_brand(callback: types.CallbackQuery, state: FSMContext,
 	filters.Text(startswith='shop_info_model_page_'),
 	state='*',
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def change_models_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -152,6 +156,7 @@ async def change_models_page(callback: types.CallbackQuery, state: FSMContext, l
 	filters.Text(startswith='shop_info_pick_model_'),
 	state='*',
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def pick_model(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -175,6 +180,7 @@ async def pick_model(callback: types.CallbackQuery, state: FSMContext, language=
 	filters.Text(startswith='shop_info_pick_all_models_'),
 	state='*',
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def pick_all_models(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -195,6 +201,7 @@ async def pick_all_models(callback: types.CallbackQuery, state: FSMContext, lang
 	filters.Text(startswith='shop_info_pick_page_models_'),
 	state='*',
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def pick_models_on_page(callback: types.CallbackQuery, state: FSMContext, language='eng', shop_id=-1):
@@ -223,6 +230,7 @@ class ChangeShopInfoStates(StatesGroup):
 	filters.Text(startswith="shop_change_"),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 @decorators.delete_msg_decorator
@@ -245,6 +253,7 @@ async def change_shop_information(callback:types.CallbackQuery, state:FSMContext
 @dp.message_handler(
 	state=ChangeShopInfoStates.pending_value
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def get_value_to_change(message: types.Message, state: FSMContext, language='eng', shop_id = -1):
@@ -264,6 +273,7 @@ async def get_value_to_change(message: types.Message, state: FSMContext, languag
 	state=ChangeShopInfoStates.pending_coords,
 	content_types=['location'],
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 async def get_coords_to_change(message: types.Message, state: FSMContext, language='eng', shop_id = -1):
@@ -282,6 +292,7 @@ async def get_coords_to_change(message: types.Message, state: FSMContext, langua
 	filters.Text(equals='shop_info_create_invite'),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 @decorators.delete_msg_decorator
@@ -298,6 +309,7 @@ async def create_invite_code(callback:types.CallbackQuery, state:FSMContext, lan
 	filters.Text(equals='shop_get_auto_parts'),
 	state="*",
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 @decorators.delete_msg_decorator
@@ -316,6 +328,7 @@ async def get_parts(callback:types.CallbackQuery, state:FSMContext, language='en
 	filters.Text(startswith='shop_info_pick_part_'),
 	state='*',
 )
+@decorators.subscribe_needed
 @decorators.picked_language
 @decorators.is_member
 @decorators.delete_msg_decorator
