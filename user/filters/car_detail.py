@@ -49,10 +49,10 @@ async def text_msg(message: Message, state: FSMContext):
 async def text_msg(message: Message, state: FSMContext):
     state_data = await state.get_data()
     await edit_msg(message.chat.id)
-    await message.answer(f"⚡️Great, your request has been received⚡️\n\nYou can find offers from car part suppliers in "🎯 Your responses" menu\n\nAfter 5 seconds you will be redirected to the main menu")
+    await message.answer(f"⚡️Great, your request has been received⚡️\n\nYou can find offers from car part suppliers in \"🎯 Your responses\" menu\n\nAfter 5 seconds you will be redirected to the main menu")
     async with state.proxy() as data:
         data["article"] = message.text
-        additional = f"Detail info: {data['detail_name']}\nDetail type: {data['detail_type']}\nArticle: {data['article']}"
+        additional = f"Car part info: {data['detail_name']}\nCar part type: {data['detail_type']}\nPart number: {data['article']}"
         detail_type = data['detail_type']
         data = await api.order_create(message.chat.id, data["model_id"], additional, detail_type)
     await state.finish()
@@ -65,10 +65,10 @@ async def text_msg(message: Message, state: FSMContext):
 async def user_no_filter(call: CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     await edit_msg(call.message.chat.id)
-    await call.message.answer(f"⚡️Great, your request has been received⚡️\n\nYou can find offers from car part suppliers in "🎯 Your responses" menu\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
+    await call.message.answer(f"⚡️Great, your request has been received⚡️\n\nYou can find offers from car part suppliers in \"🎯 Your responses\" menu\n\nAfter 5 seconds you will be redirected to the main menu", reply_markup=None)
     async with state.proxy() as data:
         data["article"] = None
-        additional = f"Detail info: {data['detail_name']}\nDetail type: {data['detail_type']}\nArticle: {data['article']}"
+        additional = f"Car part info: {data['detail_name']}\nCar part type: {data['detail_type']}\nPart number: {data['article']}"
         detail_type = data['detail_type']
         data = await api.order_create(call.message.chat.id, data["model_id"], additional, detail_type)
     await state.finish()

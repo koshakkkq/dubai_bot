@@ -66,4 +66,5 @@ urlpatterns = [
     path('notifications/', views.NotificationsView.as_view()),
     path('reset_shop_notifications/', views.ResetShopNotifications.as_view()),
     path('reset_user_notifications/', views.ResetUserNotifications.as_view()),
+    path("get_shop_tg/<int:shop_id>/", views.GetShopTg.as_view()),
 ]

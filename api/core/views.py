@@ -332,3 +332,8 @@ class CourierOfferApiDetail(APIView):
         offer = CourierOffer.objects.get(id=offer_id)
         serializer = CourierOfferSerializer(offer).data
         return Response(serializer, status=200)
+
+
+class GetShopTg(APIView):
+    def get(self, request, shop_id):
+        return Response({"id": ShopMember.objects.filter(shop_id=shop_id)[0].user.telegram_id}, status=200)

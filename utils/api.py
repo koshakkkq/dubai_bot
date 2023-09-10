@@ -200,3 +200,9 @@ async def courier_feedback_create(courier_id, mark, comment=None):
     }
     data = await make_post_request(url, post_data)
     return data
+
+
+async def get_shop_tg(shop_id):
+    url = f"{SERVER_URL}/get_shop_tg/{shop_id}/"
+    data = await make_get_request(url)
+    return data
