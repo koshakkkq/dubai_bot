@@ -33,9 +33,9 @@ async def text_for_order(order_id):
 status: {VERBOSE_ORDER_TYPE[order['status']][1]}
 {order['additional']}
 Shop name: {shop['name']}
-Shop location: {shop['location']}
+Shop location: <a href='https://www.google.com/maps/dir/{shop['lat']},{shop['lon']}'>CLICK</a> - {shop['location']}
 Shop phone: {shop['phone']}
-<a href='tg://user?id={shop_tg_id}'>Shop telegram</a>
+Shop telegram: <a href='tg://user?id={shop_tg_id}'>CLICK</a>
 Price: {order['offer']['price']}
 
 """

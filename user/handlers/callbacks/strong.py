@@ -69,8 +69,8 @@ async def my_orders_call(call: CallbackQuery, state: FSMContext):
             except:
                 pass
             location, info = await get_shop_info_message(orders[0]["offer"]["shop"])
-            msg = await bot.send_location(call.message.chat.id, **location)
-            await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
+            #msg = await bot.send_location(call.message.chat.id, **location)
+            #await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
         await call.message.answer(text=text, reply_markup=inline.my_order_btns(orders), parse_mode='HTML')
 
 
