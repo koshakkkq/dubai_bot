@@ -140,7 +140,7 @@ class ExtendedOrderApiView(OrderApiView):
                     else:
                         raiting = sum(feedback.values_list("raiting", flat=True)) / len(feedback.all())
                     lst.append({"raiting": raiting, "id": offer.id, "price": offer.price, "shop":
-                        {"id": shop.id, "name": shop.name, "location": shop.location, "phone": shop.phone, 'shop_tg_id': shop_tg_id}})
+                        {"id": shop.id, "name": shop.name, "location": shop.location, "phone": shop.phone, 'shop_tg_id': shop_tg_id, 'lat': shop.lat, "lon": shop.lon}})
 
                 can_pick_courier = False if order.credential is None else order.credential.is_delivery
                 if can_pick_courier:

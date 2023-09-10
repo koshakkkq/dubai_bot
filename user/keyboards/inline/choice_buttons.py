@@ -205,7 +205,7 @@ def my_order_btns(orders, current_page=0):
 
 def back_to_pickup_selecton():
 	keyboard = InlineKeyboardMarkup()
-	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"delivery"))
+	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"to_delivery_method"))
 	return keyboard
 
 
@@ -221,4 +221,16 @@ def courier_selection_btns(data):
 	for key, val in data.items():
 		keyboard.row(InlineKeyboardButton(f'{val}', callback_data=f"order_offer_pick:{key}"))
 	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"my_orders"))
+	return keyboard
+
+
+def back_to__pickup_selecton():
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"delivery"))
+	return keyboard
+
+
+def back_to___pickup_selecton():
+	keyboard = InlineKeyboardMarkup()
+	keyboard.row(InlineKeyboardButton('↩️ Back', callback_data=f"tekst"))
 	return keyboard

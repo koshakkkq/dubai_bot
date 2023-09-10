@@ -60,12 +60,12 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
             pass
         #msg = await bot.send_location(call.message.chat.id, **geo)
         #await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
-    await call.message.answer(text=f"Shop name: {name}\nShop location: {location}\nShop phone: {phone}\nPrice: {offer['price']}\n\n" + "Choose your next action ⤵️",
+    await call.message.answer(text=f"Shop name: {name}\nShop location: {location} - <a href='https://www.google.com/maps/dir/{offer['shop']['lat']},{offer['shop']['lon']}'>CLICK</a> \nShop phone: {phone}\nPrice: {offer['price']}\n\n" + "Choose your next action ⤵️",
         reply_markup=inline.choice_company())
 
 
 
-@dp.callback_query_handler(lambda call: "to_delivery_method" == call.data, state=[ResponseStates.PRICE_STATE, ResponseStates.SELECT_CORIER_STATE])
+@dp.callback_query_handler(lambda call: "to_delivery_method" == call.data, state=[ResponseStates.PRICE_STATE, ResponseStates.SELECT_CORIER_STATE, ResponseStates.PHONE_STATE])
 async def to_delivery_method(call: CallbackQuery, state: FSMContext):
     await delete_msg(call.message.chat.id)
     state_data = await state.get_data()
@@ -97,7 +97,7 @@ async def find_spare_part(call: CallbackQuery, state: FSMContext):
 
 
 
-@dp.callback_query_handler(lambda call: 'delivery' == call.data, state=ResponseStates.PRICE_STATE)
+@dp.callback_query_handler(lambda call: 'delivery' == call.data, state=[ResponseStates.PRICE_STATE, ResponseStates.ADDRESS_STATE])
 async def begin_credentials(call: CallbackQuery, state: FSMContext):
     msg = await call.message.edit_text('Please, enter your phone.', reply_markup=inline.back_to_pickup_selecton())
     await api.set_msg_to_edit(call.message.chat.id, msg.message_id)
@@ -107,7 +107,14 @@ async def begin_credentials(call: CallbackQuery, state: FSMContext):
 async def get_phone(msg: Message, state: FSMContext):
     phone = msg.text
     await state.update_data(users_phone=phone)
-    msg = await msg.answer("Send your geolocation, please", reply_markup=inline.back_to_pickup_selecton())
+    msg = await msg.answer("Send your geolocation, please", reply_markup=inline.back_to__pickup_selecton())
+    await ResponseStates.ADDRESS_STATE.set()
+
+
+
+@dp.callback_query_handler(lambda call: call.data == "tekst", state="*")
+async def begin_credentials(call: CallbackQuery, state: FSMContext):
+    msg = await call.message.answer("Send your geolocation, please", reply_markup=inline.back_to__pickup_selecton())
     await ResponseStates.ADDRESS_STATE.set()
 
 
@@ -129,7 +136,7 @@ async def text_msg(message: Message, state: FSMContext):
         data["lat"] = lat
         data["lon"] = lon
     await ResponseStates.STRIPE_STATE.set()
-    msg = await message.answer("Write additional address info for courier, if there is noting write '-' ", reply_markup=inline.back_to_pickup_selecton())
+    msg = await message.answer("Write additional address info for courier, if there is noting write '-' ", reply_markup=inline.back_to___pickup_selecton())
     await api.set_msg_to_edit(message.chat.id, msg.message_id)
 
 
