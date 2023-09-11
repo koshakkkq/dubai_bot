@@ -61,7 +61,7 @@ async def user_no_filter(call: CallbackQuery, state: FSMContext):
         #msg = await bot.send_location(call.message.chat.id, **geo)
         #await api.set_msg_to_delete(call.message.chat.id, msg.message_id)
     await call.message.answer(text=f"Shop name: {name}\nShop location: {location} - <a href='https://www.google.com/maps/dir/{offer['shop']['lat']},{offer['shop']['lon']}'>CLICK</a> \nShop phone: {phone}\nPrice: {offer['price']}\n\n" + "Choose your next action ⤵️",
-        reply_markup=inline.choice_company())
+        reply_markup=inline.choice_company(), parse_mode='HTML')
 
 
 
