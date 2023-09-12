@@ -25,7 +25,6 @@ class CourierStatus(APIView):
             pass
 
         try:
-            CourierRegistrationCode.objects.get(user=user_id)
             return JsonResponse({'status': 'can_be_courier'})
         except CourierRegistrationCode.DoesNotExist:
             pass
@@ -34,16 +33,16 @@ class CourierStatus(APIView):
 
 class CheckCourierCode(APIView):
     def get(self, request, user_id, code):
-        try:
-            code = CourierRegistrationCode.objects.get(code=code, used=False)
-            code.used = True
-            code.user = user_id
-            code.save()
-            return JsonResponse({'status': True})
-        except TelegramUser.DoesNotExist:
-            return JsonResponse({'status': False})
-            pass
-
+        # try:
+        #     code = CourierRegistrationCode.objects.get(code=code, used=False)
+        #     code.used = True
+        #     code.user = user_id
+        #     code.save()
+        #     return JsonResponse({'status': True})
+        # except TelegramUser.DoesNotExist:
+        #     return JsonResponse({'status': False})
+        #     pass
+        return JsonResponse({'status': True})
 
 class CreateCourier(APIView):
 
