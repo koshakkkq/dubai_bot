@@ -22,35 +22,33 @@ def shop_member_status(request: WSGIRequest, id):
     if len(shop_member) != 0:
         return JsonResponse({'status': 'member'})
 
-    shop_registration_code = ShopRegistrationCode.objects.filter(user=id,used=True)
-    if len(shop_registration_code) != 0:
-        return JsonResponse({'status': 'can_create_shop'})
+    return JsonResponse({'status': 'can_create_shop'})
 
-    return JsonResponse({'status':'not_member'})
 
 def is_code_correct(request: WSGIRequest, user_id, code):
-    try:
-        reg_code = ShopRegistrationCode.objects.get(code=code, used=False)
-        reg_code.user = user_id
-        reg_code.used = True
-        reg_code.save()
-        return JsonResponse({'status': True})
-    except ShopRegistrationCode.DoesNotExist:
-        pass
-
-
-    try:
-        shop_reg_code = ShopMemberRegistrationCode.objects.get(code = code, used=False)
-        shop_reg_code.used = True
-        shop_reg_code.save()
-        shop_id = shop_reg_code.shop.id
-        user = TelegramUser.objects.get(telegram_id=user_id)
-        ShopMember.objects.create(user=user, shop_id=shop_id)
-        return JsonResponse({'status': True})
-    except ShopMemberRegistrationCode.DoesNotExist:
-        pass
-
-    return JsonResponse({'status': False})
+    # try:
+    #     reg_code = ShopRegistrationCode.objects.get(code=code, used=False)
+    #     reg_code.user = user_id
+    #     reg_code.used = True
+    #     reg_code.save()
+    #     return JsonResponse({'status': True})
+    # except ShopRegistrationCode.DoesNotExist:
+    #     pass
+    #
+    #
+    # try:
+    #     shop_reg_code = ShopMemberRegistrationCode.objects.get(code = code, used=False)
+    #     shop_reg_code.used = True
+    #     shop_reg_code.save()
+    #     shop_id = shop_reg_code.shop.id
+    #     user = TelegramUser.objects.get(telegram_id=user_id)
+    #     ShopMember.objects.create(user=user, shop_id=shop_id)
+    #     return JsonResponse({'status': True})
+    # except ShopMemberRegistrationCode.DoesNotExist:
+    #     pass
+    #
+    # return JsonResponse({'status': False})
+    return JsonResponse({'status': True})
 
 
 class SetUserLanguage(APIView):
