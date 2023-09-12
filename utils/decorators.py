@@ -50,9 +50,9 @@ def picked_language(func):
 			user_id = int(event["from"]["id"])
 
 			language = await get_current_language(user_id)
-			language = 'eng'
 			if language is None:
 				await set_language(user_id, language)
+			language = 'eng'
 		except Exception as e:
 			logging.error(e)
 			return
