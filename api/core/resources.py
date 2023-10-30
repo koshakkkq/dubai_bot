@@ -34,10 +34,14 @@ class CarModelResource(resources.ModelResource):
         end_lst = []
         brands = set()
         for row in dataset:
-            start, end = map(int, row[3].split(" - "))
+            if row[0] is None:
+                continue
+            start, end = map(int, row[3].replace(" ", "").split("-"))
             start_lst.append(start)
             end_lst.append(end)
             brands.add(row[0])
+        while len(start_lst) < len(dataset):
+            dataset.pop()
         dataset.insert_col(3, col=start_lst, header="production_start")
         dataset.insert_col(4, col=end_lst, header="production_end")
         del dataset["Years of Production"]
